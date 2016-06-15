@@ -55,7 +55,7 @@ brock           | long
 
 Keyword             | Java
 ---------           | --------
-Volcano             | Object
+Volcano*             | Object
 erupt               | main
 $varname            | variable
 explode             | print
@@ -86,13 +86,14 @@ Example program: *hello.magma*:
 Example program: *gcd.magma*:
 ```
   chamber gcd {
-      rock $count
+      rock $count;
   
       rupture rock gcd (rock $a, rock $b){
+          $count = 0;
           rock $result = 0;
-          if ($a == $b){
+          if ($a == $b) then {
               $result = $a;
-          } else if ($a > $b){
+          } else if ($a > $b) then {
               $result = gcd(($a-$b), $b);
           } else {
               $result = gcd(($b-$a), $a);
@@ -102,6 +103,8 @@ Example program: *gcd.magma*:
       }
   
   }
+  
+
 ```
 
 Example program: *gauss.magma*:
@@ -128,16 +131,16 @@ Example program: *max.magma*:
 ```
   chamber max {
       erupt(){
-          rock ashes $array = [0,45,2,7,4];
-          int $x = max ($array);
+          rock[] $array = [0,45,2,7,4];
+          rock $x = max ($array);
           explode("Maximum: "  + $x);
       }
-      
-      rupture rock max (rock ashes $a){
+  
+      rupture rock max (rock[] $a){
           rock $maximum = 0;
           rock $counter =0;
-          while ($counter < $a.length){
-            if ($a[$counter] >= $maximum){
+          while ($counter < $a.length()){
+            if ($a[$counter] >= $maximum) then {
               $maximum = $a[$counter];
             }
             $counter = $counter + 1;
