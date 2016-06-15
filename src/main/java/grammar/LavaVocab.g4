@@ -25,6 +25,7 @@ XOR:           'xor';
 RUPTURE:        'rupture' ;
 ERUPT:          'erupt';
 RETURN :       'return' ;
+SHARED :        'shared' ;
 
 STATIC_STRING : '"' (~["\\] | '\\'.)* '"';
 

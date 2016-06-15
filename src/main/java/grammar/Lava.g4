@@ -9,13 +9,13 @@ body: localVariableDeclarationStatement* functiondecl*;
 
 
 statement :
-      target ASS expr SEMI
-    | IF LPAR expr RPAR THEN statement (ELSE statement)?
-    | WHILE LPAR expr RPAR  statement
-    | block
-    | function
-    | RETURN expr SEMI
-    | emptyStatement
+      target ASS expr SEMI                                  #assignStat
+    | IF LPAR expr RPAR THEN statement (ELSE statement)?    #ifStat
+    | WHILE LPAR expr RPAR  statement                       #whileStat
+    | block                                                 #blockStat
+    | function                                              #functionStat
+    | RETURN expr SEMI                                      #returnStat
+    | emptyStatement                                        #emptyStat
     ;
 
 block :
@@ -113,7 +113,7 @@ expr:
     ;
 
 type :
-    primitiveType (LBLOCK RBLOCK)?
+     (SHARED)? primitiveType (LBLOCK RBLOCK)?
     ;
 
 primitiveType:
