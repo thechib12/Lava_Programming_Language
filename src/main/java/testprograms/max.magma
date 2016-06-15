@@ -1,9 +1,5 @@
 chamber max {
-    erupt(){
-        rock[] $array = [0,45,2,7,4];
-        rock $x = max ($array);
-        explode("Maximum: "  + $x);
-    }
+
 
     rupture rock max (rock[] $a){
         rock $maximum = 0;
@@ -15,6 +11,12 @@ chamber max {
           $counter = $counter + 1;
         }
         return $maximum;
+    }
+
+    erupt(){
+        rock[] $array = [0,45,2,7,4];
+        rock $x = max ($array);
+        explode("Maximum: "  + $x);
     }
 }
 
