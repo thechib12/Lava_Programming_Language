@@ -25,7 +25,8 @@
 
 
 
-
+TODO:
+verslag - shared var keuze
 
 INTRODUCTION
 LAVA Programming Language
