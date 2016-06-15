@@ -7,6 +7,7 @@ DOUBLE:         'pebble';
 CHAR:       'mineral';
 LONG:           'brock';
 STRING:         'mine';
+VOID:           'void';
 IF:             'if';
 THEN:           'then';
 ELSE:           'else' ;

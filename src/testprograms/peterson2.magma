@@ -1,5 +1,5 @@
 chamber peterson2 {
-   temperature $flag[2]   = [cold, cold];
+   temperature[] $flag   = [cold, cold];
    rock $turn;
    rock $value;
 

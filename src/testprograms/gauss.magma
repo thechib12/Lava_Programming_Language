@@ -2,7 +2,7 @@ chamber gauss {
     erupt() {
         explode("Number? ");
         mine $x = implode();
-        rock $x1 = x.toRock();
+        rock $x1 = $x.toRock();
         rock $count = 0;
         rock $y     = 0;
         while ($count < $x1){
