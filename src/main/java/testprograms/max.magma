@@ -8,7 +8,7 @@ chamber max {
     rupture rock max (rock[] $a){
         rock $maximum = 0;
         rock $counter =0;
-        while ($counter < $a.length){
+        while ($counter < $a.length()){
           if ($a[$counter] >= $maximum) then {
             $maximum = $a[$counter];
           }

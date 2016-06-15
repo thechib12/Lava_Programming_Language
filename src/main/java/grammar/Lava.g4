@@ -1,11 +1,11 @@
-grammar LAVA;
+grammar Lava;
 
 import LavaVocab;
 
 program: CHAMBER ID LBRACE body  RBRACE EOF;
 
 
-body: localVariableDeclarationStatement* functiondecl+;
+body: localVariableDeclarationStatement* functiondecl*;
 
 
 statement   : target ASS expr SEMI
@@ -71,6 +71,7 @@ expr: expr DOT expr        #fieldExpr
     | STATIC_STRING     #staticstringExpr
     | FALSE             #falseExpr
     | function             #inputExpr
+    | VARID LBLOCK expr RBLOCK #arrayExpr
     | VARID                #idExpr
     ;
 
