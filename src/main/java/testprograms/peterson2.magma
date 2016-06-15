@@ -6,8 +6,9 @@ chamber peterson2 {
    rupture void takeTurnFirst(){
        $flag[0] = hot;
        $turn = 1;
-       while (flag[1] && $turn == 1){
+       while ($flag[1] and $turn == 1){
            /^\ busy wait
+           ;
        }
        $value = $value + 1;
     }
@@ -19,8 +20,9 @@ chamber peterson2 {
    rupture void takeTurnSecond(){
        $flag[1] = hot;
        $turn = 1;
-       while (flag[0] && $turn == 1){
+       while ($flag[0] and $turn == 1){
            /^\ busy wait
+           ;
        }
        $value = $value + 1;
    }
