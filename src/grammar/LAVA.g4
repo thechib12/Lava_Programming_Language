@@ -1,4 +1,4 @@
-grammar Lava;
+grammar LAVA;
 
 import LavaVocab;
 
