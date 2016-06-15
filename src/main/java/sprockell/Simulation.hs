@@ -1,106 +1,83 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances, UndecidableInstances #-}
-
-{- =====================================================
-Jan Kuper, June 2016
-===================================================== -}
-
-{- Graphical demo of Sprockells.
-===============================
-Commands -- hit key:
-
-1 : start single sprockell
-m : next cycle
-
-2 : start multi sprockell thing
-n : next cycle
-
-q : quit
-
-===============================
-
-Example programs in ExampleProg.hs
-
-Be careful IO-component, that will assume certain values, and is thus application dependent.
-
-===============================
-
-Run in ghci:
-Architecture.hs
-evaluate: main
-
-Don't pay attention to the warnings, it runs anyway.
--}
-
-
-
 module Simulation where
 
+import BasicFunctions
 import HardwareTypes
 import Sprockell
-import BasicFunctions
-import IO_Comp          -- relevant for graphical simulation, not for PP-project
 import System
 
 -- ====================================================================================================
--- Simulation Function for Sprockell
+-- Sprockell Test
 -- ====================================================================================================
-data Tick = Tick        deriving (Eq,Show)
-clock = Tick : clock
 
-sprockellSim prg s []     = []
-sprockellSim prg s (i:is) | instr /= EndProg    = (ljustify 20 $ show instr, s',o) : sprockellSim prg s' is
-                          | otherwise           = []
+sprockellSim :: [Instruction]
+                -> SprockellState
+                -> [Reply]
+                -> [(Instruction, SprockellState, Request)]
+
+sprockellSim instrs s []     = []
+sprockellSim instrs s (i:is) | instr /= EndProg    = (instr,s',o) : sprockellSim instrs s' is
+                             | otherwise           = []
                 where
-                  (s',o) = sprockell prg s i
-                  instr  = prg ! pc s
+                  (s',o) = sprockell instrs s i
+                  instr  = instrs ! pc s
 
--- ====================================================================================================
--- Some Constants
--- ====================================================================================================
-localMemSize    = 16                    :: Int
-regbankSize     = 8                     :: Int
-
--- initVarLUT      = [("sprID",0,[])]      :: VarLUT
+localMemSize = 16 :: Int
+regbankSize  = 8  :: Int
 
 initSprockellState :: Value -> SprockellState
 initSprockellState sprID = SprState
-  { pc       = 0
-  , sp       = localMemSize
-  , regbank  = replicate regbankSize 0
-  , localMem = replicate localMemSize 0 <~ (0,sprID)
-  }
+        { pc       = 0
+        , sp       = localMemSize
+        , regbank  = replicate regbankSize 0 <~ (regSprID,sprID)
+        , localMem = replicate localMemSize 0
+        }
 
--- ====================================================================================================
--- ====================================================================================================
+sprTest :: Value -> [Instruction] -> [Reply] -> IO ()
+sprTest sprID instrs input = putStr
+                           $ unlines
+                           $ map show
+                           $ sprockellSim instrs (initSprockellState sprID) input
+
 -- ====================================================================================================
 -- System Test
 -- ====================================================================================================
--- ====================================================================================================
--- ====================================================================================================
+data Tick  = Tick        deriving (Eq,Show)
+type Clock = [Tick]
+clock = repeat Tick
 
--- ====================================================================================================
--- Simulation function for Syatem
--- ====================================================================================================
-systemSim progs s []     = []
-systemSim progs s (i:is) | not sysHalted = o : systemSim progs s' is
-                         | otherwise     = []
+systemSim :: [[Instruction]] -> SystemState -> Clock -> [([Instruction],SystemState)]
+systemSim instrss s []     = []
+systemSim instrss s (t:ts) | not sysHalted = (instrs,s') : systemSim instrss s' ts
+                           | otherwise     = []
                 where
-                  (s',o)    = system nrOfSprockells progs s i
-                  sysHalted = and $ map (==EndProg) $ zipWith (!!) progs $ map pc $ sprStates s
+                  instrs    = zipWith (!) instrss (map pc $ sprStates s)
+                  s'        = system nrOfSprockells instrss s t
+                  sysHalted = and $ map (==EndProg) $ zipWith (!!) instrss $ map pc $ sprStates s
 
--- ====================================================================================================
--- Some Constants
--- ====================================================================================================
-nrOfSprockells  = 4                     :: Int
-shMemSize       = 8                     :: Int
-channelDelay    = 4                     :: Int
+nrOfSprockells  = 4 :: Int
+shMemSize       = 8 :: Int
+channelDelay    = 4 :: Int
 
 initSystemState = SystemState
         { sprStates     = map initSprockellState [0 .. nrOfSprockells-1]
-        , io_state      = (NoExp,0,NoRequest, 0, (0,0,0), (0,0,0,0,0,0,0))      -- not relevant for PP-project
-        , requestChnls  = replicate (nrOfSprockells+1) $ replicate channelDelay NoRequest
-        , replyChnls    = replicate (nrOfSprockells+1) $ replicate channelDelay Nothing
+        , requestChnls  = replicate nrOfSprockells $ replicate channelDelay NoRequest
+        , replyChnls    = replicate nrOfSprockells $ replicate channelDelay Nothing
         , requestFifo   = []
         , sharedMem     = replicate shMemSize 0
         }
+
+myShow (instrs,s) = show instrs ++ "\n" ++
+                    (unlines $ map show $ sprStates s) ++
+                    show (requestChnls s) ++ "\n" ++
+                    show (replyChnls s) ++"\n" ++
+                    show (requestFifo s) ++ "\n" ++
+                    show (sharedMem s)
+
+
+sysTest :: [[Instruction]] -> IO ()                             -- instrss: list of instructions per Sprockell
+sysTest instrss = putStr                                        -- putStr: standard Haskell IO-function
+                $ unlines
+                $ map (++"\n")
+                $ map myShow                                    -- make your own show-function?
+                $ systemSim instrss initSystemState clock
 

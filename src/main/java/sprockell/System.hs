@@ -4,9 +4,9 @@ module System where
 
 import Data.Maybe
 
+import BasicFunctions
 import HardwareTypes
 import Sprockell
-import IO_Comp
 
 
 -- ===================================================================================
@@ -16,17 +16,17 @@ shMem :: (SharedMem, RequestFifo)
 
 shMem (sharedMem,requestFifo) chRequests = ((sharedMem',requestFifo'), (i,reply))
         where
-          (i,req)       | not $ null requestFifo        = head requestFifo
-                        | otherwise                     = (0, NoRequest)
+          (i,req)  | not $ null requestFifo   = head requestFifo
+                   | otherwise                = (0, NoRequest)
 
           (reply, sharedMem')   = case req of
-                NoRequest       -> ( Nothing            , sharedMem )
-                ReadReq a       -> ( Just (sharedMem!a) , sharedMem )
-                WriteReq v a    -> ( Nothing            , sharedMem <~ (a,v))
-                TestReq a       -> ( Nothing            , sharedMem )                                   -- <=== TODO: define correctly
+                NoRequest                          -> ( Nothing            , sharedMem )
+                ReadReq a                          -> ( Just (sharedMem!a) , sharedMem )
+                WriteReq v a                       -> ( Nothing            , sharedMem <~ (a,v))
+                TestReq a     | sharedMem!a == 0   -> ( Just 1             , sharedMem <~ (a,1))
+                              | otherwise          -> ( Just 0             , sharedMem )
 
-          requestFifo'  = tail' requestFifo ++ filter ((/=NoRequest).snd) chRequests                    -- <<== TODO: abstract away from software/hardware
-          -- requestFifo'       = requestFifo <<++ (chRequests, ((/=NoRequest).snd))                            --              Possibility??
+          requestFifo'  = drop 1 requestFifo ++ filter ((/=NoRequest).snd) chRequests
 
 -- ===================================================================================
 transfer :: (RequestChannels, ReplyChannels)
@@ -46,31 +46,23 @@ transfer (requestChnls,replyChnls) (sprRequests,(i,shMemReply)) = ( (requestChnl
           replyChnls'   = zipWith (<<+) replyChnls inReplies
 
 -- ===================================================================================
--- system :: Int -> [InstructionMem] -> SystemState -> _ -> (SystemState, ... )
+system :: Int -> [InstructionMem] -> SystemState -> t -> SystemState
 
-system nrOfSprs progs systemState _ = (systemState', io_outp)
-                                      -- (systemState', [ (requestChnls'!!i,replyChnls'!!i) | i <- [0..nrOfSprs] ] )
-                                                                        -- Output for simulation purposes
-
+system nrOfSprs instrss systemState _ = systemState'
         where
           SystemState{..} = systemState
 
           -- Sprockells
-          (sprStates',sprRequests)                              = unzip $ sprockell $> progs |$| sprStates |$| init chReplies
-
-          -- IO_Component
-          allRequests                   = sprRequests ++ [io_Req]
-          (io_state',(io_Req,io_outp))  = io io_state $ last chReplies
+          (sprStates',sprRequests)                              = unzip $ sprockell $> instrss |$| sprStates |$| chReplies
 
           -- Communication
-          ((requestChnls',replyChnls'), (chReplies,chRequests)) = transfer (requestChnls,replyChnls) (allRequests,(i,shMemReply))
+          ((requestChnls',replyChnls'), (chReplies,chRequests)) = transfer (requestChnls,replyChnls) (sprRequests,(i,shMemReply))
 
           -- Shared Memory
           ((sharedMem',requestFifo'), (i,shMemReply))           = shMem (sharedMem,requestFifo) chRequests
 
           systemState' = SystemState
                 { sprStates     = sprStates'
-                , io_state      = io_state'
                 , requestChnls  = requestChnls'
                 , replyChnls    = replyChnls'
                 , requestFifo   = requestFifo'

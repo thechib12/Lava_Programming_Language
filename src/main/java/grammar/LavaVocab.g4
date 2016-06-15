@@ -26,6 +26,7 @@ RUPTURE:        'rupture' ;
 ERUPT:          'erupt';
 RETURN :       'return' ;
 SHARED :        'shared' ;
+NOT:     'not';
 
 STATIC_STRING : '"' (~["\\] | '\\'.)* '"';
 
@@ -55,7 +56,7 @@ LBRACE: '{';
 LPAR:   '(';
 LT:     '<';
 MINUS:  '-';
-NOT:     '!';
+
 PLUS:   '+';
 RBRACE: '}';
 RPAR:   ')';
