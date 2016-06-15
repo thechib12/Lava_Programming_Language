@@ -14,11 +14,11 @@ public enum TypeKind {
         /** Array compound type. */
         ARRAY,
 
-        CHAR,
+        CHAR
 
-        STRING,
-
-        DOUBLE
+//        STRING,
+//
+//        DOUBLE
 
 
 }

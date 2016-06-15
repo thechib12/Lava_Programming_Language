@@ -36,6 +36,19 @@ different from others, but clear and easy to use. We decided to use other keywor
 Also we wanted to include some references to movies and such, but thats something you would have to find out yourself
 
 
+### Features
+- Variable declaration with the option to initialize it.
+- Variable assingment with expression, functions, constants, arrays and other variables.
+- Local variables in global scope and in function scope.
+- Shared variables will be put in shared memory which can be accessed by other threads.
+- Functions in a single scope, only at the global can functions be defined. 
+- Special `main` function. The runtime system starts your program by calling `main` function first.
+- `if-then-else` branching.
+- `while` loops.
+- `fork` and `join` to execute tasks in parallel.
+- Arrays with primitive types which will be evaluated at run-time.
+
+
 ### Syntax
 We define the following keywords with its translation.
 
@@ -49,7 +62,7 @@ cold            | false
 pebble          | double
 rock            | int
 mineral         | char
-mine            | string
+mine*            | string
 void            | void
 brock           | long
 
@@ -59,13 +72,10 @@ Keyword             | Java
 Volcano*             | Object
 erupt               | main
 $varname            | variable
-explode             | print
-implode             | input
+shared              | put variable in shared memory
 rupture             | function
 if                  | if
 while               | while
-fork                | fork
-join                | join
 extinguish          | delete Object
 Line ending         | ;
 Block of statements | {}
@@ -73,7 +83,20 @@ and                 | &&
 or                  | ||
 xor                 | ^
 
-Example program: *hello.magma*:
+
+TODO:
+ 
+Function | Action
+--------| --------
+explode | print a string to the standard output
+implode | prompt a user for input
+fork    | execute given function in parallel
+join    | wait until all other threads are finished
+
+
+*not implemented yet
+
+Example program: *hello.magma*
 ```
   chamber hello {
       erupt (){
@@ -84,7 +107,7 @@ Example program: *hello.magma*:
   /^\ Prints a String to the console
 ```
 
-Example program: *gcd.magma*:
+Example program: *gcd.magma*
 ```
   chamber gcd {
       rock $count;
@@ -108,7 +131,7 @@ Example program: *gcd.magma*:
 
 ```
 
-Example program: *gauss.magma*:
+Example program: *gauss.magma*
 ```
   chamber gauss {
       erupt() {
@@ -128,7 +151,7 @@ Example program: *gauss.magma*:
 
 ```
 
-Example program: *max.magma*:
+Example program: *max.magma*
 ```
   chamber max {
       erupt(){
