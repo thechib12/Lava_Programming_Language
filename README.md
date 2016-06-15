@@ -24,7 +24,7 @@
                              |mm| X  |n|X    ||___|             
 
 Visit our wiki for more detailed information.
-[Wiki](/thechib12/Lava_Programming_Language/wiki)
+[Wiki](https://github.com/thechib12/Lava_Programming_Language/wiki)
 
 TODO:
 verslag - shared var keuze
