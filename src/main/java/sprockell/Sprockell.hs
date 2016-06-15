@@ -6,6 +6,7 @@ import Data.Bits
 import Data.Maybe
 import Debug.Trace
 
+import BasicFunctions
 import HardwareTypes
 
 {-------------------------------------------------------------
@@ -16,9 +17,42 @@ import HardwareTypes
 | Simplification: January 2016, Jan Kuper
 -------------------------------------------------------------}
 
+-- =====================================================================================
+-- sprockell: combines the separate components defined below
+--      instrs  : list of instructions to be executed
+--      sprState: state of the sprockell, containing pc, sp, registers, local memory
+--      reply   : input from shared memory (Maybe type)
+--      request : output to shared memory
+-- =====================================================================================
+
+sprockell :: InstructionMem -> SprockellState -> Reply -> (SprockellState, Request)
+
+sprockell instrs sprState reply = (sprState', request)
+    where
+        SprState{..} = sprState
+        MachCode{..} = decode (instrs!pc)
+
+        (x,y)        = (regbank!regX , regbank!regY)
+        aluOutput    = alu aluCode x y
+
+        pc'          = nextPC branch tgtCode (x,reply) (pc,immValue,y)
+        sp'          = nextSP spCode sp
+
+        address      = agu aguCode (addrImm,x,sp)
+
+        loadValue    = load ldCode (immValue, aluOutput, localMem!address, pc, reply)
+        regbank'     = regbank <~! (loadReg, loadValue)
+
+        localMem'    = store localMem stCode (address,y)
+
+        sprState'    = SprState {pc=pc', sp=sp', regbank=regbank', localMem=localMem'}
+
+        request      = sendOut ioCode address y
+
+
 
 -- =====================================================================================
--- Default Machine Code
+-- decode function + default machine code (nullcode): to generate machine code from an instruction
 -- =====================================================================================
 
 nullcode :: MachCode
@@ -39,45 +73,12 @@ nullcode = MachCode
         , addrImm  = 0
         }
 
--- =====================================================================================
--- The actual Sprockell
--- =====================================================================================
-
-sprockell :: InstructionMem -> SprockellState -> Reply -> (SprockellState, Request)
-
-sprockell instrs sprState reply = (sprState', request)
-    where
-        SprState{..} = sprState
-        MachCode{..} = decode (instrs!pc)
-
-        (x,y)        = (regbank!regX , regbank!regY)
-        aluOutput    = alu aluCode x y
-
-        pc'          = nextPC branch tgtCode (x,reply) (pc,immValue,y)
-        sp'          = nextSP spCode sp
-
-        address      = agu aguCode (addrImm,x,sp)                                                               -- x is deref-addr
-
-        loadValue    = load ldCode (immValue, aluOutput, localMem!address, pc, reply)
-        regbank'     = regbank <~! (loadReg, loadValue)
-
-        localMem'    = store localMem stCode (address,y)
-
-        sprState'    = SprState {pc=pc', sp=sp', regbank=regbank', localMem=localMem'}
-
-        request      = sendOut ioCode address y
-
 -- ============================
 
 decode :: Instruction -> MachCode
 decode instr = case instr of
 
   Compute c rx ry toReg       -> nullcode {ldCode=LdAlu, aluCode=c, regX=rx, regY=ry, loadReg=toReg}
-
-  Load memAddr toReg          -> case memAddr of
-                                   ImmValue n  -> nullcode {loadReg=toReg, ldCode=LdImm, immValue=n}
-                                   DirAddr a   -> nullcode {loadReg=toReg, ldCode=LdMem, aguCode=AguDir, addrImm=a}
-                                   IndAddr p   -> nullcode {loadReg=toReg, ldCode=LdMem, aguCode=AguInd, regX=p}
 
   Jump target                 -> case target of
                                    Abs n       -> nullcode {tgtCode=TAbs, immValue=n}
@@ -89,8 +90,13 @@ decode instr = case instr of
                                    Rel n       -> nullcode {branch=True, tgtCode=TRel, regX=cReg, immValue=n}
                                    Ind r       -> nullcode {branch=True, tgtCode=TInd, regX=cReg, regY=r}
 
+  Load memAddr toReg          -> case memAddr of
+                                   ImmValue n  -> nullcode {loadReg=toReg, ldCode=LdImm, immValue=n}
+                                   DirAddr a   -> nullcode {loadReg=toReg, ldCode=LdMem, aguCode=AguDir, addrImm=a}
+                                   IndAddr p   -> nullcode {loadReg=toReg, ldCode=LdMem, aguCode=AguInd, regX=p}
+
   Store fromReg memAddr       -> case memAddr of
-                                   ImmValue n  -> nullcode {stCode=StMem, regY=fromReg, ldCode=LdImm, immValue=n}
+                                   ImmValue n  -> nullcode -- Undefined. Should not occur.
                                    DirAddr a   -> nullcode {stCode=StMem, regY=fromReg, ldCode=LdMem, aguCode=AguDir, addrImm=a}
                                    IndAddr p   -> nullcode {stCode=StMem, regY=fromReg, ldCode=LdMem, aguCode=AguInd, regX=p}
 
@@ -101,17 +107,17 @@ decode instr = case instr of
   Receive toReg               -> nullcode {ldCode=LdInp, tgtCode=Waiting, loadReg=toReg}
 
   ReadInstr memAddr           -> case memAddr of
-                                   ImmValue n  -> nullcode {ioCode=IORead, ldCode=LdImm, immValue=n}
+                                   ImmValue n  -> nullcode -- undefined
                                    DirAddr a   -> nullcode {ioCode=IORead, ldCode=LdMem, aguCode=AguDir, addrImm=a}
                                    IndAddr p   -> nullcode {ioCode=IORead, ldCode=LdMem, aguCode=AguInd, regX=p}
 
   WriteInstr fromReg memAddr  -> case memAddr of
-                                   ImmValue n  -> nullcode {ioCode=IOWrite, regY=fromReg, ldCode=LdImm, immValue=n}
+                                   ImmValue n  -> nullcode -- undefined
                                    DirAddr a   -> nullcode {ioCode=IOWrite, regY=fromReg, ldCode=LdMem, aguCode=AguDir, addrImm=a}
                                    IndAddr p   -> nullcode {ioCode=IOWrite, regY=fromReg, ldCode=LdMem, aguCode=AguInd, regX=p}
 
-  TestAndSet memAddr          -> case memAddr of
-                                   ImmValue n  -> nullcode {ioCode=IOTest, ldCode=LdImm, immValue=n}
+  TestAndSet memAddr         -> case memAddr of
+                                   ImmValue n  -> nullcode -- undefined
                                    DirAddr a   -> nullcode {ioCode=IOTest, ldCode=LdMem, aguCode=AguDir, addrImm=a}
                                    IndAddr p   -> nullcode {ioCode=IOTest, ldCode=LdMem, aguCode=AguInd, regX=p}
 
@@ -157,9 +163,11 @@ Write fromReg (DirAddr a)       |   -           | fromReg       |
  -     -      (IndAddr p)       | deref-addr p  | fromReg       |
 =============================================================== -}
 
--- ============================
+-- =====================================================================================
+-- alu (Arithmetic-Logic Unit): defines the computational functionality
+-- =====================================================================================
 alu :: Operator -> Value -> Value -> Value
-alu opCode x y = case opCode of
+alu op x y = case op of
         Incr   -> x + 1
         Decr   -> x - 1
         Add    -> x + y
@@ -176,11 +184,12 @@ alu opCode x y = case opCode of
         LShift -> shiftL x (fromIntegral y)
         RShift -> shiftR x (fromIntegral y)
         Xor    -> x `xor` y
-
-        -- Div    -> x `div` y                          -- too expensive on hardware; to be defined by yourself
+        -- Div    -> x `div` y                          -- usable in Haskell, but expensive on hardware
         -- Mod    -> x `mod` y                          -- Ibid
 
--- ============================
+-- =====================================================================================
+-- agu (Address Generation Unit): calculates the address for local memory
+-- =====================================================================================
 agu :: AguCode -> (MemAddr,MemAddr,MemAddr) -> MemAddr
 agu aguCode (addrImm,x,sp) = case aguCode of
         AguDir   -> addrImm
@@ -188,7 +197,9 @@ agu aguCode (addrImm,x,sp) = case aguCode of
         AguPush  -> sp-1
         AguPop   -> sp
 
--- ============================
+-- =====================================================================================
+-- load: calculates the value that has to be put in a register
+-- =====================================================================================
 load :: LdCode -> (Value, Value, Value, Value, Reply) -> Value
 load ldCode (immval,aluOutput,memval,pc,reply) = case (ldCode, reply) of
         (LdImm, Nothing) -> immval
@@ -201,44 +212,49 @@ load ldCode (immval,aluOutput,memval,pc,reply) = case (ldCode, reply) of
 
         (_    , Just rx) -> error ("Sprockell ignored a system response of value: " ++ show rx)
 
--- ============================
+-- =====================================================================================
+-- store: to store data in local memory
+-- =====================================================================================
 store :: LocalMem -> StCode -> (MemAddr, Value) -> LocalMem
 store mem stCode (address,value) = case stCode of
         StNone -> mem
         StMem  -> mem <~! (address, value)
 
--- ============================
+-- =====================================================================================
+-- nextPC: to calculate next program counter
+-- =====================================================================================
 nextPC :: Bool -> TargetCode -> (Value,Reply) -> (Value,Value,Value) -> Value
 nextPC branch tgtCode (x,reply) (pc,n,y) =
 
-        case  (branch, tgtCode, x/=0,  reply  ) of
+        case  (branch, tgtCode, x/=0,  reply  )  of
 
-              ( True , TAbs   , True,    _    )   -> n
-              ( True , TRel   , True,    _    )   -> pc'
-              ( True , TInd   , True,    _    )   -> y
+              ( True , TAbs   , True,    _    )  -> n
+              ( True , TRel   , True,    _    )  -> pc + n
+              ( True , TInd   , True,    _    )  -> y
 
-              ( False, TAbs   ,  _  ,    _    )   -> n
-              ( False, TRel   ,  _  ,    _    )   -> pc'
-              ( False, TInd   ,  _  ,    _    )   -> y
+              ( False, TAbs   ,  _  ,    _    )  -> n
+              ( False, TRel   ,  _  ,    _    )  -> pc + n
+              ( False, TInd   ,  _  ,    _    )  -> y
 
-              ( False, Waiting,  _  , Nothing )   -> pc
+              ( False, Waiting,  _  , Nothing )  -> pc
 
-              (  _   ,   _    ,  _  ,    _    )   -> pc + 1
+              (  _   ,   _    ,  _  ,    _    )  -> pc + 1
 
-              where
-                pc' = pc + n
-
--- ============================
+-- =====================================================================================
+-- nextSP: to calculate next stack pointer
+-- =====================================================================================
 nextSP :: SPCode -> MemAddr -> MemAddr
 nextSP spCode sp = case spCode of
         Down    -> sp-1
         Flat    -> sp
         Up      -> sp+1
 
--- ============================
+-- =====================================================================================
+-- sendOut: to calculate output request to shared memory
+-- =====================================================================================
 sendOut :: IOCode -> MemAddr -> Value -> Request
 sendOut ioCode address value = case ioCode of
         IONone    -> NoRequest
-        IORead    -> ReadReq address
+        IORead    -> ReadReq  address
         IOWrite   -> WriteReq value address
-        IOTest    -> TestReq address
+        IOTest    -> TestReq  address
