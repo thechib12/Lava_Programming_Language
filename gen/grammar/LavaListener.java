@@ -28,15 +28,77 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitBody(LavaParser.BodyContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#statement}.
+	 * Enter a parse tree produced by the {@code assignStat}
+	 * labeled alternative in {@link LavaParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatement(LavaParser.StatementContext ctx);
+	void enterAssignStat(LavaParser.AssignStatContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#statement}.
+	 * Exit a parse tree produced by the {@code assignStat}
+	 * labeled alternative in {@link LavaParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatement(LavaParser.StatementContext ctx);
+	void exitAssignStat(LavaParser.AssignStatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ifStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfStat(LavaParser.IfStatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ifStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfStat(LavaParser.IfStatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code whileStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStat(LavaParser.WhileStatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code whileStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStat(LavaParser.WhileStatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code functionStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionStat(LavaParser.FunctionStatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code functionStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionStat(LavaParser.FunctionStatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code returnStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnStat(LavaParser.ReturnStatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code returnStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnStat(LavaParser.ReturnStatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code emptyStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterEmptyStat(LavaParser.EmptyStatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code emptyStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitEmptyStat(LavaParser.EmptyStatContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#block}.
 	 * @param ctx the parse tree
@@ -148,16 +210,6 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitTarget(LavaParser.TargetContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#variableInit}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableInit(LavaParser.VariableInitContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LavaParser#variableInit}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableInit(LavaParser.VariableInitContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link LavaParser#arrayInit}.
 	 * @param ctx the parse tree
 	 */
@@ -241,6 +293,18 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTrueExpr(LavaParser.TrueExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayInitExpr(LavaParser.ArrayInitExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayInitExpr(LavaParser.ArrayInitExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code inputExpr}
 	 * labeled alternative in {@link LavaParser#expr}.

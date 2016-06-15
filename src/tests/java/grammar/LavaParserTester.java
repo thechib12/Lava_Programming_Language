@@ -41,7 +41,7 @@ public class LavaParserTester {
         String test4 = "chamber {}";
         String test5 = "chamber{}";
         String test6 = "chamber testChamber { doSomething(); ";
-        String test7 = "chamber hot {};";
+        String test7 = "chamber var {};";
         parse(test1, false, "program");
         parse(test2, false, "program");
         parse(test3, false, "program");
@@ -62,33 +62,81 @@ public class LavaParserTester {
     }
 
     @Test
-    public void expressionTest() throws ParseException {
+    public void statementTest() throws ParseException {
         String test1 = "if (hot) then { $x = 7; }  else { $x = 3; } ";
-        String test2 = "if (1 == $y) then { doSomething(); } else { doSomethingElse(); }";
-        String test3 = "if (hot) then doThis();";
-
+        String test2 = "if (1 == $y) then { doSomething(); } else { pebble[] $array = [1,2,34]; }";
+        String test3 = "if (hot) then { doThis(); }";
+        String test4 = "while ($thisIsABool) { if ($anotherBool) then { /^\\ another comment here! \n $bool = ($a == $b); } else { rock $a = 12; }}";
+        String test5 = "return ($a == $b);";
+        String test6 = "$a = 51;";
         parse(test1, false, "statement");
         parse(test2, false, "statement");
         parse(test3, false, "statement");
-
+        parse(test4, false, "statement");
+        parse(test5, false, "statement");
+        parse(test6, false, "statement");
     }
+
     @Test(expected = ParseException.class)
-    public void expressionsWrong() throws ParseException {
-//
-//        target ASS expr SEMI                                  #assignStat
-//                | IF LPAR expr RPAR THEN statement (ELSE statement)?    #ifStat
-//                | WHILE LPAR expr RPAR  statement                       #whileStat
-//                | block                                                 #blockStat
-//                | function                                              #functionStat
-//                | RETURN expr SEMI                                      #returnStat
-//                | emptyStatement                                        #emptyStat
-//        ;
+    public void statementsWrongTest() throws ParseException {
+        String test1 = "if ($a) then doSomething(); ";
+        String test2 = "retrun ($a == $b);";
+        String test3 = "if then { doSomething(); }";
+        String test4 = "if if ($a  == $c) then { $a = $b;  } ";
+        String test5 = " while (hot) { $a; } ";
+        String test6 = " while { doSomething(); }";
+        parse(test1, false, "statement");
+        parse(test2, false, "statement");
+        parse(test3, false, "statement");
+        parse(test4, false, "statement");
+        parse(test5, false, "statement");
+        parse(test6, false, "statement");
+    }
 
+    @Test
+    public void exprTest() throws ParseException {
+        /*expr:
+        expr DOT expr        #fieldExpr
+                | NOT expr            #notExpr
+                | expr multOp expr    #multExpr
+                | expr plusOp expr    #plusExpr
+                | expr boolOp expr #boolExpr
+                | expr compOp expr #compExpr
+                | LPAR expr RPAR    #parExpr
+                | NUM               #numExpr
+                | TRUE              #trueExpr
+                | STATIC_STRING     #staticstringExpr
+                | FALSE             #falseExpr
+                | function             #inputExpr
+                | arrayInit             #arrayInitExpr
+                | VARID LBLOCK expr RBLOCK #arrayExpr
+                | VARID                #idExpr
+        ;*/
 
+        String test1 = "3.3";
+        String test2 = "not hot";
+        String test3 = "3.1 * 5";
+        String test4 = "not and hot";
+        String test5 = "1 < 3";
+        String test6 = "1 <= (3+4)";
+        String test7 = "\"test\"";
+        String test8 = "(not not not not not hot)";
+        String test9 = "[1,2,3]";
+        String test10 = "$a";
+        String test11 = "$a[3+3]";
+        String test12 = "doSomething($a)";
+
+        parse(test1, false, "expr");
+        parse(test2, false, "expr");
+        parse(test2, false, "expr");
+        parse(test2, false, "expr");
+        parse(test2, false, "expr");
+        parse(test2, false, "expr");
+        parse(test2, false, "expr");
+        parse(test2, false, "expr");
 
 
     }
-
 
     private ParseTree parse(String testProgram, boolean isFile, String parseOption) throws ParseException {
         ErrorListener listener = new ErrorListener();

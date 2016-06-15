@@ -55,7 +55,7 @@ LBRACE: '{';
 LPAR:   '(';
 LT:     '<';
 MINUS:  '-';
-NOT:     '!';
+NOT:     'not';
 PLUS:   '+';
 RBRACE: '}';
 RPAR:   ')';
