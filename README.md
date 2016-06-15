@@ -49,22 +49,33 @@ Also we wanted to include some references to movies and such, but thats somethin
 - Arrays with primitive types which will be evaluated at run-time.
 
 
+#### Variables
+- At variable declaration, if not initialized, the default value of the type will be used.
+
+Type | Default Value
+---- | ------
+rock | 0
+temperature | false
+mineral | \u0000 (null character)
+array | [] (empty array)
+ 
+
 ### Syntax
 We define the following keywords with its translation.
 
 Type            | Actual
 ----            | ----
-chamber         |  class
+chamber         | class
 temperature     | boolean
+rock            | int
+mineral         | char
 hot             | true
 cold            | false
 []              | array
-pebble          | double
-rock            | int
-mineral         | char
+pebble *         | double
 mine*            | string
-void            | void
-brock           | long
+void (function only)            | void
+brock  *         | long
 
 
 Keyword             | Java
