@@ -1,0 +1,16 @@
+chamber gauss {
+    erupt() {
+        explode("Number? ");
+        mine $x = implode();
+        rock $x1 = x.toRock();
+        rock $count = 0;
+        rock $y     = 0;
+        while ($count < $x1){
+            $y = $y + $count;
+            $count = $count + 1;
+        }
+        explode("Gauss: " + $y);
+     }
+
+}
+

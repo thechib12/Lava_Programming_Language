@@ -1,0 +1,20 @@
+chamber gcd {
+    rock $count;
+
+    rupture rock gcd (rock $a, rock $b){
+        $count = 0;
+        rock $result = 0;
+        if ($a == $b) then {
+            $result = $a;
+        } else if ($a > $b) then {
+            $result = gcd(($a-$b), $b);
+        } else {
+            $result = gcd(($b-$a), $a);
+        }
+        $count = $count + 1;
+        return $result;
+    }
+
+}
+
+

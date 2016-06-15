@@ -1,0 +1,7 @@
+chamber hello {
+    erupt (){
+        explode("Hello 7 tectonic plates!");
+    }
+}
+
+/^\ Prints a String to the console
