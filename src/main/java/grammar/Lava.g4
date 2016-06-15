@@ -10,9 +10,8 @@ body: localVariableDeclarationStatement* functiondecl*;
 
 statement :
       target ASS expr SEMI                                  #assignStat
-    | IF LPAR expr RPAR THEN statement (ELSE statement)?    #ifStat
-    | WHILE LPAR expr RPAR  statement                       #whileStat
-    | block                                                 #blockStat
+    | IF LPAR expr RPAR THEN block (ELSE block)?    #ifStat
+    | WHILE LPAR expr RPAR  block                       #whileStat
     | function                                              #functionStat
     | RETURN expr SEMI                                      #returnStat
     | emptyStatement                                        #emptyStat
@@ -46,11 +45,11 @@ localVariableDeclaration :
 
 
 main:
-    ERUPT LPAR RPAR statement
+    ERUPT LPAR RPAR block
     ;
 
 functiondecl:
-      (RUPTURE type ID LPAR parametersdecl RPAR statement )
+      (RUPTURE type ID LPAR parametersdecl RPAR block )
     | main
     ;
 
