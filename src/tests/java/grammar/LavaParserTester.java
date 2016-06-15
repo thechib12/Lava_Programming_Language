@@ -77,25 +77,82 @@ public class LavaParserTester {
         parse(test6, false, "statement");
     }
 
+    //
     @Test(expected = ParseException.class)
     public void statementsWrongTest() throws ParseException {
-        String test1 = "if ($a) then doSomething(); ";
-        String test2 = "retrun ($a == $b);";
+        String test1 = "if $a then { doSomething(); } ";
+        String test2 = "return;";
         String test3 = "if then { doSomething(); }";
-        String test4 = "if if ($a  == $c) then { $a = $b;  } ";
-        String test5 = " while (hot) { $a; } ";
-        String test6 = " while { doSomething(); }";
+        String test4 = "if ($a  == $c) then { $a = $b;  } ";
+//        String test5 = "while (hot) { $a; } ";
+//        String test6 = "while (hot) { doSomething(); }";
         parse(test1, false, "statement");
         parse(test2, false, "statement");
         parse(test3, false, "statement");
         parse(test4, false, "statement");
-        parse(test5, false, "statement");
-        parse(test6, false, "statement");
+//        parse(test5, false, "statement");
+//        parse(test6, false, "statement");
     }
 
     @Test
     public void exprTest() throws ParseException {
-        /*expr:
+        String test1 = "3.3";
+        String test2 = "not hot";
+        String test3 = "3.1 * 5";
+        String test4 = "not hot and cold";
+        String test5 = "1 < 3";
+        String test6 = "1 <= (3+4)";
+        String test7 = "\"test\"";
+        String test8 = "(not not not not not hot)";
+        String test9 = "[1,2,3]";
+        String test10 = "$a";
+        String test11 = "$a[3+3]";
+        String test12 = "doSomething($a)";
+
+        parse(test1, false, "expr");
+        parse(test2, false, "expr");
+        parse(test3, false, "expr");
+        parse(test4, false, "expr");
+        parse(test5, false, "expr");
+        parse(test6, false, "expr");
+        parse(test7, false, "expr");
+        parse(test8, false, "expr");
+        parse(test9, false, "expr");
+        parse(test10, false, "expr");
+        parse(test11, false, "expr");
+        parse(test12, false, "expr");
+
+
+    }
+
+    @Test(expected = ParseException.class)
+    public void exprFailTest() throws ParseException {
+        String test1 = "3.3";
+        String test2 = "not";
+        String test3 = "3.1 * ";
+        String test4 = "not hot and ";
+        String test5 = "1 << 3";
+        String test6 = "1 = (3+4)";
+        String test7 = "\"test";
+        String test8 = "cool + 3";
+        String test9 = "[1,2,3";
+        String test10 = "a";
+        String test11 = "$a[3+3";
+        String test12 = "doSomething($a";
+
+        parse(test1, false, "expr");
+        parse(test2, false, "expr");
+        parse(test3, false, "expr");
+        parse(test4, false, "expr");
+        parse(test5, false, "expr");
+        parse(test6, false, "expr");
+        parse(test7, false, "expr");
+        parse(test8, false, "expr");
+        parse(test9, false, "expr");
+        parse(test10, false, "expr");
+        parse(test11, false, "expr");
+        parse(test12, false, "expr");
+               /*expr:
         expr DOT expr        #fieldExpr
                 | NOT expr            #notExpr
                 | expr multOp expr    #multExpr
@@ -112,29 +169,6 @@ public class LavaParserTester {
                 | VARID LBLOCK expr RBLOCK #arrayExpr
                 | VARID                #idExpr
         ;*/
-
-        String test1 = "3.3";
-        String test2 = "not hot";
-        String test3 = "3.1 * 5";
-        String test4 = "not and hot";
-        String test5 = "1 < 3";
-        String test6 = "1 <= (3+4)";
-        String test7 = "\"test\"";
-        String test8 = "(not not not not not hot)";
-        String test9 = "[1,2,3]";
-        String test10 = "$a";
-        String test11 = "$a[3+3]";
-        String test12 = "doSomething($a)";
-
-        parse(test1, false, "expr");
-        parse(test2, false, "expr");
-        parse(test2, false, "expr");
-        parse(test2, false, "expr");
-        parse(test2, false, "expr");
-        parse(test2, false, "expr");
-        parse(test2, false, "expr");
-        parse(test2, false, "expr");
-
 
     }
 
