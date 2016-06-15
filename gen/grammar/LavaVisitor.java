@@ -1,4 +1,4 @@
-// Generated from D:/UTwente/Module 8/Lava Programming Language/src/main/java/grammar\Lava.g4 by ANTLR 4.5.1
+// Generated from /Users/Rogier/Library/Mobile Documents/com~apple~CloudDocs/Universiteit Twente/Programming Paradigms/Compiler Construction/Lava_Programming_Language/src/main/java/grammar/Lava.g4 by ANTLR 4.5.3
 package grammar;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -23,11 +23,47 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBody(LavaParser.BodyContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#statement}.
+	 * Visit a parse tree produced by the {@code assignStat}
+	 * labeled alternative in {@link LavaParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement(LavaParser.StatementContext ctx);
+	T visitAssignStat(LavaParser.AssignStatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ifStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStat(LavaParser.IfStatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code whileStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStat(LavaParser.WhileStatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code functionStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionStat(LavaParser.FunctionStatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code returnStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnStat(LavaParser.ReturnStatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code emptyStat}
+	 * labeled alternative in {@link LavaParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyStat(LavaParser.EmptyStatContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#block}.
 	 * @param ctx the parse tree
@@ -95,12 +131,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTarget(LavaParser.TargetContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#variableInit}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableInit(LavaParser.VariableInitContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link LavaParser#arrayInit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -150,6 +180,13 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTrueExpr(LavaParser.TrueExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayInitExpr(LavaParser.ArrayInitExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code inputExpr}
 	 * labeled alternative in {@link LavaParser#expr}.

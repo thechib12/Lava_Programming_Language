@@ -5,12 +5,12 @@ import LavaVocab;
 program: CHAMBER ID LBRACE body  RBRACE EOF;
 
 
-body: localVariableDeclarationStatement* functiondecl*;
+body: localVariableDeclarationStatement* functiondecl* main?;
 
 
 statement :
       target ASS expr SEMI                                  #assignStat
-    | IF LPAR expr RPAR THEN block (ELSE block)?    #ifStat
+    | IF LPAR expr RPAR THEN block (ELSE IF LPAR expr RPAR THEN block)* (ELSE block)?    #ifStat
     | WHILE LPAR expr RPAR  block                       #whileStat
     | function                                              #functionStat
     | RETURN expr SEMI                                      #returnStat
@@ -50,7 +50,6 @@ main:
 
 functiondecl:
       (RUPTURE type ID LPAR parametersdecl RPAR block )
-    | main
     ;
 
 function:
