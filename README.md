@@ -50,7 +50,7 @@ Also we wanted to include some references to movies and such, but thats somethin
 
 
 #### Variables
-- At variable declaration, if not initialized, the default value of the type will be used.
+At variable declaration, if not initialized, the default value of the type will be used.
 
 Type | Default Value
 ---- | ------
