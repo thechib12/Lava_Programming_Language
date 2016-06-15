@@ -20,7 +20,7 @@ public class LavaParserTester {
 
     @Test
     public void simpleProgramTests() throws ParseException {
-        String test1 = "chamber testChamber {}";
+        String test1 = "chamber testChamber {/^\\ this is a comment \n }";
         String test2 = "chamber testChamber2 {" +
                 "erupt() {" +
                 "while (hot){doSomething();}" +
@@ -61,8 +61,30 @@ public class LavaParserTester {
         parse("producer", true, "program");
     }
 
+    @Test
+    public void expressionTest() throws ParseException {
+        String test1 = "if (hot) then { $x = 7; }  else { $x = 3; } ";
+        String test2 = "if (1 == $y) then { doSomething(); } else { doSomethingElse(); }";
+        String test3 = "if (hot) then doThis();";
+
+        parse(test1, false, "statement");
+        parse(test2, false, "statement");
+        parse(test3, false, "statement");
+
+    }
     @Test(expected = ParseException.class)
     public void expressionsWrong() throws ParseException {
+//
+//        target ASS expr SEMI                                  #assignStat
+//                | IF LPAR expr RPAR THEN statement (ELSE statement)?    #ifStat
+//                | WHILE LPAR expr RPAR  statement                       #whileStat
+//                | block                                                 #blockStat
+//                | function                                              #functionStat
+//                | RETURN expr SEMI                                      #returnStat
+//                | emptyStatement                                        #emptyStat
+//        ;
+
+
 
 
     }
