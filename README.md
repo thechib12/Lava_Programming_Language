@@ -23,7 +23,8 @@
                    |M|       ---- .  ___.|n| /\___\  X
                              |mm| X  |n|X    ||___|             
 
-
+Visit our wiki for more detailed information.
+[Wiki](/thechib12/Lava_Programming_Language/wiki)
 
 TODO:
 verslag - shared var keuze
@@ -51,13 +52,6 @@ Also we wanted to include some references to movies and such, but thats somethin
 
 #### Variables
 At variable declaration, if not initialized, the default value of the type will be used.
-
-Type | Default Value
----- | ------
-rock | 0
-temperature | false
-mineral | \u0000 (null character)
-array | [] (empty array)
  
 
 ### Syntax
@@ -69,11 +63,11 @@ chamber         | class
 temperature     | boolean
 rock            | int
 mineral         | char
+mine            | string
 hot             | true
 cold            | false
 []              | array
 pebble *         | double
-mine*            | string
 void (function only)            | void
 brock  *         | long
 
@@ -107,81 +101,3 @@ join    | wait until all other threads are finished
 
 *not implemented yet
 
-Example program: *hello.magma*
-```
-  chamber hello {
-      erupt (){
-          explode("Hello 7 tectonic plates!");
-      }
-  }
-  
-  /^\ Prints a String to the console
-```
-
-Example program: *gcd.magma*
-```
-  chamber gcd {
-      rock $count;
-  
-      rupture rock gcd (rock $a, rock $b){
-          $count = 0;
-          rock $result = 0;
-          if ($a == $b) then {
-              $result = $a;
-          } else if ($a > $b) then {
-              $result = gcd(($a-$b), $b);
-          } else {
-              $result = gcd(($b-$a), $a);
-          }
-          $count = $count + 1;
-          return $result;
-      }
-  
-  }
-  
-
-```
-
-Example program: *gauss.magma*
-```
-  chamber gauss {
-      erupt() {
-          explode("Number? ");
-          mine $x = implode();
-          rock $x1 = x.toRock();
-          rock $count = 0;
-          rock $y     = 0;
-          while ($count < $x1){
-              $y = $y + $count;
-              $count = $count + 1;
-          }
-          explode("Gauss: " + $y);
-       }
-  
-  }
-
-```
-
-Example program: *max.magma*
-```
-  chamber max {
-      erupt(){
-          rock[] $array = [0,45,2,7,4];
-          rock $x = max ($array);
-          explode("Maximum: "  + $x);
-      }
-  
-      rupture rock max (rock[] $a){
-          rock $maximum = 0;
-          rock $counter =0;
-          while ($counter < $a.length()){
-            if ($a[$counter] >= $maximum) then {
-              $maximum = $a[$counter];
-            }
-            $counter = $counter + 1;
-          }
-          return $maximum;
-      }
-  }
-
-```
