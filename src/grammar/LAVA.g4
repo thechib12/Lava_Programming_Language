@@ -21,16 +21,16 @@ block : LBRACE blockStatements RBRACE;
 
 blockStatements : blockStatement blockStatement*;
 
-blockStatement : localVariableDeclaration
+blockStatement : localVariableDeclarationStatement
                | statement
-                ;
+               ;
 
 
 localVariableDeclarationStatement: localVariableDeclaration SEMI;
 
 emptyStatement:	';';
 
-localVariableDeclaration : type VARID (ASS variableInit)? ;
+localVariableDeclaration : type  VARID (ASS variableInit)? ;
 
 
 main: ERUPT LPAR RPAR statement;
@@ -50,16 +50,17 @@ target:  VARID
 variableInit:   arrayInit
             |   expr;
 
-arrayInit: LBLOCK parameters LBLOCK;
+arrayInit: LBLOCK parameters RBLOCK;
 
 parameters: ( expr (COMMA expr)*)?;
 
-compOp: EQ | GE | GT |LE ;
+compOp: EQ | GE | GT |LE | LT;
 boolOp: AND | OR | XOR;
 multOp: STAR | SLASH;
 plusOp : PLUS | MINUS;
 
-expr: NOT expr            #notExpr
+expr: expr DOT expr        #fieldExpr
+    | NOT expr            #notExpr
     | expr multOp expr    #multExpr
     | expr plusOp expr    #plusExpr
     | expr boolOp expr #boolExpr
@@ -73,12 +74,15 @@ expr: NOT expr            #notExpr
     | VARID                #idExpr
     ;
 
-type: INTEGER  #intType
+type : primitiveType (LBLOCK RBLOCK)?;
+
+primitiveType: INTEGER  #intType
     | BOOLEAN  #boolType
     | DOUBLE   #doubleType
     | CHAR     #charType
     | LONG     #longType
     | STRING   #stringType
+    | VOID     #voidType
     ;
 
 
