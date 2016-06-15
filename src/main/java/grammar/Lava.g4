@@ -8,58 +8,94 @@ program: CHAMBER ID LBRACE body  RBRACE EOF;
 body: localVariableDeclarationStatement* functiondecl*;
 
 
-statement   : target ASS expr SEMI
-            | IF LPAR expr RPAR THEN statement (ELSE statement)?
-            | WHILE LPAR expr RPAR  statement
-            | block
-            | function
-            | RETURN expr SEMI
-            | emptyStatement
-            ;
+statement :
+      target ASS expr SEMI
+    | IF LPAR expr RPAR THEN statement (ELSE statement)?
+    | WHILE LPAR expr RPAR  statement
+    | block
+    | function
+    | RETURN expr SEMI
+    | emptyStatement
+    ;
 
-block : LBRACE blockStatements RBRACE;
+block :
+    LBRACE blockStatements RBRACE
+    ;
 
-blockStatements : blockStatement blockStatement*;
+blockStatements :
+    blockStatement blockStatement*
+    ;
 
-blockStatement : localVariableDeclarationStatement
-               | statement
-               ;
-
-
-localVariableDeclarationStatement: localVariableDeclaration SEMI;
-
-emptyStatement:	';';
-
-localVariableDeclaration : type  VARID (ASS variableInit)? ;
+blockStatement :
+      localVariableDeclarationStatement
+    | statement
+    ;
 
 
-main: ERUPT LPAR RPAR statement;
+localVariableDeclarationStatement:
+    localVariableDeclaration SEMI
+    ;
 
-functiondecl: (RUPTURE type ID LPAR parametersdecl RPAR statement )
-            | main
-            ;
+emptyStatement:
+    SEMI
+    ;
 
-function: ID LPAR parameters RPAR;
+localVariableDeclaration :
+    type VARID (ASS expr)?
+    ;
 
-parametersdecl: (type VARID(COMMA type VARID)*)?;
 
-target:  VARID
-      |  VARID LBLOCK expr RBLOCK
-      ;
+main:
+    ERUPT LPAR RPAR statement
+    ;
 
-variableInit:   arrayInit
-            |   expr;
+functiondecl:
+      (RUPTURE type ID LPAR parametersdecl RPAR statement )
+    | main
+    ;
 
-arrayInit: LBLOCK parameters RBLOCK;
+function:
+    ID LPAR parameters RPAR
+    ;
 
-parameters: ( expr (COMMA expr)*)?;
+parametersdecl:
+    (type VARID(COMMA type VARID)*)?
+    ;
 
-compOp: EQ | GE | GT |LE | LT;
-boolOp: AND | OR | XOR;
+target:
+      VARID
+    | VARID LBLOCK expr RBLOCK
+    ;
+
+
+arrayInit:
+    LBLOCK parameters RBLOCK
+    ;
+
+parameters:
+    ( expr (COMMA expr)*)?
+    ;
+
+compOp:
+      EQ
+    | GE
+    | GT
+    | LE
+    | LT
+    ;
+
+boolOp:
+      AND
+    | OR
+    | XOR
+    ;
+
 multOp: STAR | SLASH;
+
 plusOp : PLUS | MINUS;
 
-expr: expr DOT expr        #fieldExpr
+expr:
+      expr DOT expr        #fieldExpr
     | NOT expr            #notExpr
     | expr multOp expr    #multExpr
     | expr plusOp expr    #plusExpr
@@ -71,13 +107,17 @@ expr: expr DOT expr        #fieldExpr
     | STATIC_STRING     #staticstringExpr
     | FALSE             #falseExpr
     | function             #inputExpr
+    | arrayInit             #arrayInitExpr
     | VARID LBLOCK expr RBLOCK #arrayExpr
     | VARID                #idExpr
     ;
 
-type : primitiveType (LBLOCK RBLOCK)?;
+type :
+    primitiveType (LBLOCK RBLOCK)?
+    ;
 
-primitiveType: INTEGER  #intType
+primitiveType:
+      INTEGER  #intType
     | BOOLEAN  #boolType
     | DOUBLE   #doubleType
     | CHAR     #charType
