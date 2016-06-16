@@ -16,6 +16,7 @@ public class CheckerResult {
     /** Mapping from variables to coordinates. */
     private final ParseTreeProperty<Integer> offsets = new ParseTreeProperty<>();
 
+
     /** Adds an association from parse tree node to the flow graph entry. */
     public void setEntry(ParseTree node, ParserRuleContext entry) {
         this.entries.put(node, entry);

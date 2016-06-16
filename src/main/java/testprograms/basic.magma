@@ -1,0 +1,9 @@
+chamber basic {
+    /^\ Created by Rogier on 16-06-16 in Enschede.
+    rock $a;
+    mineral $b;
+    temperature $c;
+    mine $d;
+    rock[] $e;
+    mineral[] $f;
+}
