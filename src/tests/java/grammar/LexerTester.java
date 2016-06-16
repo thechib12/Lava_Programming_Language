@@ -59,6 +59,15 @@ public class LexerTester {
         }
     }
 
+    //    test whether all characters are wrong
+    public void allWrong(String text) {
+
+        for (char i : text.toCharArray()) {
+
+            this.wrong(Character.toString(i));
+        }
+    }
+
     /**
      * Tests whether a given text is rejected by the lexer.
      */

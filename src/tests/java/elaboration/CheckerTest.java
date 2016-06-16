@@ -29,7 +29,7 @@ public class CheckerTest {
 //        assertEquals(Type.INT, result.getType(assX.getChild(0)));
 //        assertEquals(Type.CHAR, result.getType(assX.getChild(2)));
 //        assertEquals(Type.BOOL, result.getType(assX.getChild(0)));
-//        assertEquals(, result.getType(assX.getChild(2)));
+//        assertEquals(Type.StringType, result.getType(assX.getChild(2)));
 //        assertEquals(Type.INT, result.getType(assX.getChild(0)));
 //        assertEquals(Type.INT, result.getType(assX.getChild(2)));
 //        assertEquals(Type.INT, result.getType(assX.getChild(0)));
