@@ -2,6 +2,7 @@ package grammar;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.junit.Assert;
 import org.junit.Test;
 import testutils.ErrorListener;
 import testutils.ParseException;
@@ -33,21 +34,21 @@ public class LavaParserTester {
         parse(test3, false, "program");
     }
 
-    @Test(expected = ParseException.class)
-    public void simpleProgramFailTest() throws ParseException {
+    @Test
+    public void simpleProgramFailTest() {
         String test1 = "chamber testChamber {doSomething();}";
         String test2 = "chaamber testChamber{}";
-        String test3 = "chamber testChamber {} ";
+        String test3 = "chamber testChamber { ";
         String test4 = "chamber {}";
         String test5 = "chamber{}";
         String test6 = "chamber testChamber { doSomething(); ";
-        String test7 = "chamber var {};";
-        parse(test1, false, "program");
-        parse(test2, false, "program");
-        parse(test3, false, "program");
-        parse(test4, false, "program");
-        parse(test5, false, "program");
-        parse(test6, false, "program");
+        testParseFailure(test1, false, "program");
+        testParseFailure(test2, false, "program");
+        testParseFailure(test3, false, "program");
+        testParseFailure(test4, false, "program");
+        testParseFailure(test5, false, "program");
+        testParseFailure(test6, false, "program");
+
     }
 
     @Test
@@ -77,21 +78,21 @@ public class LavaParserTester {
         parse(test6, false, "statement");
     }
 
-    //
-    @Test(expected = ParseException.class)
+    @Test
     public void statementsWrongTest() throws ParseException {
+
         String test1 = "if $a then { doSomething(); } ";
         String test2 = "return;";
         String test3 = "if then { doSomething(); }";
-        String test4 = "if ($a  == $c) then { $a = $b;  } ";
-//        String test5 = "while (hot) { $a; } ";
-//        String test6 = "while (hot) { doSomething(); }";
-        parse(test1, false, "statement");
-        parse(test2, false, "statement");
-        parse(test3, false, "statement");
-        parse(test4, false, "statement");
-//        parse(test5, false, "statement");
-//        parse(test6, false, "statement");
+        String test4 = "if ($a  = $c) then { $a = $b;  } ";
+        String test5 = "while (hot) { $a; } ";
+        String test6 = "while hot { doSomething(); }";
+        testParseFailure(test1, false, "statement");
+        testParseFailure(test2, false, "statement");
+        testParseFailure(test3, false, "statement");
+        testParseFailure(test4, false, "statement");
+        testParseFailure(test5, false, "statement");
+        testParseFailure(test6, false, "statement");
     }
 
     @Test
@@ -125,9 +126,9 @@ public class LavaParserTester {
 
     }
 
-    @Test(expected = ParseException.class)
-    public void exprFailTest() throws ParseException {
-        String test1 = "3.3";
+    @Test
+    public void exprFailTest() {
+        String test1 = ".3";
         String test2 = "not";
         String test3 = "3.1 * ";
         String test4 = "not hot and ";
@@ -140,36 +141,29 @@ public class LavaParserTester {
         String test11 = "$a[3+3";
         String test12 = "doSomething($a";
 
-        parse(test1, false, "expr");
-        parse(test2, false, "expr");
-        parse(test3, false, "expr");
-        parse(test4, false, "expr");
-        parse(test5, false, "expr");
-        parse(test6, false, "expr");
-        parse(test7, false, "expr");
-        parse(test8, false, "expr");
-        parse(test9, false, "expr");
-        parse(test10, false, "expr");
-        parse(test11, false, "expr");
-        parse(test12, false, "expr");
-               /*expr:
-        expr DOT expr        #fieldExpr
-                | NOT expr            #notExpr
-                | expr multOp expr    #multExpr
-                | expr plusOp expr    #plusExpr
-                | expr boolOp expr #boolExpr
-                | expr compOp expr #compExpr
-                | LPAR expr RPAR    #parExpr
-                | NUM               #numExpr
-                | TRUE              #trueExpr
-                | STATIC_STRING     #staticstringExpr
-                | FALSE             #falseExpr
-                | function             #inputExpr
-                | arrayInit             #arrayInitExpr
-                | VARID LBLOCK expr RBLOCK #arrayExpr
-                | VARID                #idExpr
-        ;*/
+        testParseFailure(test1, false, "expr");
+        testParseFailure(test2, false, "expr");
+        testParseFailure(test3, false, "expr");
+        testParseFailure(test4, false, "expr");
+        testParseFailure(test5, false, "expr");
+        testParseFailure(test6, false, "expr");
+        testParseFailure(test7, false, "expr");
+        testParseFailure(test8, false, "expr");
+        testParseFailure(test9, false, "expr");
+        testParseFailure(test10, false, "expr");
+        testParseFailure(test11, false, "expr");
+        testParseFailure(test12, false, "expr");
 
+
+    }
+
+    public void testParseFailure(String testString, boolean isFile, String parseOption) {
+        try {
+            parse(testString, isFile, parseOption);
+            Assert.fail();
+        } catch (ParseException e) {
+
+        }
     }
 
     private ParseTree parse(String testProgram, boolean isFile, String parseOption) throws ParseException {
