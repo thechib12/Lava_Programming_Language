@@ -12,7 +12,7 @@ statement :
       target ASS expr SEMI                                  #assignStat
     | IF LPAR expr RPAR THEN block (ELSE IF LPAR expr RPAR THEN block)* (ELSE block)?    #ifStat
     | WHILE LPAR expr RPAR  block                       #whileStat
-    | function                                              #functionStat
+    | function SEMI                                         #functionStat
     | RETURN expr SEMI                                      #returnStat
     | emptyStatement                                        #emptyStat
     ;

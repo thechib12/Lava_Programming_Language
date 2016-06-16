@@ -1,4 +1,4 @@
-// Generated from /Users/Rogier/Library/Mobile Documents/com~apple~CloudDocs/Universiteit Twente/Programming Paradigms/Compiler Construction/Lava_Programming_Language/src/main/java/grammar/Lava.g4 by ANTLR 4.5.3
+// Generated from D:/UTwente/Module 8/Lava Programming Language/src/main/java/grammar\Lava.g4 by ANTLR 4.5.1
 package grammar;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -459,6 +459,26 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitType(LavaParser.TypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LavaParser#arrayType}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayType(LavaParser.ArrayTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LavaParser#arrayType}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayType(LavaParser.ArrayTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LavaParser#shared}.
+	 * @param ctx the parse tree
+	 */
+	void enterShared(LavaParser.SharedContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LavaParser#shared}.
+	 * @param ctx the parse tree
+	 */
+	void exitShared(LavaParser.SharedContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code intType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.

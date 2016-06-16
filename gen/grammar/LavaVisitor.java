@@ -1,4 +1,4 @@
-// Generated from /Users/Rogier/Library/Mobile Documents/com~apple~CloudDocs/Universiteit Twente/Programming Paradigms/Compiler Construction/Lava_Programming_Language/src/main/java/grammar/Lava.g4 by ANTLR 4.5.3
+// Generated from D:/UTwente/Module 8/Lava Programming Language/src/main/java/grammar\Lava.g4 by ANTLR 4.5.1
 package grammar;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -277,6 +277,18 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitType(LavaParser.TypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LavaParser#arrayType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayType(LavaParser.ArrayTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LavaParser#shared}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitShared(LavaParser.SharedContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code intType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.

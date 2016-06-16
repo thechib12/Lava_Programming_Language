@@ -6,7 +6,7 @@ chamber bank {
     rupture void consume(){
         rock $count = 0;
         while ($count < 100){
-            
+            doSomething();
         }
     }
 

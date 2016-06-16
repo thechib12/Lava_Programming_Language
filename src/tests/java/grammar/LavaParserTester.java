@@ -53,13 +53,14 @@ public class LavaParserTester {
 
     @Test
     public void testProgramsTests() throws ParseException {
-        parse("consumer", true, "program");
         parse("gauss", true, "program");
         parse("gcd", true, "program");
         parse("hello", true, "program");
         parse("max", true, "program");
         parse("peterson2", true, "program");
-        parse("producer", true, "program");
+        parse("bank", true, "program");
+        parse("basic", true, "program");
+        parse("fib", true, "program");
     }
 
     @Test
