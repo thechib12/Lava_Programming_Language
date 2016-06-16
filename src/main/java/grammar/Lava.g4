@@ -111,10 +111,12 @@ expr:
     ;
 
 type :
-     (SHARED)? primitiveType arrayType?
+     shared? primitiveType arrayType?
     ;
 
 arrayType: LBLOCK RBLOCK;
+
+shared : SHARED;
 
 primitiveType:
       INTEGER  #intType

@@ -27,6 +27,12 @@ public class CheckerTest {
         ParseTree body = tree.getChild(3).getChild(1);
         ParseTree assX = body.getChild(1);
         assertEquals(Type.INT, result.getType(assX.getChild(0)));
+        assertEquals(Type.CHAR, result.getType(assX.getChild(2)));
+        assertEquals(Type.BOOL, result.getType(assX.getChild(0)));
+        assertEquals(Type.StringType, result.getType(assX.getChild(2)));
+        assertEquals(Type.INT, result.getType(assX.getChild(0)));
+        assertEquals(Type.INT, result.getType(assX.getChild(2)));
+        assertEquals(Type.INT, result.getType(assX.getChild(0)));
         assertEquals(Type.INT, result.getType(assX.getChild(2)));
     }
 
