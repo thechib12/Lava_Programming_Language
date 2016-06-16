@@ -48,20 +48,12 @@ public class Checker extends LavaBaseListener {
         super.exitBoolType(ctx);
     }
 
-    @Override
-    public void exitDoubleType(LavaParser.DoubleTypeContext ctx) {
-        super.exitDoubleType(ctx);
-    }
 
     @Override
     public void exitCharType(LavaParser.CharTypeContext ctx) {
         super.exitCharType(ctx);
     }
 
-    @Override
-    public void exitStringType(LavaParser.StringTypeContext ctx) {
-        super.exitStringType(ctx);
-    }
 
     @Override
     public void exitVoidType(LavaParser.VoidTypeContext ctx) {

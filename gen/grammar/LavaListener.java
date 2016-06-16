@@ -150,15 +150,29 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitEmptyStatement(LavaParser.EmptyStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#localVariableDeclaration}.
+	 * Enter a parse tree produced by the {@code primDecl}
+	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterLocalVariableDeclaration(LavaParser.LocalVariableDeclarationContext ctx);
+	void enterPrimDecl(LavaParser.PrimDeclContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#localVariableDeclaration}.
+	 * Exit a parse tree produced by the {@code primDecl}
+	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitLocalVariableDeclaration(LavaParser.LocalVariableDeclarationContext ctx);
+	void exitPrimDecl(LavaParser.PrimDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrayDecl}
+	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayDecl(LavaParser.ArrayDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayDecl}
+	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayDecl(LavaParser.ArrayDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#main}.
 	 * @param ctx the parse tree
@@ -270,6 +284,18 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitPlusOp(LavaParser.PlusOpContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code charExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterCharExpr(LavaParser.CharExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code charExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitCharExpr(LavaParser.CharExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code arrayExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
@@ -317,18 +343,6 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInputExpr(LavaParser.InputExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code staticstringExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterStaticstringExpr(LavaParser.StaticstringExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code staticstringExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitStaticstringExpr(LavaParser.StaticstringExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code fieldExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
@@ -504,18 +518,6 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitBoolType(LavaParser.BoolTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code doubleType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void enterDoubleType(LavaParser.DoubleTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code doubleType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void exitDoubleType(LavaParser.DoubleTypeContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code charType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.
 	 * @param ctx the parse tree
@@ -539,18 +541,6 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLongType(LavaParser.LongTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code stringType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void enterStringType(LavaParser.StringTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code stringType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void exitStringType(LavaParser.StringTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code voidType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.

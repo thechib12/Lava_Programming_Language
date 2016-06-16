@@ -95,11 +95,19 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEmptyStatement(LavaParser.EmptyStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#localVariableDeclaration}.
+	 * Visit a parse tree produced by the {@code primDecl}
+	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLocalVariableDeclaration(LavaParser.LocalVariableDeclarationContext ctx);
+	T visitPrimDecl(LavaParser.PrimDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code arrayDecl}
+	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayDecl(LavaParser.ArrayDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#main}.
 	 * @param ctx the parse tree
@@ -167,6 +175,13 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPlusOp(LavaParser.PlusOpContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code charExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCharExpr(LavaParser.CharExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code arrayExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
@@ -194,13 +209,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInputExpr(LavaParser.InputExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code staticstringExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStaticstringExpr(LavaParser.StaticstringExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code fieldExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
@@ -304,13 +312,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBoolType(LavaParser.BoolTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code doubleType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDoubleType(LavaParser.DoubleTypeContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code charType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.
 	 * @param ctx the parse tree
@@ -324,13 +325,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLongType(LavaParser.LongTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code stringType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStringType(LavaParser.StringTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code voidType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.
