@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.util.List;
 
 /**
- * Created by Rogier on 16-06-16 in Enschede.
+ * Created by Rogier + Christiaan on 16-06-16 in Enschede.
  */
 public class Checker extends LavaBaseListener {
     private CheckerResult checkerResult;

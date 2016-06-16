@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Created by Rogier on 16-06-16 in Enschede.
+ * Created by Christiaan + Rogier on 16-06-16 in Enschede.
  */
 public class LavaCompiler {
     private final static LavaCompiler instance = new LavaCompiler();

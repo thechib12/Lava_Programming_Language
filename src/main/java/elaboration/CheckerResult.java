@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 /**
- * Created by Rogier on 15-06-16 in Enschede.
+ * Created by Rogier + Christiaan on 15-06-16 in Enschede.
  */
 public class CheckerResult {
     /** Mapping from statements and expressions to the atomic

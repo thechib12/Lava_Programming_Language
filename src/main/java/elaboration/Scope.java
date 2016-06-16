@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by Rogier on 16-06-16 in Enschede.
+ * Created by Christiaan + Rogier on 16-06-16 in Enschede.
  */
 public class Scope {
     /** Current size of this scope (in bytes).
