@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 /**
  * Created by Rogier on 15-06-16 in Enschede.
  */
-public class Result {
+public class CheckerResult {
     /** Mapping from statements and expressions to the atomic
      * subtree that is their entry in the control flow graph. */
     private final ParseTreeProperty<ParserRuleContext> entries = new ParseTreeProperty<>();

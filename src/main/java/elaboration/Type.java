@@ -15,6 +15,9 @@ abstract public class Type {
      * The singleton instance of the {@link Int} type.
      */
     public static final Type INT = new Int();
+
+    public static final Type CHAR = new Char();
+
     private final TypeKind kind;
 
     /**
@@ -169,12 +172,89 @@ abstract public class Type {
 
         @Override
         public int size() {
-            return 4;
+            return 2;
         }
 
         @Override
         public String toString() {
             return "Char";
         }
+    }
+
+    static public class StringType extends Type {
+        private final int lower;
+        private final int upper;
+        private final Type elemType = new Char();
+
+        private StringType(int lower, int upper) {
+            super(TypeKind.STRING_TYPE);
+            assert upper >= lower;
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        /**
+         * Returns the lower bound of this array type.
+         */
+        public int getLower() {
+            return this.lower;
+        }
+
+        /**
+         * Returns the upper bound of this array type.
+         */
+        public int getUpper() {
+            return this.upper;
+        }
+
+        /**
+         * Returns the element bound of this array type.
+         */
+        public Type getElemType() {
+            return this.elemType;
+        }
+
+        @Override
+        public int size() {
+            return (getUpper() - getLower() + 1) * this.elemType.size();
+        }
+
+        @Override
+        public String toString() {
+            return "Array [" + this.lower + ".." + this.upper + "] of "
+                    + this.elemType;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + this.elemType.hashCode();
+            result = prime * result + this.lower;
+            result = prime * result + this.upper;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof StringType)) {
+                return false;
+            }
+            StringType other = (StringType) obj;
+            if (!this.elemType.equals(other.elemType)) {
+                return false;
+            }
+            if (this.lower != other.lower) {
+                return false;
+            }
+            if (this.upper != other.upper) {
+                return false;
+            }
+            return true;
+        }
+
     }
 }
