@@ -14,7 +14,8 @@ chamber max {
     }
 
     erupt(){
-        rock[] $array = [0,45,2,7,4];
+        rock[] $array = with size 5;
+        $array = [0,45,2,7,4];
         rock $x = max ($array);
         explode("Maximum: "  + $x);
     }

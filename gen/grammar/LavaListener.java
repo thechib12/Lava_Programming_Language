@@ -460,6 +460,26 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitType(LavaParser.TypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link LavaParser#arrayType}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayType(LavaParser.ArrayTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LavaParser#arrayType}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayType(LavaParser.ArrayTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LavaParser#shared}.
+	 * @param ctx the parse tree
+	 */
+	void enterShared(LavaParser.SharedContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LavaParser#shared}.
+	 * @param ctx the parse tree
+	 */
+	void exitShared(LavaParser.SharedContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code intType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.
 	 * @param ctx the parse tree

@@ -278,6 +278,18 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitType(LavaParser.TypeContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link LavaParser#arrayType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayType(LavaParser.ArrayTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LavaParser#shared}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitShared(LavaParser.SharedContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code intType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.
 	 * @param ctx the parse tree

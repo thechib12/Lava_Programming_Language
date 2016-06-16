@@ -1,6 +1,7 @@
 package elaboration;
 
 import grammar.LavaBaseListener;
+import grammar.LavaParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -22,8 +23,55 @@ public class Checker extends LavaBaseListener {
         return checkerResult;
     }
 
+    @Override
+    public void exitLocalVariableDeclaration(LavaParser.LocalVariableDeclarationContext ctx) {
+        this.scope.put(ctx.VARID().getText(),getType(ctx.type()));
+        setType(ctx.VARID(),getType(ctx.type()));
+        setType(ctx,getType(ctx.type()));
+    }
+
+    @Override
+    public void exitType(LavaParser.TypeContext ctx) {
+        if (ctx.arrayType().isEmpty()){
+            setType(ctx, getType(ctx.primitiveType()));
+        } else {
+//            Type type = new Type.Array()
 
 
+            setType(ctx, getType(ctx.primitiveType()));
+        }
+
+    }
+
+    @Override
+    public void exitIntType(LavaParser.IntTypeContext ctx) {
+        super.exitIntType(ctx);
+    }
+
+    @Override
+    public void exitBoolType(LavaParser.BoolTypeContext ctx) {
+        super.exitBoolType(ctx);
+    }
+
+    @Override
+    public void exitDoubleType(LavaParser.DoubleTypeContext ctx) {
+        super.exitDoubleType(ctx);
+    }
+
+    @Override
+    public void exitCharType(LavaParser.CharTypeContext ctx) {
+        super.exitCharType(ctx);
+    }
+
+    @Override
+    public void exitStringType(LavaParser.StringTypeContext ctx) {
+        super.exitStringType(ctx);
+    }
+
+    @Override
+    public void exitVoidType(LavaParser.VoidTypeContext ctx) {
+        super.exitVoidType(ctx);
+    }
 
     private void checkType(ParserRuleContext node, Type expected) {
         Type actual = getType(node);
