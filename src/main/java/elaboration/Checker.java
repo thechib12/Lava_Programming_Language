@@ -23,12 +23,7 @@ public class Checker extends LavaBaseListener {
         return checkerResult;
     }
 
-    @Override
-    public void exitLocalVariableDeclaration(LavaParser.LocalVariableDeclarationContext ctx) {
-        this.scope.put(ctx.VARID().getText(),getType(ctx.type()));
-        setType(ctx.VARID(),getType(ctx.type()));
-        setType(ctx,getType(ctx.type()));
-    }
+
 
     @Override
     public void exitType(LavaParser.TypeContext ctx) {

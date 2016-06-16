@@ -1,6 +1,6 @@
 chamber gauss {
     erupt() {
-        explode("Number? ");
+/^\        explode("Number? ");
         mine $x = implode();
         rock $x1 = $x.toRock();
         rock $count = 0;
@@ -9,7 +9,7 @@ chamber gauss {
             $y = $y + $count;
             $count = $count + 1;
         }
-        explode("Gauss: " + $y);
+/^\        explode("Gauss: " + $y);
      }
 
 }

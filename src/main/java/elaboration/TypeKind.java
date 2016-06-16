@@ -16,7 +16,6 @@ public enum TypeKind {
 
         CHAR,
 
-        STRING_TYPE
 //
 //        DOUBLE
 

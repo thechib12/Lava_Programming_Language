@@ -1,6 +1,10 @@
 chamber hello {
     erupt (){
-        explode("Hello 7 tectonic plates!");
+        mineral[] $a = with size 24;
+        $a = ['H', 'e', 'l', 'l', 'o', ' ', '7', ' ', 't', 'e', 'c', 't', 'o', 'n', 'i'
+        , 'c', ' ', 'p', 'l', 'a', 't', 'e', 's', '!'];
+        explode($a);
+
     }
 }
 

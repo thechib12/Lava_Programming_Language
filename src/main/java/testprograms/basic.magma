@@ -3,7 +3,6 @@ chamber basic {
     rock $a;
     mineral $b;
     temperature $c;
-    mine $d;
     rock[] $e = with size 8;
     mineral[] $f = with size 4;
 }

@@ -40,8 +40,8 @@ emptyStatement:
     ;
 
 localVariableDeclaration :
-    primitiveType VARID (ASS expr)?
-    | primitiveType arrayType VARID ASS WITH SIZE INTEGER
+      primitiveType VARID (ASS expr)?                       #primDecl
+    | primitiveType arrayType VARID ASS WITH SIZE NUM #arrayDecl
     ;
 
 
@@ -102,8 +102,9 @@ expr:
     | expr compOp expr #compExpr
     | LPAR expr RPAR    #parExpr
     | NUM               #numExpr
+    | CHARACTER              #charExpr
     | TRUE              #trueExpr
-    | STATIC_STRING     #staticstringExpr
+//    | STATIC_STRING     #staticstringExpr
     | FALSE             #falseExpr
     | function             #inputExpr
     | arrayInit             #arrayInitExpr
@@ -122,10 +123,10 @@ shared : SHARED;
 primitiveType:
       INTEGER  #intType
     | BOOLEAN  #boolType
-    | DOUBLE   #doubleType
+//    | DOUBLE   #doubleType
     | CHAR     #charType
     | LONG     #longType
-    | STRING   #stringType
+//    | STRING   #stringType
     | VOID     #voidType
     ;
 

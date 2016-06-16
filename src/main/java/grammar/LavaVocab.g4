@@ -43,6 +43,8 @@ ID: LETTER (LETTER | DIGIT)*;
 
 NUM: DIGIT+;
 
+CHARACTER : '\'' ( . )? '\'';
+
 
 LBLOCK: '[';
 RBLOCK: ']';
