@@ -1,0 +1,21 @@
+chamber bank {
+    /^\ Created by Rogier on 15-06-16 in Enschede.
+
+
+
+    rupture void consume(){
+        rock $count = 0;
+        while ($count < 100){
+            
+        }
+    }
+
+    rupture void produce(){
+        ;
+
+    }
+
+    erupt() {
+        ;
+    }
+}

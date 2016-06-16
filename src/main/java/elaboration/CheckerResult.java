@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 /**
  * Created by Rogier on 15-06-16 in Enschede.
  */
-public class Result {
+public class CheckerResult {
     /** Mapping from statements and expressions to the atomic
      * subtree that is their entry in the control flow graph. */
     private final ParseTreeProperty<ParserRuleContext> entries = new ParseTreeProperty<>();
@@ -15,6 +15,7 @@ public class Result {
     private final ParseTreeProperty<Type> types = new ParseTreeProperty<>();
     /** Mapping from variables to coordinates. */
     private final ParseTreeProperty<Integer> offsets = new ParseTreeProperty<>();
+
 
     /** Adds an association from parse tree node to the flow graph entry. */
     public void setEntry(ParseTree node, ParserRuleContext entry) {

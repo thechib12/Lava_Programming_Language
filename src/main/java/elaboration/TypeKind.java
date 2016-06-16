@@ -14,9 +14,9 @@ public enum TypeKind {
         /** Array compound type. */
         ARRAY,
 
-        CHAR
+        CHAR,
 
-//        STRING,
+        STRING_TYPE
 //
 //        DOUBLE
 
