@@ -51,6 +51,6 @@ chamber peterson2 {
        fork(run1());
        fork(run2());
        join();
-       explode("Value: " + $value);
+/^\       explode("Value: " + $value);
    }
 }

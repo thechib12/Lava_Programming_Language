@@ -1,8 +1,8 @@
 chamber gauss {
     erupt() {
-/^\        explode("Number? ");
-        mineral[] $x = implode();
-        rock $x1 = $x.toRock();
+/^\     explode("Number? ");
+/^\        mineral[] $x = implode();
+        rock $x1 = 7;
         rock $count = 0;
         rock $y     = 0;
         while ($count < $x1){
