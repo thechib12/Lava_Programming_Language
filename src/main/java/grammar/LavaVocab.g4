@@ -27,6 +27,8 @@ ERUPT:          'erupt';
 RETURN :       'return' ;
 SHARED :        'shared' ;
 NOT:     'not';
+WITH:       'with';
+SIZE :      'size';
 
 STATIC_STRING : '"' (~["\\] | '\\'.)* '"';
 

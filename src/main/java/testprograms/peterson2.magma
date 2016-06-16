@@ -1,5 +1,5 @@
 chamber peterson2 {
-   temperature[] $flag   = [cold, cold];
+   temperature[] $flag   = with size 2;
    rock $turn;
    rock $value;
 
@@ -47,6 +47,7 @@ chamber peterson2 {
    }
 
    erupt(){
+        $flag = [cold, cold];
        fork(run1());
        fork(run2());
        join();
