@@ -120,16 +120,8 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitCharExpr(LavaParser.CharExprContext ctx) {
-        Type type1 = getType(ctx);
-        if (type1.equals(Type.INT)) {
-            throw new IllegalArgumentException("Jesus Christ Marie, they are not Rocks, they are Minerals! - Henk Schrader");
-        } else {
-            checkType(ctx, Type.CHAR);
-        }
-
         setType(ctx, Type.CHAR);
-//        setEntry(ctx, );
-
+        setEntry(ctx, ctx);
     }
 
     @Override
@@ -140,7 +132,35 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitNumExpr(LavaParser.NumExprContext ctx) {
-        super.exitNumExpr(ctx);
+        setType(ctx, Type.INT);
+        setEntry(ctx, ctx);
+    }
+
+    @Override
+    public void exitIfStat(LavaParser.IfStatContext ctx) {
+        int exprCount = ctx.expr().size();
+        for (int i = 0; i < exprCount; i++) {
+            checkType(ctx.expr(i), Type.BOOL);
+        }
+
+        int statementCount = ctx.block().size();
+        for (int j = 0; j < statementCount; j++) {
+            setEntry(ctx, ctx.block(j));
+        }
+        setEntry(ctx, ctx.expr(0));
+    }
+
+    @Override
+    public void exitReturnStat(LavaParser.ReturnStatContext ctx) {
+        setType(ctx, getType(ctx.expr()));
+        setEntry(ctx, ctx);
+    }
+
+    @Override
+    public void exitWhileStat(LavaParser.WhileStatContext ctx) {
+        checkType(ctx.expr(), Type.BOOL);
+        setEntry(ctx, ctx.expr());
+
     }
 
     @Override
