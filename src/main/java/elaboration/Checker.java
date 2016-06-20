@@ -122,6 +122,19 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
+    public void exitAssignStat(LavaParser.AssignStatContext ctx) {
+        Type type = this.getType(ctx.expr());
+        Type type1 = this.getType(ctx.target());
+        if (type == type1) {
+            setType(ctx, type);
+        } else {
+            errors.add("Assignment type error");
+        }
+        this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
+        this.setEntry(ctx, ctx.expr());
+    }
+
+    @Override
     public void exitVariableTarget(LavaParser.VariableTargetContext ctx) {
         this.setType(ctx, this.scope.type(ctx.VARID().getText()));
         this.setOffset(ctx,this.scope.offset(ctx.VARID().getText()));
