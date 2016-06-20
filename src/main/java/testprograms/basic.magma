@@ -8,7 +8,8 @@ chamber basic {
 
      erupt() {
         $a = 0;
-
+        $b = 'c';
+        $c = hot and cold;
      }
 
  }
