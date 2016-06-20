@@ -119,6 +119,40 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
+    public void exitCharExpr(LavaParser.CharExprContext ctx) {
+        Type type1 = getType(ctx);
+        if (type1.equals(Type.INT)) {
+            throw new IllegalArgumentException("Jesus Christ Marie, they are not Rocks, they are Minerals! - Henk Schrader");
+        } else {
+            checkType(ctx, Type.CHAR);
+        }
+
+        setType(ctx, Type.CHAR);
+//        setEntry(ctx, );
+
+    }
+
+    @Override
+    public void exitTrueExpr(LavaParser.TrueExprContext ctx) {
+        setType(ctx, Type.BOOL);
+        setEntry(ctx, ctx);
+    }
+
+    @Override
+    public void exitNumExpr(LavaParser.NumExprContext ctx) {
+        super.exitNumExpr(ctx);
+    }
+
+    @Override
+    public void exitMultExpr(LavaParser.MultExprContext ctx) {
+        checkType(ctx.expr(0), Type.INT);
+        checkType(ctx.expr(0), Type.INT);
+        setType(ctx, Type.INT);
+        setEntry(ctx, ctx.expr(0));
+
+    }
+
+    @Override
     public void exitPrimDecl(LavaParser.PrimDeclContext ctx) {
         Type type = getType(ctx.primitiveType());
         if (type.getKind() == TypeKind.VOID){
