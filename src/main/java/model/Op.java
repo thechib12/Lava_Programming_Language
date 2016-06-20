@@ -26,28 +26,26 @@ public class Op extends Instr {
 
 	/** Constructs an unlabelled operation with a given opcode and arguments. */
 	public Op(OpCode opCode, Operand... args) {
-		this(null, opCode, args);
+		this(opCode, args);
 	}
 
 	/** Constructs an unlabelled operation with a given opcode and arguments. */
 	public Op(OpCode opCode, List<Operand> args) {
-		this(null, opCode, args);
+		this(opCode, args);
 	}
 
 	/** Constructs a labelled operation with a given opcode and arguments. */
-	public Op(Label label, OpCode opCode, Operand... args) {
-		this(label, opCode, Arrays.asList(args));
+	public Op(OpCode opCode, Operand... args) {
+		this(opCode, Arrays.asList(args));
 	}
 
 	/** Constructs a labelled operation with a given opcode and arguments.
 	 * @throws IllegalArgumentException if one of the arguments
 	 * is not of the expected type 
 	 */
-	public Op(Label label, OpCode opCode, List<Operand> args)
+	public Op(OpCode opCode, List<Operand> args)
 			throws IllegalArgumentException {
-		if (label != null) {
-			super.setLabel(label);
-		}
+
 		this.opCode = opCode;
 		int argsCount = opCode.getSigSize();
 		if (args.size() != argsCount) {
@@ -68,10 +66,7 @@ public class Op extends Instr {
 		this.args = new ArrayList<>(args);
 	}
 
-	/** Returns the class of operation (normal or control flow). */
-	public OpClaz getClaz() {
-		return this.opCode.getClaz();
-	}
+
 
 	/** Returns the opcode of this operation. */
 	public OpCode getOpCode() {
@@ -88,34 +83,19 @@ public class Op extends Instr {
 		return (Reg) this.args.get(i);
 	}
 
-	/** Convenience method to retrieve a given argument as {@link Str}. */
-	public Str str(int i) {
-		return (Str) this.args.get(i);
-	}
+    /** Convenience method to retrieve a given argument as {@link Addr}. */
+	public Addr addr(int i){
+        return (Addr) this.args.get(i);
+    }
+
+    /** Convenience method to retrieve a given argument as {@link Targ}. */
+    public Target target(int i){
+        return (Target) this.args.get(i);
+    }
 
 	/** Convenience method to retrieve a given argument as {@link Num}. */
 	public Num num(int i) {
 		return (Num) this.args.get(i);
-	}
-
-	/** Convenience method to retrieve a given operand as {@link Label}. */
-	public Label label(int i) {
-		return (Label) this.args.get(i);
-	}
-
-	/** Indicates if this operation has a comment. */
-	public boolean hasComment() {
-		return getComment() != null;
-	}
-
-	/** Returns the optional comment for this operation. */
-	public String getComment() {
-		return this.comment;
-	}
-
-	/** Sets a comment for this operation. */
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	@Override
@@ -136,9 +116,6 @@ public class Op extends Instr {
 					.format("%-" + labelSize + "s", toLabelString()));
 		}
 		int arrowSize = 4;
-		if (getClaz() == COMMENT) {
-			result.append(toCommentString());
-		}
 		if (getOpCode() == OpCode.out) {
 			int size = sourceSize + targetSize + arrowSize;
 			result.append(String.format("%-8s", getOpCode().name()));
@@ -166,7 +143,6 @@ public class Op extends Instr {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append(toLabelString());
-		if (getClaz() != COMMENT) {
 			result.append(getOpCode());
 			if (getOpCode().getSourceCount() > 0) {
 				result.append(' ');
@@ -179,28 +155,12 @@ public class Op extends Instr {
 				result.append(toTargetString());
 			}
 			result.append(' ');
-		}
 		result.append(toCommentString());
 		return result.toString();
 	}
 
-	/** Returns the string representation of the arrow symbol. */
-	String toArrowString() {
-		if (getOpCode().getTargetCount() > 0 && getClaz() != COMMENT) {
-			return ' ' + getClaz().getArrow() + ' ';
-		} else {
-			return "";
-		}
-	}
 
 	/** Returns the string representation of the optional comment. */
-	String toCommentString() {
-		if (hasComment()) {
-			return COMMENT_SEP + getComment();
-		} else {
-			return "";
-		}
-	}
 
 	/** Returns the string representation of the source operands. */
 	String toSourceString() {
@@ -256,13 +216,6 @@ public class Op extends Instr {
 			return false;
 		}
 		Op other = (Op) obj;
-		if (!hasComment()) {
-			if (other.hasComment()) {
-				return false;
-			}
-		} else if (!getComment().equals(other.getComment())) {
-			return false;
-		}
 		if (this.opCode != other.opCode) {
 			return false;
 		}

@@ -20,7 +20,6 @@ public class Program {
 	/** Mapping from labels defined in the program to corresponding
 	 * index locations.
 	 */
-	private final Map<Label, Integer> labelMap;
 	/** (Partial) mapping from symbolic constants used in the program
 	 * to corresponding numeric values. */
 	private final Map<Num, Integer> symbMap;
@@ -29,7 +28,6 @@ public class Program {
 	public Program() {
 		this.instrList = new ArrayList<>();
 		this.opList = new ArrayList<>();
-		this.labelMap = new LinkedHashMap<>();
 		this.symbMap = new LinkedHashMap<>();
 	}
 
@@ -48,17 +46,6 @@ public class Program {
 		}
 	}
 
-	/** Registers the label of a given instruction. */
-	void registerLabel(Instr instr) {
-		Label label = instr.getLabel();
-		Integer loc = this.labelMap.get(label);
-		if (loc != null) {
-			throw new IllegalArgumentException(String.format(
-					"Label %s already occurred at location %d", label, loc));
-		}
-		this.labelMap.put(label, instr.getLine());
-	}
-
 	/** Returns the current list of instructions of this program. */
 	public List<Instr> getInstr() {
 		return Collections.unmodifiableList(this.instrList);
@@ -74,15 +61,6 @@ public class Program {
 		return this.opList.size();
 	}
 
-	/**
-	 * Returns the location at which a given label is defined, if any.
-	 * @return the location of an instruction with the label, or {@code -1}
-	 * if the label is undefined
-	 */
-	public int getLine(Label label) {
-		Integer result = this.labelMap.get(label);
-		return result == null ? -1 : result;
-	}
 
 	/** Assigns a fixed numeric value to a symbolic constant.
 	 * It is an error to assign to the same constant twice.
@@ -119,28 +97,11 @@ public class Program {
 	 */
 	public void check() throws FormatException {
 		List<String> messages = new ArrayList<>();
-		for (Instr instr : getInstr()) {
-			for (Op op : instr) {
-				messages.addAll(checkOpnds(op.getLine(), op.getArgs()));
-			}
-		}
 		if (!messages.isEmpty()) {
 			throw new FormatException(messages);
 		}
 	}
 
-	private List<String> checkOpnds(int loc, List<Operand> opnds) {
-		List<String> result = new ArrayList<>();
-		for (Operand opnd : opnds) {
-			if (opnd instanceof Label) {
-				if (getLine((Label) opnd) < 0) {
-					result.add(String.format("Line %d: Undefined label '%s'",
-							loc, opnd));
-				}
-			}
-		}
-		return result;
-	}
 
 	/**
 	 * Returns a mapping from registers to line numbers

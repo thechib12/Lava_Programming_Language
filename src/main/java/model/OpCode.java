@@ -2,9 +2,6 @@ package model;
 
 import java.util.*;
 
-import static model.OpClaz.COMMENT;
-import static model.OpClaz.CONTROL;
-import static model.OpClaz.NORMAL;
 import static model.Operand.Type.*;
 
 /**
