@@ -244,13 +244,25 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTarget(LavaParser.TargetContext ctx) { }
+	@Override public void enterVariableTarget(LavaParser.VariableTargetContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTarget(LavaParser.TargetContext ctx) { }
+	@Override public void exitVariableTarget(LavaParser.VariableTargetContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -575,18 +587,6 @@ public class LavaBaseListener implements LavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCharType(LavaParser.CharTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLongType(LavaParser.LongTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLongType(LavaParser.LongTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

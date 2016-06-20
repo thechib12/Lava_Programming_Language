@@ -18,6 +18,8 @@ abstract public class Type {
 
     public static final Type CHAR = new Char();
 
+    public static final Type VOID = new Void();
+
     private final TypeKind kind;
 
     /**
@@ -90,7 +92,7 @@ abstract public class Type {
         private final int upper;
         private final Type elemType;
 
-        private Array(int lower, int upper, Type elemType) {
+        public Array(int lower, int upper, Type elemType) {
             super(TypeKind.ARRAY);
             assert upper >= lower;
             this.lower = lower;
@@ -173,6 +175,24 @@ abstract public class Type {
         @Override
         public int size() {
             return 2;
+        }
+
+        @Override
+        public String toString() {
+            return "Char";
+        }
+    }
+
+    static public class Void extends Type {
+        public static final int VOID_SIZE = 0;
+
+        private Void() {
+            super(TypeKind.CHAR);
+        }
+
+        @Override
+        public int size() {
+            return VOID_SIZE;
         }
 
         @Override

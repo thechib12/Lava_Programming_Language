@@ -62,8 +62,8 @@ parametersdecl:
     ;
 
 target:
-      VARID
-    | VARID LBLOCK expr RBLOCK
+      VARID                         #variableTarget
+    | VARID LBLOCK expr RBLOCK      #arrayIndexTarget
     ;
 
 
@@ -125,7 +125,7 @@ primitiveType:
     | BOOLEAN  #boolType
 //    | DOUBLE   #doubleType
     | CHAR     #charType
-    | LONG     #longType
+//    | LONG     #longType
 //    | STRING   #stringType
     | VOID     #voidType
     ;

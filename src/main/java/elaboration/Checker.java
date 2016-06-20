@@ -5,7 +5,9 @@ import grammar.LavaParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,44 +22,124 @@ public class Checker extends LavaBaseListener {
 
 
     public CheckerResult check(ParseTree tree){
+        checkerResult = new CheckerResult();
+        scope = new Scope();
+        errors = new ArrayList<>();
+        new ParseTreeWalker().walk(this,tree);
         return checkerResult;
     }
 
 
+    @Override
+    public void exitArrayType(LavaParser.ArrayTypeContext ctx) {
+        super.exitArrayType(ctx);
+    }
 
     @Override
     public void exitType(LavaParser.TypeContext ctx) {
-        if (ctx.arrayType().isEmpty()){
-            setType(ctx, getType(ctx.primitiveType()));
+        super.exitType(ctx);
+    }
+
+    @Override
+    public void exitIdExpr(LavaParser.IdExprContext ctx) {
+        super.exitIdExpr(ctx);
+    }
+
+    @Override
+    public void exitBoolExpr(LavaParser.BoolExprContext ctx) {
+        super.exitBoolExpr(ctx);
+    }
+
+    @Override
+    public void exitFalseExpr(LavaParser.FalseExprContext ctx) {
+        super.exitFalseExpr(ctx);
+    }
+
+    @Override
+    public void exitCompExpr(LavaParser.CompExprContext ctx) {
+        super.exitCompExpr(ctx);
+    }
+
+    @Override
+    public void exitNotExpr(LavaParser.NotExprContext ctx) {
+        super.exitNotExpr(ctx);
+    }
+
+    @Override
+    public void exitParExpr(LavaParser.ParExprContext ctx) {
+        super.exitParExpr(ctx);
+    }
+
+    @Override
+    public void exitPlusExpr(LavaParser.PlusExprContext ctx) {
+        Type type1 = getType(ctx.expr(0));
+        Type type2 = getType(ctx.expr(1));
+    }
+
+    @Override
+    public void exitVariableTarget(LavaParser.VariableTargetContext ctx) {
+        this.setType(ctx, this.scope.type(ctx.VARID().getText()));
+        this.setOffset(ctx,this.scope.offset(ctx.VARID().getText()));
+    }
+
+    @Override
+    public void exitArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx) {
+        if (getType(ctx.expr()).getKind() != TypeKind.INT ){
+            addError(ctx,"Array index must be a rock.");
         } else {
-//            Type type = new Type.Array()
+//            int size = ctx.expr();
+            this.setType(ctx, this.scope.type(ctx.VARID().getText()));
+            this.setOffset(ctx,this.scope.offset(ctx.VARID().getText()) );
+        }
 
+    }
 
-            setType(ctx, getType(ctx.primitiveType()));
+    @Override
+    public void exitPrimDecl(LavaParser.PrimDeclContext ctx) {
+        Type type = getType(ctx.primitiveType());
+        if (type.getKind() == TypeKind.VOID){
+            addError(ctx,"Void is not a type for a variable");
+        } else {
+            this.scope.put(ctx.VARID().getText(),type);
+            setType(ctx, type);
+            setType(ctx.VARID(),type);
+        }
+    }
+
+    @Override
+    public void exitArrayDecl(LavaParser.ArrayDeclContext ctx) {
+        int size = Integer.parseInt(ctx.NUM().getSymbol().getText());
+        Type type = new Type.Array(0,size,getType(ctx.primitiveType()));
+        if (type.getKind() == TypeKind.VOID){
+            addError(ctx,"Void is not a type for an array");
+        } else {
+            this.scope.put(ctx.VARID().getText(),type);
+            setType(ctx, type);
+            setType(ctx.VARID(),type);
         }
 
     }
 
     @Override
     public void exitIntType(LavaParser.IntTypeContext ctx) {
-        super.exitIntType(ctx);
+        setType(ctx,Type.INT);
     }
 
     @Override
     public void exitBoolType(LavaParser.BoolTypeContext ctx) {
-        super.exitBoolType(ctx);
+        setType(ctx,Type.BOOL);
     }
 
 
     @Override
     public void exitCharType(LavaParser.CharTypeContext ctx) {
-        super.exitCharType(ctx);
+        setType(ctx,Type.CHAR);
     }
 
 
     @Override
     public void exitVoidType(LavaParser.VoidTypeContext ctx) {
-        super.exitVoidType(ctx);
+        setType(ctx,Type.VOID);
     }
 
     private void checkType(ParserRuleContext node, Type expected) {

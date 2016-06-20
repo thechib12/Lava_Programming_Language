@@ -16,6 +16,8 @@ public enum TypeKind {
 
         CHAR,
 
+        VOID
+
 //
 //        DOUBLE
 

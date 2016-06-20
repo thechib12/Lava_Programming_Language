@@ -214,15 +214,29 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitParametersdecl(LavaParser.ParametersdeclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#target}.
+	 * Enter a parse tree produced by the {@code variableTarget}
+	 * labeled alternative in {@link LavaParser#target}.
 	 * @param ctx the parse tree
 	 */
-	void enterTarget(LavaParser.TargetContext ctx);
+	void enterVariableTarget(LavaParser.VariableTargetContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#target}.
+	 * Exit a parse tree produced by the {@code variableTarget}
+	 * labeled alternative in {@link LavaParser#target}.
 	 * @param ctx the parse tree
 	 */
-	void exitTarget(LavaParser.TargetContext ctx);
+	void exitVariableTarget(LavaParser.VariableTargetContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrayIndexTarget}
+	 * labeled alternative in {@link LavaParser#target}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayIndexTarget}
+	 * labeled alternative in {@link LavaParser#target}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#arrayInit}.
 	 * @param ctx the parse tree
@@ -529,18 +543,6 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCharType(LavaParser.CharTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code longType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void enterLongType(LavaParser.LongTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code longType}
-	 * labeled alternative in {@link LavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void exitLongType(LavaParser.LongTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code voidType}
 	 * labeled alternative in {@link LavaParser#primitiveType}.
