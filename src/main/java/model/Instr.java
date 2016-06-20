@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  * ILOC instruction
- * @author Arend Rensink
+ * @author Barend Pensink
  */
 public abstract class Instr implements Iterable<Op> {
 	/** The line number of this instruction. */
