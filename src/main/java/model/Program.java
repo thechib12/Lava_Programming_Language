@@ -37,9 +37,6 @@ public class Program {
 	public void addInstr(Instr instr) {
 		instr.setProgram(this);
 		instr.setLine(this.opList.size());
-		if (instr.hasLabel()) {
-			registerLabel(instr);
-		}
 		this.instrList.add(instr);
 		for (Op op : instr) {
 			this.opList.add(op);
@@ -205,8 +202,7 @@ public class Program {
 		int sourceSize = 0;
 		int targetSize = 0;
 		for (Instr i : getInstr()) {
-			labelSize = Math.max(labelSize, i.toLabelString().length());
-			if (i instanceof Op && ((Op) i).getOpCode() != OpCode.out) {
+			if (i instanceof Op) {
 				Op op = (Op) i;
 				sourceSize = Math.max(sourceSize, op.toSourceString().length());
 				targetSize = Math.max(targetSize, op.toTargetString().length());

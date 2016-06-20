@@ -4,7 +4,6 @@ import model.Operand.Type;
 
 import java.util.*;
 
-import static model.OpClaz.COMMENT;
 
 
 /**
@@ -24,37 +23,22 @@ public class Op extends Instr {
 	/** The optional comment for this operation. */
 	private String comment;
 
-	/** Constructs an unlabelled operation with a given opcode and arguments. */
-	public Op(OpCode opCode, Operand... args) {
-		this(opCode, args);
-	}
-
-	/** Constructs an unlabelled operation with a given opcode and arguments. */
-	public Op(OpCode opCode, List<Operand> args) {
-		this(opCode, args);
-	}
-
-	/** Constructs a labelled operation with a given opcode and arguments. */
-	public Op(OpCode opCode, Operand... args) {
-		this(opCode, Arrays.asList(args));
-	}
-
 	/** Constructs a labelled operation with a given opcode and arguments.
 	 * @throws IllegalArgumentException if one of the arguments
 	 * is not of the expected type 
 	 */
-	public Op(OpCode opCode, List<Operand> args)
+	public Op(OpCode opCode, Operand... args)
 			throws IllegalArgumentException {
-
+        this.args = Arrays.asList(args);
 		this.opCode = opCode;
 		int argsCount = opCode.getSigSize();
-		if (args.size() != argsCount) {
+		if (this.args.size() != argsCount) {
 			throw new IllegalArgumentException(String.format(
 					"Operation '%s' expects %d arguments but has %d", opCode,
-					argsCount, args.size()));
+					argsCount, this.args.size()));
 		}
 		for (int i = 0; i < argsCount; i++) {
-			Operand arg = args.get(i);
+			Operand arg = this.args.get(i);
 			Type expected = opCode.getSig().get(i);
 			if (arg.getType() != expected) {
 				throw new IllegalArgumentException(
@@ -63,7 +47,6 @@ public class Op extends Instr {
 								this.opCode, i, expected, arg.getType()));
 			}
 		}
-		this.args = new ArrayList<>(args);
 	}
 
 
@@ -88,7 +71,7 @@ public class Op extends Instr {
         return (Addr) this.args.get(i);
     }
 
-    /** Convenience method to retrieve a given argument as {@link Targ}. */
+    /** Convenience method to retrieve a given argument as {@link Target}. */
     public Target target(int i){
         return (Target) this.args.get(i);
     }
@@ -116,25 +99,22 @@ public class Op extends Instr {
 					.format("%-" + labelSize + "s", toLabelString()));
 		}
 		int arrowSize = 4;
-		if (getOpCode() == OpCode.out) {
-			int size = sourceSize + targetSize + arrowSize;
-			result.append(String.format("%-8s", getOpCode().name()));
-			result.append(String.format("%-" + size + "s ", toSourceString()));
-			result.append(toCommentString());
-		} else {
-			result.append(String.format("%-8s", getOpCode().name()));
-			if (sourceSize > 0) {
-				result.append(String.format("%-" + sourceSize + "s",
-						toSourceString()));
-			}
-			result.append(String
-					.format("%-" + arrowSize + "s", toArrowString()));
-			if (targetSize > 0) {
-				result.append(String.format("%-" + targetSize + "s ",
-						toTargetString()));
-			}
-			result.append(toCommentString());
-		}
+//		if (getOpCode() == OpCode.out) {
+//			int size = sourceSize + targetSize + arrowSize;
+//			result.append(String.format("%-8s", getOpCode().name()));
+//			result.append(String.format("%-" + size + "s ", toSourceString()));
+//			result.append(toCommentString());
+//		} else {
+        result.append(String.format("%-8s", getOpCode().name()));
+        if (sourceSize > 0) {
+            result.append(String.format("%-" + sourceSize + "s",
+                    toSourceString()));
+        }
+        if (targetSize > 0) {
+            result.append(String.format("%-" + targetSize + "s ",
+                    toTargetString()));
+        }
+//		}
 		result.append('\n');
 		return result.toString();
 	}
@@ -150,12 +130,10 @@ public class Op extends Instr {
 			}
 			if (getOpCode().getTargetCount() > 0) {
 				result.append(' ');
-				result.append(getClaz().getArrow());
 				result.append(' ');
 				result.append(toTargetString());
 			}
 			result.append(' ');
-		result.append(toCommentString());
 		return result.toString();
 	}
 
