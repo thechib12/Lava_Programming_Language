@@ -28,41 +28,16 @@ public enum OpCode {
 
 	// Immediate arithmetic
 	/** Addition of immediate value (reg0 + num1 => reg2). */
-	addI(2, REG, NUM, REG),
-	/** Subtraction of immediate value (reg0 - num1 => reg2). */
-	subI(2, REG, NUM, REG),
-	/** Subtraction from immediate value (num1 - reg0 => reg2). */
-	rsubI(2, REG, NUM, REG),
-	/** Multiplication by immediate value (reg0 * num1 => reg2). */
-	multI(2, REG, NUM, REG),
-	/** Division by immediate value (reg0 / num1 => reg2). */
-	divI(2, REG, NUM, REG),
-	/** Division of immediate value (num1 / reg0 => reg2). */
-	rdivI(2, REG, NUM, REG),
 
-	// Shifts (register + immediate)
-	/** Left-shift (reg0 << reg1 => reg2). */
-	lshift(2, REG, REG, REG),
-	/** Left-shift immediate value (reg0 << num1 => reg2). */
-	lshiftI(2, REG, NUM, REG),
-	/** Right-shift (reg0 >> reg1 => reg2). */
-	rshift(2, REG, REG, REG),
-	/** Right-shift immediate value (reg0 >> num1 => reg2). */
-	rshiftI(2, REG, NUM, REG),
 
 	// Other bitwise operations
 	/** Bitwise OR (reg0 | reg1 => reg2). */
 	or(2, REG, REG, REG),
-	/** Bitwise OR with immediate value (reg0 | num1 => reg2). */
-	orI(2, REG, NUM, REG),
 	/** Bitwise AND (reg0 & reg1 => reg2). */
 	and(2, REG, REG, REG),
-	/** Bitwise AND with immediate value (reg0 & num1 => reg2). */
-	andI(2, REG, NUM, REG),
 	/** Bitwise XOR (reg0 ^ reg1 => reg2). */
 	xor(2, REG, REG, REG),
 	/** Bitwise XOR with immediate value (reg0 ^ num1 => reg2). */
-	xorI(2, REG, NUM, REG),
 
 	// Memory operations
 	/** Load immediate (num0 => reg1). */

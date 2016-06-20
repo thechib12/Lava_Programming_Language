@@ -19,9 +19,10 @@ abstract public class Operand {
 		REG,
 		/** Numeric operand; class {@link Num} or {@link Symb}. */
 		NUM,
-		/** Label operand; class {@link Label}. */
-		LABEL,
-		/** Literal string operand; class {@link Str}. */
-		STR;
+		/** Target operand; class {@link Target}. */
+		TARGET,
+
+        AddrImmDI
+
 	}
 }
