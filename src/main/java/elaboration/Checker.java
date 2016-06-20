@@ -32,6 +32,7 @@ public class Checker extends LavaBaseListener {
     }
 
 
+
     @Override
     public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
         setEntry(ctx,getEntry(ctx.localVariableDeclaration()));
@@ -216,6 +217,7 @@ public class Checker extends LavaBaseListener {
             setType(ctx, type);
             setType(ctx.VARID(),type);
         }
+        setEntry(ctx,ctx.expr());
     }
 
     @Override
