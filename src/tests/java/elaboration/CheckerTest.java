@@ -20,21 +20,17 @@ public class CheckerTest {
             .instance();
 
 
-//    @Test
-//    public void testBasicTypes() throws IOException, ParseException {
-//        ParseTree tree = parse("basic");
-//        CheckerResult result = check(tree);
-//        ParseTree body = tree.getChild(3).getChild(1);
-//        ParseTree assX = body.getChild(1);
-//        assertEquals(Type.INT, result.getType(assX.getChild(0)));
-//        assertEquals(Type.CHAR, result.getType(assX.getChild(2)));
-//        assertEquals(Type.BOOL, result.getType(assX.getChild(0)));
-//        assertEquals(Type.StringType, result.getType(assX.getChild(2)));
-//        assertEquals(Type.INT, result.getType(assX.getChild(0)));
-//        assertEquals(Type.INT, result.getType(assX.getChild(2)));
-//        assertEquals(Type.INT, result.getType(assX.getChild(0)));
-//        assertEquals(Type.INT, result.getType(assX.getChild(2)));
-//    }
+    @Test
+    public void testBasicTypes() throws IOException, ParseException {
+        ParseTree tree = parse("basic");
+        CheckerResult result = check(tree);
+        ParseTree body = tree.getChild(2);
+        assertEquals(Type.INT, result.getType(body.getChild(0)));
+        assertEquals(Type.CHAR, result.getType(body.getChild(1)));
+        assertEquals(Type.BOOL, result.getType(body.getChild(2)));
+        assertEquals(Type.INT, result.getType(body.getChild(3)));
+        assertEquals(Type.CHAR, result.getType(body.getChild(4)));
+    }
 
 //    @Test
 //    public void testBasicEntries() throws IOException, ParseException {
