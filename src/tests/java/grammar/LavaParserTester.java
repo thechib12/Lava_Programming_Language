@@ -66,7 +66,7 @@ public class LavaParserTester {
     @Test
     public void statementTest() throws ParseException {
         String test1 = "if (hot) then { $x = 7; }  else { $x = 3; } ";
-        String test2 = "if (1 == $y) then { doSomething(); } else { pebble[] $array = [1,2,34]; }";
+        String test2 = "if (1 == $y) then { doSomething(); } else { rock[] $array = with size 3; $array =  [1,2,34]; }";
         String test3 = "if (hot) then { doThis(); }";
         String test4 = "while ($thisIsABool) { if ($anotherBool) then { /^\\ another comment here! \n $bool = ($a == $b); } else { rock $a = 12; }}";
         String test5 = "return ($a == $b);";
@@ -104,12 +104,11 @@ public class LavaParserTester {
         String test4 = "not hot and cold";
         String test5 = "1 < 3";
         String test6 = "1 <= (3+4)";
-        String test7 = "\"test\"";
+        String test7 = "doSomething($a)";
         String test8 = "(not not not not not hot)";
         String test9 = "[1,2,3]";
         String test10 = "$a";
         String test11 = "$a[3+3]";
-        String test12 = "doSomething($a)";
 
         parse(test1, false, "expr");
         parse(test2, false, "expr");
@@ -122,7 +121,6 @@ public class LavaParserTester {
         parse(test9, false, "expr");
         parse(test10, false, "expr");
         parse(test11, false, "expr");
-        parse(test12, false, "expr");
 
 
     }
