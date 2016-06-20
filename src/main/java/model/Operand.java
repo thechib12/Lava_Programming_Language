@@ -22,7 +22,7 @@ abstract public class Operand {
 		/** Target operand; class {@link Target}. */
 		TARGET,
 
-        ADRR
+        ADDR
 
 	}
 }
