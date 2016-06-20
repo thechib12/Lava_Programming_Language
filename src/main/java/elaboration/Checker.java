@@ -33,6 +33,11 @@ public class Checker extends LavaBaseListener {
 
 
     @Override
+    public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
+        setEntry(ctx,getEntry(ctx.localVariableDeclaration()));
+    }
+
+    @Override
     public void exitBlock(LavaParser.BlockContext ctx) {
         setEntry(ctx,getEntry(ctx.blockStatements()));
     }
