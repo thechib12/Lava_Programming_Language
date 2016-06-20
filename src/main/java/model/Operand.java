@@ -17,12 +17,12 @@ abstract public class Operand {
 	public static enum Type {
 		/** Register-type operand; class {@link Reg}. */
 		REG,
-		/** Numeric operand; class {@link Num} or {@link Symb}. */
+		/** Numeric operand; class {@link Num} or {@link }. */
 		NUM,
 		/** Target operand; class {@link Target}. */
 		TARGET,
 
-        AddrImmDI
+        ADRR
 
 	}
 }
