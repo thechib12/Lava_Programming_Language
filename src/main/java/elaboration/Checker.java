@@ -32,9 +32,25 @@ public class Checker extends LavaBaseListener {
     }
 
 
+    @Override
+    public void exitBlock(LavaParser.BlockContext ctx) {
+        setEntry(ctx,getEntry(ctx.blockStatements()));
+    }
 
+    @Override
+    public void exitBlockStatements(LavaParser.BlockStatementsContext ctx) {
+        setEntry(ctx, getEntry(ctx.blockStatement(0)));
 
+    }
 
+    @Override
+    public void exitBlockStatement(LavaParser.BlockStatementContext ctx) {
+        if (ctx.localVariableDeclarationStatement() != null){
+            setEntry(ctx,getEntry(ctx.localVariableDeclarationStatement()));
+        } else {
+            setEntry(ctx,getEntry(ctx.statement()));
+        }
+    }
 
     @Override
     public void exitIdExpr(LavaParser.IdExprContext ctx) {
@@ -166,15 +182,15 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitArrayDecl(LavaParser.ArrayDeclContext ctx) {
-        int size = Integer.parseInt(ctx.NUM().getSymbol().getText());
-        Type type = new Type.Array(0,size,getType(ctx.primitiveType()));
-        if (type.getKind() == TypeKind.VOID){
-            addError(ctx,"Void is not a type for an array");
-        } else {
-            this.scope.put(ctx.VARID().getText(),type);
-            setType(ctx, type);
-            setType(ctx.VARID(),type);
-        }
+//        int size = Integer.parseInt(ctx.NUM().getSymbol().getText());
+//        Type type = new Type.Array(0,size,getType(ctx.primitiveType()));
+//        if (type.getKind() == TypeKind.VOID){
+//            addError(ctx,"Void is not a type for an array");
+//        } else {
+//            this.scope.put(ctx.VARID().getText(),type);
+//            setType(ctx, type);
+//            setType(ctx.VARID(),type);
+//        }
 
     }
 
