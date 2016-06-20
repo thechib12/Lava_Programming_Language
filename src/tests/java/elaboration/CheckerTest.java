@@ -24,7 +24,7 @@ public class CheckerTest {
     public void testBasicTypes() throws IOException, ParseException {
         ParseTree tree = parse("basic");
         CheckerResult result = check(tree);
-        ParseTree body = tree.getChild(2);
+        ParseTree body = tree.getChild(3);
         assertEquals(Type.INT, result.getType(body.getChild(0)));
         assertEquals(Type.CHAR, result.getType(body.getChild(1)));
         assertEquals(Type.BOOL, result.getType(body.getChild(2)));
@@ -32,15 +32,15 @@ public class CheckerTest {
 //        assertEquals(Type.CHAR, result.getType(body.getChild(4)));
     }
 
-//    @Test
-//    public void testBasicEntries() throws IOException, ParseException {
-//        ParseTree tree = parse("basic");
-//        CheckerResult result = check(tree);
-//        ParseTree body = tree.getChild(3).getChild(1);
-//        ParseTree assX = body.getChild(1);
-//        assertEquals(assX.getChild(2), result.getEntry(assX));
-//        assertEquals(assX.getChild(2), result.getEntry(body));
-//    }
+    @Test
+    public void testBasicEntries() throws IOException, ParseException {
+        ParseTree tree = parse("basic");
+        CheckerResult result = check(tree);
+        ParseTree body = tree.getChild(3);
+        ParseTree assX = body.getChild(3).getChild(3).getChild(1).getChild(0).getChild(0);
+        assertEquals(assX.getChild(2), result.getEntry(assX));
+        assertEquals(assX.getChild(2), result.getEntry(body.getChild(3)));
+    }
 //
 //    @Test
 //    public void testBasicOffsets() throws IOException, ParseException {

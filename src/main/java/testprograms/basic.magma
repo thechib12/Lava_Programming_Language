@@ -5,4 +5,10 @@ chamber basic {
      temperature $c;
      /^\ rock[] $e = with size 8;
      /^\ mineral[] $f = with size 4;
+
+     erupt() {
+        $a = 0;
+
+     }
+
  }

@@ -31,10 +31,14 @@ public class Checker extends LavaBaseListener {
         return checkerResult;
     }
 
-
+    @Override
+    public void exitMain(LavaParser.MainContext ctx) {
+        setEntry(ctx,getEntry(ctx.block()));
+    }
 
     @Override
     public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
+        setType(ctx,getType(ctx.localVariableDeclaration()));
         setEntry(ctx,getEntry(ctx.localVariableDeclaration()));
     }
 
@@ -132,7 +136,7 @@ public class Checker extends LavaBaseListener {
             errors.add("Assignment type error");
         }
         this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
-        this.setEntry(ctx, ctx.expr());
+        this.setEntry(ctx, getEntry(ctx.expr()));
     }
 
     @Override
@@ -217,7 +221,12 @@ public class Checker extends LavaBaseListener {
             setType(ctx, type);
             setType(ctx.VARID(),type);
         }
-        setEntry(ctx,ctx.expr());
+        if (ctx.expr() != null){
+            setEntry(ctx,getEntry(ctx.expr()));
+        } else {
+            setEntry(ctx,ctx);
+        }
+
     }
 
     @Override
