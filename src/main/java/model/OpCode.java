@@ -2,98 +2,73 @@ package model;
 
 import java.util.*;
 
-import static model.OpClaz.COMMENT;
-import static model.OpClaz.CONTROL;
-import static model.OpClaz.NORMAL;
 import static model.Operand.Type.*;
 
-/**
- * Code defining the type of a (non-control flow) operation.
- * @author Arend Rensink
- */
 public enum OpCode {
 
-//	Add	Add
-//	Sub	Subtract
-//	Mul	Multiply
-//	Div*	Divide
-//	Mod*	Modulo
-//	Equal	Equals
-//	NEq	Not equals
-//	Gt	Greater than
-//	GtE	Greater than or equal to
-//	Lt	Lesser than
-//	LtE	Lesser than or equal to
-//	And	Bitwise AND
-//	Or	Bitwise OR
-//	Xor	Bitwise XOR
-//	LShift	Left shift
-//	RShift	Right shift
-	// Placeholder
 
 	//Operators
-	Add(REG, REG, REG),
-	Sub(REG, REG, REG),
-	Mul(REG, REG, REG),
-	Equal(REG, REG, REG),
-	NEQ(REG, REG, REG),
-	Gt(REG, REG, REG),
-	GtE(REG, REG, REG),
-	Lt(REG, REG, REG),
-	LtE(REG, REG, REG),
-	And(REG, REG, REG),
-	Or(REG, REG, REG),
-	Xor(REG, REG, REG),
-	LShift(REG, REG, REG),
-	RShift(REG, REG, REG),
+	Add(2, REG, REG, REG),
+	Sub(2, REG, REG, REG),
+	Mul(2, REG, REG, REG),
+	Equal(2, REG, REG, REG),
+	NEQ(2, REG, REG, REG),
+	Gt(2, REG, REG, REG),
+	GtE(2, REG, REG, REG),
+	Lt(2, REG, REG, REG),
+	LtE(2, REG, REG, REG),
+	And(2, REG, REG, REG),
+	Or(2, REG, REG, REG),
+	Xor(2, REG, REG, REG),
+	LShift(2, REG, REG, REG),
+	RShift(2, REG, REG, REG),
 
 	//load
-	LoadD(ADDR, REG),
-	LoadInd(ADDR, REG),
-	LoadIm(ADDR, REG),
-	StoreD(REG, ADDR),
-	StoreInd(REG, ADDR),
+	LoadD(1, ADDR, REG),
+	LoadInd(1, ADDR, REG),
+	LoadIm(1, ADDR, REG),
+	StoreD(1, REG, ADDR),
+	StoreInd(1, REG, ADDR),
 
-	Branch(REG, TARGET),
-	Jump(TARGET),
-	Push(REG),
-	Pop(REG),
-	Nop(),
-	EndProg(),
+	Branch(1, REG, TARGET),
+	Jump(0, TARGET),
+	Push(1, REG),
+	Pop(0, REG),
+	Nop(0),
+	EndProg(0),
 
 
 	//System instructions
-	ReadD(ADDR),
-	ReadInd(ADDR),
-	Receive(REG),
-	WriteD(REG, ADDR),
-	WriteInd(REG, ADDR),
-	TestAndSetD(ADDR),
-	TestAndSetInd(ADDR);
-
-	//const
-
-
-	/** The class that this opcode falls into. */
+	ReadD(1, ADDR),
+	ReadInd(1, ADDR),
+	Receive(0, REG),
+	WriteD(1, REG, ADDR),
+	WriteInd(1, REG, ADDR),
+	TestAndSetD(1, ADDR),
+	TestAndSetInd(1, ADDR);
 
 	/** The source operand types. */
-//	private final List<Operand.Type> sourceSig;
+	private final List<Operand.Type> sourceSig;
 //
 //	/** The target operand types. */
-//	private final List<Operand.Type> targetSig;
+private final List<Operand.Type> targetSig;
 //
 //	/** The operand types. */
-//	private final List<Operand.Type> sig;
-	private OpCode(Operand.Type... sig) {
-//		this.sourceSig = new ArrayList<>(sourceCount);
-//		for (int i = 0; i < sourceCount; i++) {
-//			this.sourceSig.add(sig[i]);
-//		}
-//		this.targetSig = new ArrayList<>(sig.length - sourceCount);
-//		for (int i = sourceCount; i < sig.length; i++) {
-//			this.targetSig.add(sig[i]);
-//		}
-//		this.sig = new ArrayList<>(Arrays.asList(sig));
+private final List<Operand.Type> sig;
+	private final int sourceCount;
+
+	private OpCode(int sourceCount, Operand.Type... sig) {
+		this.sourceCount = sourceCount;
+
+		this.sourceSig = new ArrayList<>(sourceCount);
+		for (int i = 0; i < sourceCount; i++) {
+			this.sourceSig.add(sig[i]);
+		}
+		this.targetSig = new ArrayList<>(sig.length - sourceCount);
+		for (int i = sourceCount; i < sig.length; i++) {
+			this.targetSig.add(sig[i]);
+		}
+		this.sig = new ArrayList<>(Arrays.asList(sig));
 	}
 
 	/** Returns the class of this opcode (normal or control flow). */
