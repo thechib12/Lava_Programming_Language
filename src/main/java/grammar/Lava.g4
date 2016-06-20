@@ -93,9 +93,11 @@ multOp: STAR | SLASH;
 
 plusOp : PLUS | MINUS;
 
+negaOp : NOT | MINUS;
+
 expr:
       expr DOT expr        #fieldExpr
-    | NOT expr            #notExpr
+    | negaOp expr            #notExpr
     | expr multOp expr    #multExpr
     | expr plusOp expr    #plusExpr
     | expr boolOp expr #boolExpr

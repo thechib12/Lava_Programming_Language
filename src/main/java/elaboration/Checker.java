@@ -21,6 +21,8 @@ public class Checker extends LavaBaseListener {
     private List<String> errors;
 
 
+
+
     public CheckerResult check(ParseTree tree){
         checkerResult = new CheckerResult();
         scope = new Scope();
@@ -30,50 +32,72 @@ public class Checker extends LavaBaseListener {
     }
 
 
-    @Override
-    public void exitArrayType(LavaParser.ArrayTypeContext ctx) {
-        super.exitArrayType(ctx);
-    }
 
-    @Override
-    public void exitType(LavaParser.TypeContext ctx) {
-        super.exitType(ctx);
-    }
+
+
 
     @Override
     public void exitIdExpr(LavaParser.IdExprContext ctx) {
-        super.exitIdExpr(ctx);
+        String id = ctx.VARID().getText();
+        Type type = this.scope.type(id);
+        if (type == null) {
+            addError(ctx, "Variable '%s' not declared", id);
+        } else {
+            setType(ctx, type);
+            setOffset(ctx, this.scope.offset(id));
+            setEntry(ctx, ctx);
+        }
     }
 
     @Override
     public void exitBoolExpr(LavaParser.BoolExprContext ctx) {
-        super.exitBoolExpr(ctx);
+        checkType(ctx.expr(0), Type.BOOL);
+        checkType(ctx.expr(1), Type.BOOL);
+        setType(ctx,Type.BOOL);
+        setEntry(ctx, ctx.expr(0));
     }
 
     @Override
     public void exitFalseExpr(LavaParser.FalseExprContext ctx) {
-        super.exitFalseExpr(ctx);
+        setType(ctx,Type.BOOL);
+        setEntry(ctx, ctx);
     }
 
     @Override
     public void exitCompExpr(LavaParser.CompExprContext ctx) {
-        super.exitCompExpr(ctx);
+        checkType(ctx.expr(0), Type.INT, Type.CHAR);
+        checkType(ctx.expr(1), Type.INT, Type.CHAR);
+        setType(ctx, Type.BOOL);
+        setEntry(ctx, getEntry(ctx.expr(0)));
     }
 
     @Override
     public void exitNotExpr(LavaParser.NotExprContext ctx) {
-        super.exitNotExpr(ctx);
+        Type type;
+        if (ctx.negaOp().NOT() != null) {
+            type = Type.BOOL;
+        } else {
+            assert ctx.negaOp().MINUS() != null;
+            type = Type.INT;
+        }
+        checkType(ctx.expr(), type);
+        setType(ctx, type);
+        setEntry(ctx, getEntry(ctx.expr()));
     }
 
     @Override
     public void exitParExpr(LavaParser.ParExprContext ctx) {
-        super.exitParExpr(ctx);
+        setType(ctx, getType(ctx.expr()));
+        setEntry(ctx, getEntry(ctx));
     }
 
     @Override
     public void exitPlusExpr(LavaParser.PlusExprContext ctx) {
-        Type type1 = getType(ctx.expr(0));
-        Type type2 = getType(ctx.expr(1));
+        checkType(ctx.expr(0), Type.INT);
+        checkType(ctx.expr(1), Type.INT);
+        setType(ctx, Type.INT);
+        setEntry(ctx, getEntry(ctx.expr(0)));
+
     }
 
     @Override
@@ -152,6 +176,22 @@ public class Checker extends LavaBaseListener {
             addError(node, "Expected type '%s' but found '%s'", expected,
                     actual);
         }
+    }
+
+    private void checkType(ParserRuleContext node, Type... expected) {
+        Type actual = getType(node);
+        if (actual == null) {
+            throw new IllegalArgumentException("Missing inferred type of "
+                    + node.getText());
+        }
+        for (Type type :
+             expected) {
+            if (!actual.equals(type)) {
+                addError(node, "Expected type '%s' but found '%s'", expected,
+                        actual);
+            }
+        }
+
     }
 
     private void addError(ParserRuleContext node, String message, Object... args) {

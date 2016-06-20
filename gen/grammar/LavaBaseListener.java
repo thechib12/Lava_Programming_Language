@@ -1,4 +1,4 @@
-// Generated from D:/UTwente/Module 8/Lava Programming Language/src/main/java/grammar\Lava.g4 by ANTLR 4.5.1
+// Generated from /Users/Rogier/Library/Mobile Documents/com~apple~CloudDocs/Universiteit Twente/Programming Paradigms/Compiler Construction/Lava_Programming_Language/src/main/java/grammar/Lava.g4 by ANTLR 4.5.3
 package grammar;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -335,6 +335,18 @@ public class LavaBaseListener implements LavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPlusOp(LavaParser.PlusOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNegaOp(LavaParser.NegaOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNegaOp(LavaParser.NegaOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

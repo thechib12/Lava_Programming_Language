@@ -1,4 +1,4 @@
-// Generated from D:/UTwente/Module 8/Lava Programming Language/src/main/java/grammar\Lava.g4 by ANTLR 4.5.1
+// Generated from /Users/Rogier/Library/Mobile Documents/com~apple~CloudDocs/Universiteit Twente/Programming Paradigms/Compiler Construction/Lava_Programming_Language/src/main/java/grammar/Lava.g4 by ANTLR 4.5.3
 package grammar;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -182,6 +182,12 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPlusOp(LavaParser.PlusOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LavaParser#negaOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNegaOp(LavaParser.NegaOpContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code charExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
