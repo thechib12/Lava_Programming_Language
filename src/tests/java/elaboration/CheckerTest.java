@@ -1,21 +1,13 @@
 package elaboration;
 
-import grammar.LavaLexer;
-import grammar.LavaParser;
-import grammar.LavaParserTester;
-import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
-import elaboration.ParseException;
 import org.junit.Test;
-import testutils.*;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
 
 /**
  * Created by Rogier on 16-06-16 in Enschede.
@@ -57,9 +49,9 @@ public class CheckerTest {
         ParseTree assA = body.getChild(0).getChild(0);
         ParseTree assB = body.getChild(1).getChild(0);
         ParseTree assC = body.getChild(2).getChild(0);
-        assertEquals(0, result.getOffset(assA.getChild(0)));
-        assertEquals(4, result.getOffset(assB.getChild(0)));
-        assertEquals(8, result.getOffset(assC.getChild(0)));
+        assertEquals(1, result.getOffset(assA.getChild(0)));
+        assertEquals(2, result.getOffset(assB.getChild(0)));
+        assertEquals(3, result.getOffset(assC.getChild(0)));
 
     }
 
