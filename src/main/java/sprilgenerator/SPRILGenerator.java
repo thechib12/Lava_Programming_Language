@@ -29,7 +29,32 @@ public class SPRILGenerator {
     public SPRILGenerator() {
 
 
-    }
+    }    //Load from address a1, store at a2
+//    LoadD(1, ADDR, REG),
+//    LoadInd(1, ADDR, REG),
+//    //Load Immediate value from address a1, store at a2
+//    LoadIm(1, ADDR, REG),
+//    StoreD(1, REG, ADDR),
+//    StoreInd(1, REG, ADDR),
+//
+//    Branch(1, REG, LABEL),
+//    BranchI(1, REG, TARGET),
+//    Jump(0, LABEL),
+//    JumpI(0,TARGET),
+//    Push(1, REG),
+//    Pop(0, REG),
+//    Nop(0),
+//    EndProg(0),
+//
+//
+//    //System instructions
+//    ReadD(1, ADDR),
+//    ReadInd(1, ADDR),
+//    Receive(0, REG),
+//    WriteD(1, REG, ADDR),
+//    WriteInd(1, REG, ADDR),
+//    TestAndSetD(1, ADDR),
+//    TestAndSetInd(1, ADDR);
 
     public void writeFile(String text) {
         try {
@@ -85,6 +110,12 @@ public class SPRILGenerator {
             if (Arrays.asList(computationsOpcodes).contains(opcode)) {
                 result.add("Compute " + opcode.toString() + " " + instr.reg(0).toString()
                         + " " + instr.reg(1).toString() + " " + instr.reg(2).toString());
+            } else {
+                switch (opcode) {
+                    case LoadD:
+                        result.add("Load " + "(" + instr.addr(0) + ") " + instr.reg(1).toString());
+
+                }
             }
 
         }
