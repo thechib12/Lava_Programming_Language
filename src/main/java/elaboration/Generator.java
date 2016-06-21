@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import sprilgenerator.SPRILGenerator;
 
 import java.io.File;
 import java.io.FileReader;
@@ -56,6 +55,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         this.labels = new ParseTreeProperty<>();
         this.regCount = 0;
         tree.accept(this);
+        prog.addInstr(emit(OpCode.EndProg));
         return this.prog;
     }
 
