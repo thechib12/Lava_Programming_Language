@@ -73,7 +73,10 @@ public class RegisterMinimizer {
             for (Integer i : lines) {
                 for (Operand operand : program.getOpList().get(i).getArgs()) {
                     if (operand.getType() == Operand.Type.REG) {
-                        ((Reg) operand).setName(registerMapping.get(reg));
+                        if (((Reg) operand).getName().equals(reg)) {
+                            ((Reg) operand).setName(registerMapping.get(reg));
+                        }
+
                     }
                 }
             }
@@ -87,7 +90,7 @@ public class RegisterMinimizer {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("./src/main/java/testprograms/basic.magma");
+        File file = new File("./src/main/java/testprograms/gauss.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));
