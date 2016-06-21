@@ -2,6 +2,7 @@ package elaboration;
 
 /**
  * Created by Rogier on 15-06-16 in Enschede.
+ * Enums of the types.
  */
 public enum TypeKind {
 

@@ -50,13 +50,21 @@ public enum OpCode {
 
 	/** The source operand types. */
 	private final List<Operand.Type> sourceSig;
-//
-//	/** The target operand types. */
-private final List<Operand.Type> targetSig;
-//
-//	/** The operand types. */
-private final List<Operand.Type> sig;
-	private final int sourceCount;
+
+    /**
+     * The target operand types.
+     */
+    private final List<Operand.Type> targetSig;
+
+    /**
+     * The operand types.
+     */
+    private final List<Operand.Type> sig;
+
+    /**
+     * Sourcecount
+     */
+    private final int sourceCount;
 
 	private OpCode(int sourceCount, Operand.Type... sig) {
 		this.sourceCount = sourceCount;

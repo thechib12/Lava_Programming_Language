@@ -2,10 +2,13 @@ package elaboration;
 
 /**
  * Created by Rogier on 15-06-16 in Enschede.
+ * This class contains all types supported by Lava.
  */
 
 
-/** Pascal data type. */
+/**
+ * Lava data type.
+ */
 abstract public class Type {
     /**
      * The singleton instance of the {@link Bool} type.
@@ -16,8 +19,14 @@ abstract public class Type {
      */
     public static final Type INT = new Int();
 
+    /**
+     * The singleton instance of the {@link Char} type.
+     */
     public static final Type CHAR = new Char();
 
+    /**
+     * The singleton instance of the {@link Void} type.
+     */
     public static final Type VOID = new Void();
 
     private final TypeKind kind;
@@ -42,7 +51,7 @@ abstract public class Type {
     abstract public int size();
 
     /**
-     * Representation of the Pascal Boolean type.
+     * Representation of the Lava Temperature (Boolean) type.
      */
     static public class Bool extends Type {
         public static final int BOOL_SIZE = 4;
@@ -64,7 +73,7 @@ abstract public class Type {
     }
 
     /**
-     * Representation of the Pascal Integer type.
+     * Representation of the Lava Rock (Integer) type.
      */
     static public class Int extends Type {
         public static final int INT_SIZE = 4;
@@ -171,6 +180,9 @@ abstract public class Type {
 //
 //    }
 
+    /**
+     * Representation of an Lava Mineral (Character) type.
+     */
     static public class Char extends Type {
         public static final int CHAR_SIZE = 2;
 

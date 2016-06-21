@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * Created by Rogier on 20-06-16 in Enschede.
+ * Generator for the Lava IR language. The Lava IR has already the form of the Sprill, but is not one-to-one.
+ * It misses some important keywords and uses unlimited registers. The Lava IR is saved into a {@link Program} object.
  */
 public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>false</code>. */
@@ -24,7 +26,9 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>true</code>. */
     public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue,1);
 
-
+    /**
+     * All labels belonging mapped to their correct nodes.
+     */
     private ParseTreeProperty<Label> labels;
 
     /** The outcome of the checker phase. */
@@ -37,6 +41,13 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** Association of expression and target nodes to registers. */
     private ParseTreeProperty<Reg> regs;
 
+    /**
+     * Generates Lava IR from the {@link CheckerResult} and {@link ParseTree}. Generating is done by visiting nodes
+     * in the parse tree.
+     * @param tree given parse tree from the {@link LavaParser}.
+     * @param checkResult the result of the type checking phase.
+     * @return a Program object containing all instructions in Lava IR language.
+     */
     public Program generate(ParseTree tree, CheckerResult checkResult) {
         this.prog = new Program();
         this.checkResult = checkResult;
