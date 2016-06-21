@@ -54,7 +54,7 @@ abstract public class Type {
      * Representation of the Lava Temperature (Boolean) type.
      */
     static public class Bool extends Type {
-        public static final int BOOL_SIZE = 4;
+        public static final int BOOL_SIZE = 1;
 
 
         private Bool() {
@@ -76,7 +76,7 @@ abstract public class Type {
      * Representation of the Lava Rock (Integer) type.
      */
     static public class Int extends Type {
-        public static final int INT_SIZE = 4;
+        public static final int INT_SIZE = 1;
 
         private Int() {
             super(TypeKind.INT);
@@ -84,7 +84,7 @@ abstract public class Type {
 
         @Override
         public int size() {
-            return 4;
+            return INT_SIZE;
         }
 
         @Override
@@ -184,7 +184,7 @@ abstract public class Type {
      * Representation of an Lava Mineral (Character) type.
      */
     static public class Char extends Type {
-        public static final int CHAR_SIZE = 2;
+        public static final int CHAR_SIZE = 1;
 
         private Char() {
             super(TypeKind.CHAR);
@@ -192,7 +192,7 @@ abstract public class Type {
 
         @Override
         public int size() {
-            return 4;
+            return CHAR_SIZE;
         }
 
         @Override

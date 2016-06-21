@@ -20,6 +20,7 @@ public class Scope {
     public Scope() {
         this.types = new LinkedHashMap<>();
         this.offsets = new LinkedHashMap<>();
+        size = 1;
     }
 
     /** Tests if a given identifier is declared in this scope. */

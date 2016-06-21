@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,46 @@ public class SPRILGenerator {
 
     public SPRILGenerator() {
 
+
+    }
+
+    public void writeFile(String text) {
+        try {
+            FileWriter writer = new FileWriter("./src/main/java/sprockell/Program.hs");
+            writer.write(text);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String formatSpril(List<String> instruction) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("module Program where\n" +
+                "\n" +
+                "import BasicFunctions\n" +
+                "import HardwareTypes\n" +
+                "import Sprockell\n" +
+                "import System\n" +
+                "import Simulation\n" +
+                "\n" +
+                "prog :: [Instruction]\n");
+
+        builder.append("prog = [\n");
+        for (String instr : instruction) {
+            if (instruction.indexOf(instr) == instruction.size() - 1) {
+                builder.append("          " + instr + " \n");
+            } else {
+                builder.append("          " + instr + ", \n");
+            }
+
+        }
+        builder.append("       ] \n");
+
+        builder.append("demoTest = sysTest [prog]");
+
+
+        return builder.toString();
 
     }
 
@@ -47,9 +88,8 @@ public class SPRILGenerator {
             }
 
         }
-        System.out.println(result);
 
-        return null;
+        return result;
     }
 
 
@@ -75,7 +115,8 @@ public class SPRILGenerator {
         RegisterMinimizer minimizer = new RegisterMinimizer();
         Program program2 = minimizer.minimizeRegisters(program);
         SPRILGenerator sprilgen = new SPRILGenerator();
-        sprilgen.generateSpril(program);
+        List<String> spril = sprilgen.generateSpril(program2);
+        sprilgen.writeFile(sprilgen.formatSpril(spril));
 
     }
 }
