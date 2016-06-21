@@ -73,7 +73,7 @@ public class SPRILGenerator {
         ParseTree tree = parser.program();
         Program program = generator.generate(tree, checker.check(tree));
         RegisterMinimizer minimizer = new RegisterMinimizer();
-//        Program program2 = minimizer.minimizeRegisters(program);
+        Program program2 = minimizer.minimizeRegisters(program);
         SPRILGenerator sprilgen = new SPRILGenerator();
         sprilgen.generateSpril(program);
 
