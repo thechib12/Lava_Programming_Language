@@ -4,7 +4,7 @@ package model;
  * @author Arend Rensink
  */
 public class Reg extends Operand {
-	private final String name;
+    private String name;
 
 	/** Constructs an operand with a given name. */
 	public Reg(String name) {
@@ -17,6 +17,10 @@ public class Reg extends Operand {
 	public String getName() {
 		return this.name;
 	}
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 	@Override
 	public String toString() {
