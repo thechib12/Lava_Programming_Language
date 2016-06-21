@@ -7,8 +7,8 @@ import java.util.*;
 
 
 /**
- * ILOC operation
- * @author Arend Rensink
+ * Lava operation
+ * @author Rogier Monshouwer
  */
 public class Op extends Instr {
 	/** Comment separator. */

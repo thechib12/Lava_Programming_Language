@@ -10,6 +10,24 @@ regB          = 3    :: Int
 regC          = 4    :: Int
 regD          = 5    :: Int
 regE          = 6    :: Int
+regF          = 7    :: Int
+regG          = 8    :: Int
+regH          = 9    :: Int
+regI          = 10    :: Int
+regJ          = 11    :: Int
+regK          = 12    :: Int
+regL          = 13    :: Int
+regM          = 14    :: Int
+regN          = 15    :: Int
+regO          = 16    :: Int
+regP          = 17    :: Int
+regQ          = 18    :: Int
+regR          = 19    :: Int
+regS          = 20    :: Int
+
+
+
+
 
 intBool True  = 1                                               -- Bool-to-Int
 intBool False = 0
