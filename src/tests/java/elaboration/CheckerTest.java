@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 /**
@@ -56,39 +57,107 @@ public class CheckerTest {
     ParseTree assA = body.getChild(0).getChild(0);
     ParseTree assB = body.getChild(1).getChild(0);
     ParseTree assC = body.getChild(2).getChild(0);
-        assertEquals(0, result.getOffset(assA.getChild(0)));
+    assertEquals(0, result.getOffset(assA.getChild(0)));
     assertEquals(4, result.getOffset(assB.getChild(0)));
-    assertEquals(6, result.getOffset(assC.getChild(0)));
+    assertEquals(8, result.getOffset(assC.getChild(0)));
 
     }
 
     @Test
     public void checkProgram() throws IOException, ParseException {
+        String program1 = "chamber test1 { mineral $a; " +
+                "erupt(){" +
+                "$a = 'a'; " +
+                "}" +
+                "}";
+        String program2 = "chamber test2 { rock $a; " +
+                "erupt(){" +
+                "$a = 2; " +
+                "}" +
+                "}";
+        String program3 = "chamber test3 { rock $a; temperature $b; mineral $c;" +
+                "erupt(){" +
+                "$a = ( 2101 +3 ); " +
+                "$b = (hot and cold);" +
+                "$c = 'a'; " +
+                "}" +
+                "}";
+        String program4 = "chamber test4 { rock $a; mineral $b; rock $c;" +
+                "erupt(){" +
+                "$a = 100;" +
+                "$b = 'a';  " +
+                "$c = 1021;" +
+                "$c = (($a - 3) + 5);" +
+                "}" +
+                "}";
+        String program5 = "chamber test4 { rock $a; rock $b; rock $c;" +
+                "erupt(){" +
+                "$a = 100;" +
+                "$b = 5;  " +
+                "$c = 1;" +
+                "$c = ((($a +3)-$b)+$c);" +
+                "$b = (($c * 500) / 3); " +
+                "}" +
+                "}";
+        check(parseString(program1));
+        check(parseString(program2));
+        check(parseString(program3));
+        check(parseString(program4));
+        check(parseString(program5));
+    }
+
+    @Test
+    public void testFailures() throws IOException, ParseException {
         String program1 = "chamber test1 { rock $a; " +
                 "erupt(){" +
                 "$a = 'a'; " +
                 "}" +
                 "}";
-        String program2 = "chamber test1 { rock $a; " +
+        String program2 = "chamber test1 { rock $a; mineral $b; " +
                 "erupt(){" +
-                "$a = 2; " +
+                "$a = 1;" +
+                "$b = 'a'; " +
+                "$a = $b;" +
                 "}" +
                 "}";
-//        check(parseString(program1));
-        checkFail("basic");
-        check(parseString(program2));
+
+        String program3 = "chamber test3 { rock $a; temperature $b; mineral $c;" +
+                "erupt(){" +
+                "$a = ( 2101 +3 ); " +
+                "$b = (hot and cold);" +
+                "$c = ($a + $b); " +
+                "}" +
+                "}";
+        String program4 = "chamber test4 { rock $a; mineral $b; rock $c;" +
+                "erupt(){" +
+                "$a = 1;" +
+                "$b = 'a';  " +
+                "$c = 3;" +
+                "$c = ((($a - 3) + 5) and hot);" +
+                "}" +
+                "}";
+        String program5 = "chamber test4 { rock $a; rock $b; rock $c;" +
+                "erupt(){" +
+                "$a = 100;" +
+                "$b = 5;  " +
+                "$c = 1;" +
+                "$c = ((($a +3)-$b)+$c);" +
+                "$b = (($c * 500) / 3) + 'a'; " +
+                "}" +
+                "}";
+        checkFail(parseString(program1));
+        checkFail(parseString(program2));
+        checkFail(parseString(program3));
+        checkFail(parseString(program4));
+        checkFail(parseString(program5));
     }
 
 
+    private void checkFail(ParseTree tree) throws ParseException {
+        CheckerResult result = this.compiler.check(tree);
+        assertNotEquals(0, this.compiler.getChecker().getErrors().size());
 
 
-    private void checkFail(String filename) throws IOException {
-        try {
-            check(parse(filename));
-            fail(filename + " shouldn't check but did");
-        } catch (ParseException exc) {
-            // this is the expected behaviour
-        }
     }
 
     private ParseTree parse(String filename) throws IOException, ParseException {

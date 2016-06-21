@@ -116,7 +116,7 @@ public class Checker extends LavaBaseListener {
     @Override
     public void exitParExpr(LavaParser.ParExprContext ctx) {
         setType(ctx, getType(ctx.expr()));
-        setEntry(ctx, getEntry(ctx));
+        setEntry(ctx, getEntry(ctx.expr()));
     }
 
     @Override
