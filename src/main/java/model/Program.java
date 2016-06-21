@@ -3,7 +3,6 @@ package model;
 
 import java.util.*;
 
-import static model.Num.NumKind.SYMB;
 import static model.Operand.Type.REG;
 
 /** ILOC program.
@@ -21,13 +20,11 @@ public class Program {
 	 */
 	/** (Partial) mapping from symbolic constants used in the program
 	 * to corresponding numeric values. */
-	private final Map<Num, Integer> symbMap;
 	private final Map<Label, Integer> labelMap;
 
 	/** Creates a program with an initially empty instruction list. */
 	public Program() {
 		this.opList = new ArrayList<>();
-		this.symbMap = new LinkedHashMap<>();
         this.labelMap = new LinkedHashMap<>();
 	}
 
@@ -78,34 +75,8 @@ public class Program {
 	}
 
 
-	/** Assigns a fixed numeric value to a symbolic constant.
-	 * It is an error to assign to the same constant twice.
-	 * @param symb constant name, without preceding '@'
-	 */
-	public void setSymb(Num symb, int value) {
-		if (this.symbMap.containsKey(symb)) {
-			throw new IllegalArgumentException("Constant '" + symb
-					+ "' already assigned");
-		}
-		this.symbMap.put(symb, value);
-	}
 
-	/** 
-	 * Returns the value with which a given symbol has been
-	 * initialised, if any.
-	 */
-	public Integer getSymb(Num symb) {
-		return this.symbMap.get(symb);
-	}
 
-	/** 
-	 * Returns the value with which a given named symbol has been
-	 * initialised, if any.
-	 * @param name name of the symbol, without '@'-prefix
-	 */
-	public Integer getSymb(String name) {
-		return getSymb(new Num(name));
-	}
 
 	/**
 	 * Checks for internal consistency, in particular whether
@@ -158,39 +129,11 @@ public class Program {
 		return result;
 	}
 
-	/**
-	 * Returns a mapping from (symbolic) variables to line numbers
-	 * in which they appear.
-	 */
-	public Map<String, Set<Integer>> getSymbLines() {
-		Map<String, Set<Integer>> result = new LinkedHashMap<>();
-		for (Op op : this.opList) {
-			for (Operand opnd : op.getArgs()) {
-				if (!(opnd instanceof Num)) {
-					continue;
-				}
-				if (((Num) opnd).getKind() != SYMB) {
-					continue;
-				}
-				String name = ((Num) opnd).getName();
-				Set<Integer> lines = result.get(name);
-				if (lines == null) {
-					result.put(name, lines = new LinkedHashSet<>());
-				}
-				lines.add(op.getLine());
-			}
-		}
-		return result;
-	}
 
 	/** Returns a line-by-line printout of this program. */
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		for (Map.Entry<Num, Integer> symbEntry : this.symbMap.entrySet()) {
-			result.append(String.format("%s <- %d%n", symbEntry.getKey()
-					.getName(), symbEntry.getValue()));
-		}
 		for (Instr instr : getOpList()) {
 			result.append(instr.toString());
 			result.append('\n');
@@ -228,13 +171,6 @@ public class Program {
 		StringBuilder result = new StringBuilder();
 		// first print the symbolic declaration map
 		int idSize = 0;
-		for (Num symb : this.symbMap.keySet()) {
-			idSize = Math.max(idSize, symb.getName().length());
-		}
-		for (Map.Entry<Num, Integer> symbEntry : this.symbMap.entrySet()) {
-			result.append(String.format("%-" + idSize + "s <- %d%n", symbEntry
-					.getKey().getName(), symbEntry.getValue()));
-		}
 		if (idSize > 0) {
 			result.append('\n');
 		}

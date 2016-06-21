@@ -220,6 +220,7 @@ public class Checker extends LavaBaseListener {
             addError(ctx,"Void is not a type for a variable");
         } else {
             this.scope.put(ctx.VARID().getText(),type);
+            setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
             setType(ctx, type);
             setType(ctx.VARID(),type);
         }
