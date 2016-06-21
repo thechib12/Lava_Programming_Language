@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>false</code>. */
-    public final static Addr FALSE_VALUE = new Addr(0,true);
+    public final static Addr FALSE_VALUE = new Addr(Addr.AddrType.ImmValue,0);
     /** The representation of the boolean value <code>true</code>. */
-    public final static Addr TRUE_VALUE = new Addr(-1,true);
+    public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue,1);
 
 
     private ParseTreeProperty<Label> labels;
@@ -119,7 +119,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         }
         labels.put(ctx.expr(),label);
         visit(ctx.expr());
-        return emit( OpCode.StoreD, reg(ctx.expr()),new Addr(checkResult.getOffset(ctx),false));
+        return emit( OpCode.StoreD, reg(ctx.expr()),new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)));
     }
 
     @Override
@@ -143,7 +143,6 @@ public class Generator extends LavaBaseVisitor<Op>{
             label = labels.get(ctx);
         }
         labels.put(ctx.localVariableDeclaration(),label);
-        visit(ctx.localVariableDeclaration());
 
         return super.visitLocalVariableDeclarationStatement(ctx);
     }
@@ -157,11 +156,10 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (ctx.expr() != null){
             labels.put(ctx.expr(),label);
             visit(ctx.expr());
-            return emit( OpCode.StoreD, reg(ctx.expr()),new Addr(checkResult.getOffset(ctx),false));
+            return emit( OpCode.StoreD, reg(ctx.expr()),new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)));
         } else {
-
-            emit(label,OpCode.LoadIm, new Addr(0,true),reg(ctx));
-            return emit( OpCode.StoreD, reg(ctx),new Addr(checkResult.getOffset(ctx),false));
+            emit(label,OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue,0),reg(ctx));
+            return emit( OpCode.StoreD, reg(ctx),new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)));
         }
 
 
@@ -322,11 +320,11 @@ public class Generator extends LavaBaseVisitor<Op>{
         visit(ctx.expr());
         Op operation;
         if (ctx.negaOp().MINUS() != null){
-            emit(OpCode.LoadIm,new Addr(0,true),reg(ctx));
+            emit(OpCode.LoadIm,new Addr(Addr.AddrType.ImmValue,0),reg(ctx));
             operation = emit(OpCode.Sub,reg(ctx),reg(ctx.expr()),reg(ctx));
         } else {
-            emit(OpCode.LoadIm,new Addr(0,true),reg(ctx));
-            operation = emit(OpCode.Equal,reg(ctx.expr()),reg(ctx),reg(ctx));
+            emit(OpCode.LoadIm,new Addr(Addr.AddrType.ImmValue,1),reg(ctx));
+            operation = emit(OpCode.Sub,reg(ctx),reg(ctx.expr()),reg(ctx));
         }
         return operation;
     }
@@ -338,7 +336,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (hasLabel(ctx)){
             label = labels.get(ctx);
         }
-        return emit(label,OpCode.LoadIm,new Addr(Character.getNumericValue(ctx.CHARACTER().getText().charAt(1)),true),reg(ctx));
+        return emit(label,OpCode.LoadIm,new Addr(Addr.AddrType.ImmValue,Character.getNumericValue(ctx.CHARACTER().getText().charAt(1))),reg(ctx));
     }
 
     @Override
@@ -356,7 +354,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (hasLabel(ctx)){
             label = labels.get(ctx);
         }
-        return emit(label,OpCode.LoadIm,new Addr(Integer.parseInt(ctx.NUM().getText()),true),reg(ctx));
+        return emit(label,OpCode.LoadIm,new Addr(Addr.AddrType.ImmValue,Integer.parseInt(ctx.NUM().getText())),reg(ctx));
     }
 
     @Override
@@ -374,7 +372,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (hasLabel(ctx)){
             label = labels.get(ctx);
         }
-        return emit(label,OpCode.LoadD,new Addr(checkResult.getOffset(ctx),false),reg(ctx));
+        return emit(label,OpCode.LoadD,new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)),reg(ctx));
     }
 
     private boolean hasLabel(ParseTree node){
@@ -442,7 +440,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("./src/main/java/testprograms/basic.magma");
+        File file = new File("./src/main/java/testprograms/gauss.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));

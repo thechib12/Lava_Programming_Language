@@ -12,19 +12,30 @@ import java.util.List;
 
 /**
  * Created by Rogier + Christiaan on 16-06-16 in Enschede.
+ * Type checker, control flow creator and variable offset generator.
  */
 public class Checker extends LavaBaseListener {
+    /* Result object to store all the data from this checker.*/
     private CheckerResult checkerResult;
 
+    /* The current scope of the the type checker, a single scope at this time.*/
     private Scope scope;
 
+    /* The list of errors that occured while checking.*/
     private List<String> errors;
 
-
+    /**
+     * @return the list of all errors.
+     */
     public List<String> getErrors() {
         return errors;
     }
 
+    /**
+     * This method walks the parse tree and checks the types of the program.
+     * @param tree input {@link ParseTree} of the Lava Program.
+     * @return a {@link CheckerResult} object which stores all revelant data of the checking phase.
+     */
     public CheckerResult check(ParseTree tree){
         checkerResult = new CheckerResult();
         scope = new Scope();
@@ -232,19 +243,6 @@ public class Checker extends LavaBaseListener {
 
     }
 
-    @Override
-    public void exitArrayDecl(LavaParser.ArrayDeclContext ctx) {
-//        int size = Integer.parseInt(ctx.NUM().getSymbol().getText());
-//        Type type = new Type.Array(0,size,getType(ctx.primitiveType()));
-//        if (type.getKind() == TypeKind.VOID){
-//            addError(ctx,"Void is not a type for an array");
-//        } else {
-//            this.scope.put(ctx.VARID().getText(),type);
-//            setType(ctx, type);
-//            setType(ctx.VARID(),type);
-//        }
-
-    }
 
     @Override
     public void exitIntType(LavaParser.IntTypeContext ctx) {
@@ -268,6 +266,12 @@ public class Checker extends LavaBaseListener {
         setType(ctx,Type.VOID);
     }
 
+
+    /**
+     * Checks this node for its correct type and throws errors if its type is not correct.
+     * @param node current node in the parse tree.
+     * @param expected type that is expected
+     */
     private void checkType(ParserRuleContext node, Type expected) {
         Type actual = getType(node);
         if (actual == null) {
@@ -280,22 +284,35 @@ public class Checker extends LavaBaseListener {
         }
     }
 
+    /**
+     * Variation to the above method. This method checks if the node belongs to any of the expected types.
+     * @param node current node in the parse tree.
+     * @param expected types that should be expected
+     */
     private void checkType(ParserRuleContext node, Type... expected) {
         Type actual = getType(node);
         if (actual == null) {
             throw new IllegalArgumentException("Missing inferred type of "
                     + node.getText());
         }
-        for (Type type :
-             expected) {
-            if (!actual.equals(type)) {
-                addError(node, "Expected type '%s' but found '%s'", expected,
-                        actual);
+        boolean matchedType = false;
+        for (Type type : expected) {
+            if (actual.equals(type)) {
+                matchedType = true;
             }
         }
-
+        if (!matchedType){
+            addError(node, "Expected type '%s' but found '%s'", expected,
+                    actual);
+        }
     }
 
+    /**
+     * This method formats the error given and adds the error to the list of errors.
+     * @param node current node in the parse tree.
+     * @param message the input error message.
+     * @param args optional arguments.
+     */
     private void addError(ParserRuleContext node, String message, Object... args) {
         int line = node.getStart().getLine();
         int column = node.getStart().getCharPositionInLine();
@@ -304,18 +321,38 @@ public class Checker extends LavaBaseListener {
         this.errors.add(message);
     }
 
+    /**
+     * Sets the offset of this node.
+     * @param node current node.
+     * @param offset memory offset of this node.
+     */
     private void setOffset(ParseTree node, Integer offset) {
         this.checkerResult.setOffset(node, offset);
     }
 
+    /**
+     * Sets the type for this node.
+     * @param node current node.
+     * @param type type of this node.
+     */
     private void setType(ParseTree node, Type type) {
         this.checkerResult.setType(node, type);
     }
 
+    /**
+     *
+     * @param node current node.
+     * @return the type of this node.
+     */
     private Type getType(ParseTree node) {
         return this.checkerResult.getType(node);
     }
 
+    /**
+     * Sets the entry for this node.
+     * @param node current node in the parse tree.
+     * @param entry the node the control flow graph should point to.
+     */
     private void setEntry(ParseTree node, ParserRuleContext entry) {
         if (entry == null) {
             throw new IllegalArgumentException("Null flow graph entry");
@@ -323,6 +360,11 @@ public class Checker extends LavaBaseListener {
         this.checkerResult.setEntry(node, entry);
     }
 
+    /**
+     *
+     * @param node input node.
+     * @return a node which should be the entry of the control flow graph for this node.
+     */
     private ParserRuleContext getEntry(ParseTree node) {
         return this.checkerResult.getEntry(node);
     }
