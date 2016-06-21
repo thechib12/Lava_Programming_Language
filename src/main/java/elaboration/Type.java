@@ -180,7 +180,7 @@ abstract public class Type {
 
         @Override
         public int size() {
-            return 2;
+            return 4;
         }
 
         @Override

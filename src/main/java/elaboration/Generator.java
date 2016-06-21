@@ -80,13 +80,17 @@ public class Generator extends LavaBaseVisitor<Op>{
         }
         labels.put(ctx.expr(0), label);
         int statCount = ctx.block().size();
+        int elseifCount = ctx.IF().size()-1;
+        boolean hasElse = ctx.ELSE() != null && ctx.ELSE().size() == ctx.IF().size();
+
+
         List<Label> ifLabels = new ArrayList<>();
-        for (int i = 1; i < statCount - 1; i++) {
+        for (int i = 1; i <= elseifCount; i++) {
             Label label1 = createLabel(ctx.expr(i),"elseif");
             ifLabels.add(label1);
             labels.put(ctx.block(i),label1);
         }
-        if (ctx.ELSE() != null && ctx.ELSE().size() == ctx.IF().size()){
+        if (hasElse){
             Label label1 = createLabel(ctx.block(statCount-1),"else");
             labels.put(ctx.block(statCount-1),label1);
         }
@@ -96,6 +100,31 @@ public class Generator extends LavaBaseVisitor<Op>{
             emit(OpCode.Branch,reg(ctx.expr(0)), label3);
         } else {
             visit(ctx.expr(0));
+            emit(OpCode.Branch,reg(ctx.expr(0)), ifLabels.get(0));
+            visit(ctx.block(0));
+            emit(OpCode.Jump,label3);
+            if (hasElse){
+                for (int i = 1; i <= elseifCount; i++) {
+                    visit(ctx.expr(i));
+                    emit(OpCode.Branch, reg(ctx.expr(i)),ifLabels.get(i));
+                    visit(ctx.block(i));
+                    emit(OpCode.Jump);
+                }
+
+                visit(ctx.block(statCount-1));
+            } else {
+                for (int i = 1; i < elseifCount; i++) {
+                    visit(ctx.expr(i));
+                    emit(OpCode.Branch, reg(ctx.expr(i)), ifLabels.get(i));
+                    visit(ctx.block(i));
+                    emit(OpCode.Jump);
+                }
+                visit(ctx.expr(elseifCount));
+                emit(OpCode.Branch, reg(ctx.expr(elseifCount)), label3);
+                visit(ctx.block(elseifCount));
+                emit(OpCode.Jump);
+
+            }
 
 
         }
@@ -108,12 +137,99 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     @Override
     public Op visitAssignStat(LavaParser.AssignStatContext ctx) {
-        return super.visitAssignStat(ctx);
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(),label);
+        visit(ctx.expr());
+        return emit( OpCode.StoreD, reg(ctx.expr()),new Addr(checkResult.getOffset(ctx),false));
     }
 
     @Override
     public Op visitWhileStat(LavaParser.WhileStatContext ctx) {
-        return super.visitWhileStat(ctx);
+        Label label1 = createLabel(ctx,"while");
+        labels.put(ctx.expr(),label1);
+        Label label2 = createLabel(ctx, "body");
+        labels.put(ctx.block(),label2);
+        Label label3 = createLabel(ctx,"endwhile");
+        visit(ctx.expr());
+        emit(OpCode.Branch,reg(ctx.expr()),label3);
+        visit(ctx.block());
+        emit(OpCode.Jump,label1);
+        return emit(label3,OpCode.Nop);
+    }
+
+    @Override
+    public Op visitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.localVariableDeclaration(),label);
+        visit(ctx.localVariableDeclaration());
+
+        return super.visitLocalVariableDeclarationStatement(ctx);
+    }
+
+    @Override
+    public Op visitPrimDecl(LavaParser.PrimDeclContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        if (ctx.expr() != null){
+            labels.put(ctx.expr(),label);
+            visit(ctx.expr());
+            return emit( OpCode.StoreD, reg(ctx.expr()),new Addr(checkResult.getOffset(ctx),false));
+        } else {
+
+            emit(label,OpCode.LoadIm, new Addr(0,true),reg(ctx));
+            return emit( OpCode.StoreD, reg(ctx),new Addr(checkResult.getOffset(ctx),false));
+        }
+
+
+    }
+
+    @Override
+    public Op visitBlock(LavaParser.BlockContext ctx) {
+        if (hasLabel(ctx)){
+            labels.put(ctx.blockStatements(),labels.get(ctx));
+        }
+        return super.visitBlock(ctx);
+    }
+
+    @Override
+    public Op visitBlockStatements(LavaParser.BlockStatementsContext ctx) {
+        if (hasLabel(ctx)){
+            labels.put(ctx.blockStatement(0),labels.get(ctx));
+        }
+
+        return super.visitBlockStatements(ctx);
+    }
+
+    @Override
+    public Op visitBlockStatement(LavaParser.BlockStatementContext ctx) {
+        if (hasLabel(ctx)){
+            labels.put(ctx.getChild(0),labels.get(ctx));
+        }
+
+        return super.visitBlockStatement(ctx);
+    }
+
+    @Override
+    public Op visitBody(LavaParser.BodyContext ctx) {
+        return super.visitBody(ctx);
+    }
+
+    @Override
+    public Op visitProgram(LavaParser.ProgramContext ctx) {
+        return super.visitProgram(ctx);
+    }
+
+    @Override
+    public Op visitMain(LavaParser.MainContext ctx) {
+        return super.visitMain(ctx);
     }
 
     @Override
@@ -234,6 +350,52 @@ public class Generator extends LavaBaseVisitor<Op>{
             operation = emit(OpCode.Equal,reg(ctx.expr()),reg(ctx),reg(ctx));
         }
         return operation;
+    }
+
+
+    @Override
+    public Op visitCharExpr(LavaParser.CharExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        return emit(label,OpCode.LoadIm,new Addr(Character.getNumericValue(ctx.CHARACTER().getText().charAt(1)),true),reg(ctx));
+    }
+
+    @Override
+    public Op visitTrueExpr(LavaParser.TrueExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        return emit(label,OpCode.LoadIm,TRUE_VALUE,reg(ctx));
+    }
+
+    @Override
+    public Op visitNumExpr(LavaParser.NumExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        return emit(label,OpCode.LoadIm,new Addr(Integer.parseInt(ctx.NUM().getText()),true),reg(ctx));
+    }
+
+    @Override
+    public Op visitFalseExpr(LavaParser.FalseExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        return emit(label,OpCode.LoadIm,FALSE_VALUE,reg(ctx));
+    }
+
+    @Override
+    public Op visitIdExpr(LavaParser.IdExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)){
+            label = labels.get(ctx);
+        }
+        return emit(label,OpCode.LoadD,new Addr(checkResult.getOffset(ctx),false),reg(ctx));
     }
 
     private boolean hasLabel(ParseTree node){
