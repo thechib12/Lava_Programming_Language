@@ -85,32 +85,40 @@ public class Generator extends LavaBaseVisitor<Op>{
         Label label3 = createLabel(ctx,"endif");
         if (statCount == 1){
             visit(ctx.expr(0));
-            emit(OpCode.Branch,reg(ctx.expr(0)), label3);
+            emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+            emit(OpCode.Sub, reg(ctx), reg(ctx.expr(0)), reg(ctx));
+            emit(OpCode.Branch, reg(ctx), label3);
         } else {
             visit(ctx.expr(0));
+            emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+            emit(OpCode.Sub, reg(ctx), reg(ctx.expr(0)), reg(ctx.expr(0)));
             emit(OpCode.Branch,reg(ctx.expr(0)), ifLabels.get(0));
             visit(ctx.block(0));
             emit(OpCode.Jump,label3);
             if (hasElse){
                 for (int i = 1; i <= elseifCount; i++) {
                     visit(ctx.expr(i));
+                    emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+                    emit(OpCode.Sub, reg(ctx), reg(ctx.expr(i)), reg(ctx.expr(i)));
                     emit(OpCode.Branch, reg(ctx.expr(i)),ifLabels.get(i));
                     visit(ctx.block(i));
-                    emit(OpCode.Jump);
+                    emit(OpCode.Jump, label3);
                 }
 
                 visit(ctx.block(statCount-1));
             } else {
                 for (int i = 1; i < elseifCount; i++) {
                     visit(ctx.expr(i));
+                    emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+                    emit(OpCode.Sub, reg(ctx), reg(ctx.expr(i)), reg(ctx.expr(i)));
                     emit(OpCode.Branch, reg(ctx.expr(i)), ifLabels.get(i));
                     visit(ctx.block(i));
-                    emit(OpCode.Jump);
+                    emit(OpCode.Jump, label3);
                 }
                 visit(ctx.expr(elseifCount));
                 emit(OpCode.Branch, reg(ctx.expr(elseifCount)), label3);
                 visit(ctx.block(elseifCount));
-                emit(OpCode.Jump);
+                emit(OpCode.Jump, label3);
 
             }
 
@@ -142,7 +150,9 @@ public class Generator extends LavaBaseVisitor<Op>{
         labels.put(ctx.block(),label2);
         Label label3 = createLabel(ctx,"endwhile");
         visit(ctx.expr());
-        emit(OpCode.Branch,reg(ctx.expr()),label3);
+        emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+        emit(OpCode.Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
+        emit(OpCode.Branch, reg(ctx), label3);
         visit(ctx.block());
         emit(OpCode.Jump,label1);
         return emit(label3,OpCode.Nop);
