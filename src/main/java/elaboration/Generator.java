@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import sprilgenerator.SPRILGenerator;
 
 import java.io.File;
 import java.io.FileReader;
@@ -443,7 +444,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("./src/main/java/testprograms/gauss.magma");
+        File file = new File("src/main/java/testprograms/gauss.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));
@@ -459,4 +460,5 @@ public class Generator extends LavaBaseVisitor<Op>{
         Program program = generator.generate(tree,checker.check(tree));
         System.out.println(program.toString());
     }
+
 }

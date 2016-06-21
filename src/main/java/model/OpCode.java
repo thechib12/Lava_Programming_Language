@@ -7,24 +7,41 @@ import static model.Operand.Type.*;
 public enum OpCode {
 
 	//Operators
+	/**
+	 * r0 + r1 => r2
+	 */
 	Add(2, REG, REG, REG),
+	/** r0 - r1 => r2 */
 	Sub(2, REG, REG, REG),
+	/** r0 * r1 => r2 */
 	Mul(2, REG, REG, REG),
+	/** r0 == r1 => r2 */
 	Equal(2, REG, REG, REG),
+	/** r0 != r1 => r2 */
 	NEQ(2, REG, REG, REG),
+	/** r0 > r1 => r2 */
 	Gt(2, REG, REG, REG),
+	/** r0 >= r1 => r2 */
 	GtE(2, REG, REG, REG),
+	/** r0 < r1 => r2 */
 	Lt(2, REG, REG, REG),
+	/** r0 <= r1 => r2 */
 	LtE(2, REG, REG, REG),
+	/** r0 && r1 => r2 */
 	And(2, REG, REG, REG),
+	/** r0 || r1 => r2 */
 	Or(2, REG, REG, REG),
+	/** r0 xor r1 => r2 */
 	Xor(2, REG, REG, REG),
+	/** r0 shiftleft r1 => r2 */
 	LShift(2, REG, REG, REG),
+	/** r0 shiftright r1 => r2 */
 	RShift(2, REG, REG, REG),
 
-	//load
+	//Load from address a1, store at a2
 	LoadD(1, ADDR, REG),
 	LoadInd(1, ADDR, REG),
+	//Load Immediate value from address a1, store at a2
 	LoadIm(1, ADDR, REG),
 	StoreD(1, REG, ADDR),
 	StoreInd(1, REG, ADDR),

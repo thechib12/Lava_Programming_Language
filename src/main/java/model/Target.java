@@ -27,4 +27,7 @@ public class Target extends Operand {
         value = -1;
     }
 
+    public Reg getRegister() {
+        return register;
+    }
 }

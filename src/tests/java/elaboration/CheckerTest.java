@@ -48,18 +48,18 @@ public class CheckerTest {
         assertEquals(assX.getChild(2), result.getEntry(assX));
         assertEquals(assX.getChild(2), result.getEntry(body.getChild(3)));
     }
-//
-@Test
+
+    @Test
     public void testBasicOffsets() throws IOException, ParseException {
         ParseTree tree = parse("basic");
         CheckerResult result = check(tree);
-    ParseTree body = tree.getChild(3).getChild(3).getChild(3).getChild(1);
-    ParseTree assA = body.getChild(0).getChild(0);
-    ParseTree assB = body.getChild(1).getChild(0);
-    ParseTree assC = body.getChild(2).getChild(0);
-    assertEquals(0, result.getOffset(assA.getChild(0)));
-    assertEquals(4, result.getOffset(assB.getChild(0)));
-    assertEquals(8, result.getOffset(assC.getChild(0)));
+        ParseTree body = tree.getChild(3).getChild(3).getChild(3).getChild(1);
+        ParseTree assA = body.getChild(0).getChild(0);
+        ParseTree assB = body.getChild(1).getChild(0);
+        ParseTree assC = body.getChild(2).getChild(0);
+        assertEquals(0, result.getOffset(assA.getChild(0)));
+        assertEquals(4, result.getOffset(assB.getChild(0)));
+        assertEquals(8, result.getOffset(assC.getChild(0)));
 
     }
 
