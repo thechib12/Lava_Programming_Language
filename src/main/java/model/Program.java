@@ -6,7 +6,7 @@ import java.util.*;
 import static model.Operand.Type.REG;
 
 /** ILOC program.
- * @author Arend Rensink
+ * @author Rogier Monshouwer
  */
 public class Program {
 
@@ -105,6 +105,19 @@ public class Program {
             }
         }
         return result;
+    }
+
+
+    public Set<String> getRegisters() {
+        Set<String> registers = new HashSet<>();
+        for (Op op : this.getOpList()) {
+            for (Operand operand : op.getArgs()) {
+                if (operand.getType() == REG) {
+                    registers.add(((Reg) operand).getName());
+                }
+            }
+        }
+        return registers;
     }
 
 

@@ -386,19 +386,14 @@ public class Generator extends LavaBaseVisitor<Op>{
         return emit(label,OpCode.LoadD,new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)),reg(ctx));
     }
 
+    /**
+     * @param node current node.
+     * @return if this node has a label
+     */
     private boolean hasLabel(ParseTree node){
         return labels.get(node) != null;
     }
 
-    private Label label(ParserRuleContext node) {
-        Label result = this.labels.get(node);
-        if (result == null) {
-            ParserRuleContext entry = this.checkResult.getEntry(node);
-            result = createLabel(entry, "n");
-            this.labels.put(node, result);
-        }
-        return result;
-    }
 
     /** Creates a label for a given parse tree node and prefix. */
     private Label createLabel(ParserRuleContext node, String prefix) {
@@ -421,7 +416,7 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** Constructs an operation from the parameters
      * and adds it to the program under construction. */
     private Op emit(OpCode opCode, Operand... args) {
-        return emit((Label) null, opCode, args);
+        return emit(null, opCode, args);
     }
 
 
@@ -438,13 +433,10 @@ public class Generator extends LavaBaseVisitor<Op>{
     }
 
 
-
-
-
-    /** Assigns a register to a given parse tree node. */
-    private void setReg(ParseTree node, Reg reg) {
-        this.regs.put(node, reg);
-    }
+//    /** Assigns a register to a given parse tree node. */
+//    private void setReg(ParseTree node, Reg reg) {
+//        this.regs.put(node, reg);
+//    }
 
     public static void main(String[] args) {
         Checker checker = new Checker();
