@@ -175,6 +175,9 @@ public class Generator extends LavaBaseVisitor<Op>{
         OpCode opCode;
         if (ctx.boolOp().AND() != null){
             opCode = OpCode.And;
+        } else if (ctx.boolOp().XOR() != null) {
+
+            opCode = OpCode.Xor;
         } else {
             opCode = OpCode.Or;
         }

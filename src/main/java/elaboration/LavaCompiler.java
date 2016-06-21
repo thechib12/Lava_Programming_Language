@@ -33,6 +33,10 @@ public class LavaCompiler {
 //        this.generator = new Generator();
     }
 
+    public Checker getChecker() {
+        return checker;
+    }
+
     /** Typechecks a given Simple Pascal string. */
     public CheckerResult check(String text) throws ParseException {
         return check(parse(text));

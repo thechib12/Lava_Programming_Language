@@ -6,7 +6,6 @@ import static model.Operand.Type.*;
 
 public enum OpCode {
 
-
 	//Operators
 	Add(2, REG, REG, REG),
 	Sub(2, REG, REG, REG),

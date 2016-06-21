@@ -1,6 +1,5 @@
 chamber gcd {
     rock $count;
-
     rupture rock gcd (rock $a, rock $b){
         $count = 0;
         rock $result = 0;

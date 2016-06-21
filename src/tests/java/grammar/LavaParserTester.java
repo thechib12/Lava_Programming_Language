@@ -19,6 +19,10 @@ import java.io.IOException;
 public class LavaParserTester {
     private static final String BASE_DIR = "src/main/java/testprograms/";
 
+    public LavaParserTester() {
+
+    }
+
     @Test
     public void simpleProgramTests() throws ParseException {
         String test1 = "chamber testChamber {/^\\ this is a comment \n }";

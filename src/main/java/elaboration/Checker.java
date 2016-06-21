@@ -21,7 +21,9 @@ public class Checker extends LavaBaseListener {
     private List<String> errors;
 
 
-
+    public List<String> getErrors() {
+        return errors;
+    }
 
     public CheckerResult check(ParseTree tree){
         checkerResult = new CheckerResult();
