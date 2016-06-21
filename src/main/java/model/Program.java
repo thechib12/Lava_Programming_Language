@@ -10,8 +10,7 @@ import static model.Operand.Type.REG;
  * @author Arend Rensink
  */
 public class Program {
-	/** Indexed list of all instructions in the program. */
-	private final List<Instr> instrList;
+
 	/**
 	 * Indexed list of all operations in the program.
 	 * This is the flattened list of instructions.
@@ -23,12 +22,13 @@ public class Program {
 	/** (Partial) mapping from symbolic constants used in the program
 	 * to corresponding numeric values. */
 	private final Map<Num, Integer> symbMap;
+	private final Map<Label, Integer> labelMap;
 
 	/** Creates a program with an initially empty instruction list. */
 	public Program() {
-		this.instrList = new ArrayList<>();
 		this.opList = new ArrayList<>();
 		this.symbMap = new LinkedHashMap<>();
+        this.labelMap = new LinkedHashMap<>();
 	}
 
 	/** Adds an instruction to the instruction list of this program.
@@ -37,16 +37,35 @@ public class Program {
 	public void addInstr(Instr instr) {
 		instr.setProgram(this);
 		instr.setLine(this.opList.size());
-		this.instrList.add(instr);
+        if (instr.hasLabel()) {
+            registerLabel(instr);
+        }
 		for (Op op : instr) {
 			this.opList.add(op);
 		}
 	}
 
-	/** Returns the current list of instructions of this program. */
-	public List<Instr> getInstr() {
-		return Collections.unmodifiableList(this.instrList);
-	}
+
+    /** Registers the label of a given instruction. */
+    void registerLabel(Instr instr) {
+        Label label = instr.getLabel();
+        Integer loc = this.labelMap.get(label);
+        if (loc != null) {
+            throw new IllegalArgumentException(String.format(
+                    "Label %s already occurred at location %d", label, loc));
+        }
+        this.labelMap.put(label, instr.getLine());
+    }
+
+    /**
+     * Returns the location at which a given label is defined, if any.
+     * @return the location of an instruction with the label, or {@code -1}
+     * if the label is undefined
+     */
+    public int getLine(Label label) {
+        Integer result = this.labelMap.get(label);
+        return result == null ? -1 : result;
+    }
 
 	/** Returns the operation at a given line number. */
 	public Op getOpAt(int line) {
@@ -94,10 +113,28 @@ public class Program {
 	 */
 	public void check() throws FormatException {
 		List<String> messages = new ArrayList<>();
-		if (!messages.isEmpty()) {
-			throw new FormatException(messages);
-		}
-	}
+        for (Instr instr : getOpList()) {
+            for (Op op : instr) {
+                messages.addAll(checkOpnds(op.getLine(), op.getArgs()));
+            }
+        }
+        if (!messages.isEmpty()) {
+            throw new FormatException(messages);
+        }
+    }
+
+    private List<String> checkOpnds(int loc, List<Operand> opnds) {
+        List<String> result = new ArrayList<>();
+        for (Operand opnd : opnds) {
+            if (opnd instanceof Label) {
+                if (getLine((Label) opnd) < 0) {
+                    result.add(String.format("Line %d: Undefined label '%s'",
+                            loc, opnd));
+                }
+            }
+        }
+        return result;
+    }
 
 
 	/**
@@ -154,16 +191,20 @@ public class Program {
 			result.append(String.format("%s <- %d%n", symbEntry.getKey()
 					.getName(), symbEntry.getValue()));
 		}
-		for (Instr instr : getInstr()) {
+		for (Instr instr : getOpList()) {
 			result.append(instr.toString());
 			result.append('\n');
 		}
 		return result.toString();
 	}
 
-	@Override
+    public List<Op> getOpList() {
+        return Collections.unmodifiableList(opList);
+    }
+
+    @Override
 	public int hashCode() {
-		return this.instrList.hashCode();
+		return this.opList.hashCode();
 	}
 
 	@Override
@@ -175,7 +216,7 @@ public class Program {
 			return false;
 		}
 		Program other = (Program) obj;
-		if (!this.instrList.equals(other.instrList)) {
+		if (!this.opList.equals(other.opList)) {
 			return false;
 		}
 		return true;
@@ -201,14 +242,14 @@ public class Program {
 		int labelSize = 0;
 		int sourceSize = 0;
 		int targetSize = 0;
-		for (Instr i : getInstr()) {
+		for (Instr i : getOpList()) {
 			if (i instanceof Op) {
 				Op op = (Op) i;
 				sourceSize = Math.max(sourceSize, op.toSourceString().length());
 				targetSize = Math.max(targetSize, op.toTargetString().length());
 			}
 		}
-		for (Instr i : getInstr()) {
+		for (Instr i : getOpList()) {
 			result.append(i.prettyPrint(labelSize, sourceSize, targetSize));
 		}
 		return result.toString();

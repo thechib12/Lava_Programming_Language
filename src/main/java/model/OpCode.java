@@ -30,8 +30,10 @@ public enum OpCode {
 	StoreD(1, REG, ADDR),
 	StoreInd(1, REG, ADDR),
 
-	Branch(1, REG, TARGET),
-	Jump(0, TARGET),
+	Branch(1, REG, LABEL),
+	BranchI(1, REG, TARGET),
+	Jump(0, LABEL),
+	JumpI(0,TARGET),
 	Push(1, REG),
 	Pop(0, REG),
 	Nop(0),

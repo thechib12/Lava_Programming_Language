@@ -23,22 +23,39 @@ public class Op extends Instr {
 	/** The optional comment for this operation. */
 	private String comment;
 
+	/** Constructs an unlabelled operation with a given opcode and arguments. */
+	public Op(OpCode opCode, Operand... args) {
+		this(null, opCode, args);
+	}
+
+	/** Constructs an unlabelled operation with a given opcode and arguments. */
+	public Op(OpCode opCode, List<Operand> args) {
+		this(null, opCode, args);
+	}
+
+	/** Constructs a labelled operation with a given opcode and arguments. */
+	public Op(Label label, OpCode opCode, Operand... args) {
+		this(label, opCode, Arrays.asList(args));
+	}
+
 	/** Constructs a labelled operation with a given opcode and arguments.
 	 * @throws IllegalArgumentException if one of the arguments
-	 * is not of the expected type 
+	 * is not of the expected type
 	 */
-	public Op(OpCode opCode, Operand... args)
+	public Op(Label label, OpCode opCode, List<Operand> args)
 			throws IllegalArgumentException {
-        this.args = Arrays.asList(args);
+		if (label != null) {
+			super.setLabel(label);
+		}
 		this.opCode = opCode;
 		int argsCount = opCode.getSigSize();
-		if (this.args.size() != argsCount) {
+		if (args.size() != argsCount) {
 			throw new IllegalArgumentException(String.format(
 					"Operation '%s' expects %d arguments but has %d", opCode,
-					argsCount, this.args.size()));
+					argsCount, args.size()));
 		}
 		for (int i = 0; i < argsCount; i++) {
-			Operand arg = this.args.get(i);
+			Operand arg = args.get(i);
 			Type expected = opCode.getSig().get(i);
 			if (arg.getType() != expected) {
 				throw new IllegalArgumentException(
@@ -47,6 +64,7 @@ public class Op extends Instr {
 								this.opCode, i, expected, arg.getType()));
 			}
 		}
+		this.args = new ArrayList<>(args);
 	}
 
 
@@ -79,6 +97,11 @@ public class Op extends Instr {
 	/** Convenience method to retrieve a given argument as {@link Num}. */
 	public Num num(int i) {
 		return (Num) this.args.get(i);
+	}
+
+	/** Convenience method to retrieve a given operand as {@link Label}. */
+	public Label label(int i) {
+		return (Label) this.args.get(i);
 	}
 
 	@Override
