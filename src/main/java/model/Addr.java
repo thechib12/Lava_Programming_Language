@@ -25,4 +25,16 @@ public class Addr extends Operand {
         this.value = value;
         this.register = null;
     }
+
+    @Override
+    public String toString() {
+        if (register == null){
+            return prefix + " " + value;
+        }
+        if (value == -1){
+            return prefix + " " + register;
+        }
+
+        return super.toString();
+    }
 }

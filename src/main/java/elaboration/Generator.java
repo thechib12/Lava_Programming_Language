@@ -1,14 +1,17 @@
 package elaboration;
 
 import grammar.LavaBaseVisitor;
+import grammar.LavaLexer;
 import grammar.LavaParser;
 import model.*;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +20,9 @@ import java.util.List;
  */
 public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>false</code>. */
-    public final static Num FALSE_VALUE = new Num(0);
+    public final static Addr FALSE_VALUE = new Addr(0,true);
     /** The representation of the boolean value <code>true</code>. */
-    public final static Num TRUE_VALUE = new Num(-1);
+    public final static Addr TRUE_VALUE = new Addr(-1,true);
 
 
     private ParseTreeProperty<Label> labels;
@@ -47,33 +50,6 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     @Override
     public Op visitIfStat(LavaParser.IfStatContext ctx) {
-//        Label label = null;
-//        if (hasLabel(ctx)){
-//            label = labels.get(ctx);
-//        }
-//        labels.put(ctx.expr(0), label);
-//        int statCount = ctx.block().size();
-//        Label label1 = createLabel(ctx,"then");
-//        labels.put(ctx.block(0),label1);
-//        Label label3 = createLabel(ctx,"endif");
-//        Label label2;
-//        if (statCount > 2){
-//            label2 = createLabel(ctx, "elseif");
-//        } else if (statCount == 2){
-//            label2 = createLabel(ctx,"else");
-//            labels.put(ctx.block(1),label2);
-//        } else {
-//            label2 = label3;
-//        }
-//        visit(ctx.expr(0));
-//        emit(OpCode.Branch,reg(ctx.expr(0)), label2);
-//        visit(ctx.block(0));
-//        emit(OpCode.Jump,label3);
-//        if (statCount == 2){
-//            visit(ctx.stat(1));
-//        }
-
-
         Label label = null;
         if (hasLabel(ctx)){
             label = labels.get(ctx);
@@ -436,11 +412,6 @@ public class Generator extends LavaBaseVisitor<Op>{
         return emit((Label) null, opCode, args);
     }
 
-    /** Retrieves the offset of a variable node from the checker result,
-     * wrapped in a {@link Num} operand. */
-    private Num offset(ParseTree node) {
-        return new Num(this.checkResult.getOffset(node));
-    }
 
     /** Returns a register for a given parse tree node,
      * creating a fresh register if there is none for that node. */
@@ -461,5 +432,27 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** Assigns a register to a given parse tree node. */
     private void setReg(ParseTree node, Reg reg) {
         this.regs.put(node, reg);
+    }
+
+    public static void main(String[] args) {
+        Checker checker = new Checker();
+        Generator generator = new Generator();
+        CharStream input;
+
+        File file = new File("./src/main/java/testprograms/basic.magma");
+        input = null;
+        try {
+            input = new ANTLRInputStream(new FileReader(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Lexer lexer = new LavaLexer(input);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        LavaParser parser = new LavaParser(tokens);
+
+
+        ParseTree tree = parser.program();
+        Program program = generator.generate(tree,checker.check(tree));
+        System.out.println(program.toString());
     }
 }

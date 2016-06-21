@@ -94,10 +94,6 @@ public class Op extends Instr {
         return (Target) this.args.get(i);
     }
 
-	/** Convenience method to retrieve a given argument as {@link Num}. */
-	public Num num(int i) {
-		return (Num) this.args.get(i);
-	}
 
 	/** Convenience method to retrieve a given operand as {@link Label}. */
 	public Label label(int i) {
