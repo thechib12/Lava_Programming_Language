@@ -28,6 +28,8 @@ Visit our wiki for more detailed information.
 
 TODO:
 verslag - shared var keuze
+grammar formatten!!! (plugin?)
+tests aanvullen met nieuwe functies
 
 INTRODUCTION
 LAVA Programming Language
