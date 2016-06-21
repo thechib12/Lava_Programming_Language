@@ -7,6 +7,7 @@ import grammar.LavaParser;
 import model.Op;
 import model.OpCode;
 import model.Program;
+import optimization.RegisterMinimizer;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -21,17 +22,16 @@ import java.util.List;
  * Created by Rogier on 21-06-16 in Enschede.
  */
 public class SPRILGenerator {
-    Program program;
     private static final OpCode[] computationsOpcodes = {OpCode.Add, OpCode.Sub, OpCode.Mul, OpCode.Equal, OpCode.NEQ,
             OpCode.Gt, OpCode.GtE, OpCode.Lt, OpCode.LtE, OpCode.And, OpCode.Or, OpCode.Xor, OpCode.LShift, OpCode.RShift};
 
-    public SPRILGenerator(Program program) {
-        this.program = program;
+    public SPRILGenerator() {
+
 
     }
 
 
-    public List<String> generateSpril() {
+    public List<String> generateSpril(Program program) {
 
         List<Op> instructions = program.getOpList();
         List<String> result = new ArrayList<>();
@@ -72,6 +72,10 @@ public class SPRILGenerator {
 
         ParseTree tree = parser.program();
         Program program = generator.generate(tree, checker.check(tree));
-        System.out.println(program.toString());
+        RegisterMinimizer minimizer = new RegisterMinimizer();
+//        Program program2 = minimizer.minimizeRegisters(program);
+        SPRILGenerator sprilgen = new SPRILGenerator();
+        sprilgen.generateSpril(program);
+
     }
 }
