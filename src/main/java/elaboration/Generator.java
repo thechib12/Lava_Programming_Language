@@ -55,7 +55,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         this.labels = new ParseTreeProperty<>();
         this.regCount = 0;
         tree.accept(this);
-        prog.addInstr(emit(OpCode.EndProg));
+        emit(OpCode.EndProg);
         return this.prog;
     }
 
