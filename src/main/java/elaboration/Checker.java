@@ -134,6 +134,11 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
+    public void exitType(LavaParser.TypeContext ctx) {
+        setType(ctx, getType(ctx.primitiveType()));
+    }
+
+    @Override
     public void exitBoolExpr(LavaParser.BoolExprContext ctx) {
         checkType(ctx.expr(0), Type.BOOL);
         checkType(ctx.expr(1), Type.BOOL);
@@ -214,6 +219,7 @@ public class Checker extends LavaBaseListener {
         }
 
     }
+
 
     @Override
     public void exitCharExpr(LavaParser.CharExprContext ctx) {
