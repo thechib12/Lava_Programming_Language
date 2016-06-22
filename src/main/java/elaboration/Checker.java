@@ -20,7 +20,8 @@ public class Checker extends LavaBaseListener {
 
     /* The current scope of the the type checker, a single scope at this time.*/
     private Scope scope;
-    private Map<String, Type> functions;
+    private Map<String, Type> functionReturnTypes;
+    private Map<String, List<Type>> functionParameters;
     /* The list of errors that occured while checking.*/
     private List<String> errors;
     private String currentFunction;
@@ -41,8 +42,10 @@ public class Checker extends LavaBaseListener {
         checkerResult = new CheckerResult();
         scope = new MultiScope();
         errors = new ArrayList<>();
-        functions = new FunctionExplorer().explore(tree);
-        System.out.println(functions);
+        FunctionExplorer explorer = new FunctionExplorer();
+        explorer.explore(tree);
+        functionReturnTypes = explorer.getFunctionReturnTypes();
+        functionParameters = explorer.getFunctionParameterTypes();
         new ParseTreeWalker().walk(this,tree);
         return checkerResult;
     }
@@ -223,7 +226,7 @@ public class Checker extends LavaBaseListener {
         setType(ctx, getType(ctx.expr()));
         setEntry(ctx, ctx);
         Type returnType = getType(ctx.expr());
-        Type currentReturnType = functions.get(currentFunction);
+        Type currentReturnType = functionReturnTypes.get(currentFunction);
         if (returnType == Type.INT && currentReturnType == Type.CHAR) {
             addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
         } else if (returnType != currentReturnType) {
@@ -271,8 +274,27 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
+    public void exitFunction(LavaParser.FunctionContext ctx) {
+        String id = ctx.ID().getText();
+        setEntry(ctx, ctx.parameters());
+        int varCount = ctx.parameters().expr().size();
+        List<Type> varTypes = new ArrayList<>();
+        for (int i = 0; i < varCount; i++) {
+            varTypes.add(getType(ctx.parameters().expr(i)));
+        }
+        if (!varTypes.equals(functionParameters.get(id))) {
+            addError(ctx, "Invalid parameteres used");
+        }
+    }
+
+    @Override
+    public void exitParameters(LavaParser.ParametersContext ctx) {
+        setEntry(ctx, ctx.expr(0));
+    }
+
+    @Override
     public void exitFunctionExpr(LavaParser.FunctionExprContext ctx) {
-        setType(ctx, functions.get(ctx.function().ID().getText()));
+        setType(ctx, functionReturnTypes.get(ctx.function().ID().getText()));
         setEntry(ctx, ctx);
     }
 

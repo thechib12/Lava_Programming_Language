@@ -6,29 +6,42 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Rogier on 22-06-16 in Enschede.
  */
 public class FunctionExplorer extends LavaBaseListener {
-    private Map<String, Type> functions;
+    private Map<String, Type> functionReturnTypes;
     private ParseTreeProperty<Type> types;
 
-    public Map<String, Type> explore(ParseTree tree) {
-        functions = new HashMap<>();
+
+    private Map<String, List<Type>> functionParameterTypes;
+
+
+    public void explore(ParseTree tree) {
+        functionReturnTypes = new HashMap<>();
         types = new ParseTreeProperty<>();
         new ParseTreeWalker().walk(this, tree);
 
 
-        return functions;
+
     }
 
 
     @Override
     public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
-        functions.put(ctx.ID().getText(), types.get(ctx.type()));
+        String id = ctx.ID().getText();
+        functionReturnTypes.put(id, types.get(ctx.type()));
+        int typeCount = ctx.parametersdecl().type().size();
+        List<Type> types1 = new ArrayList<>();
+        for (int i = 0; i < typeCount; i++) {
+            types1.add(types.get(ctx.parametersdecl().type(i)));
+        }
+        functionParameterTypes.put(id, types1);
     }
 
     @Override
@@ -54,5 +67,13 @@ public class FunctionExplorer extends LavaBaseListener {
     @Override
     public void exitIntType(LavaParser.IntTypeContext ctx) {
         types.put(ctx, Type.INT);
+    }
+
+    public Map<String, Type> getFunctionReturnTypes() {
+        return functionReturnTypes;
+    }
+
+    public Map<String, List<Type>> getFunctionParameterTypes() {
+        return functionParameterTypes;
     }
 }
