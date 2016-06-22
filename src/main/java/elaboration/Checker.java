@@ -289,7 +289,10 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitParameters(LavaParser.ParametersContext ctx) {
-        setEntry(ctx, ctx.expr(0));
+        if (ctx.expr().size() > 0) {
+            setEntry(ctx, ctx.expr(0));
+        }
+
     }
 
     @Override

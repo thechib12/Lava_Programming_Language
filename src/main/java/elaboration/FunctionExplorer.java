@@ -24,6 +24,7 @@ public class FunctionExplorer extends LavaBaseListener {
 
     public void explore(ParseTree tree) {
         functionReturnTypes = new HashMap<>();
+        functionParameterTypes = new HashMap<>();
         types = new ParseTreeProperty<>();
         new ParseTreeWalker().walk(this, tree);
 
