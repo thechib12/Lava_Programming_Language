@@ -2,6 +2,7 @@ package model;
 
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static model.Operand.Type.REG;
 
@@ -108,16 +109,16 @@ public class Program {
     }
 
 
-    public Set<String> getRegisters() {
-        Set<String> registers = new HashSet<>();
+    public List<String> getRegisters() {
+        CopyOnWriteArrayList<String> registers = new CopyOnWriteArrayList<>();
         for (Op op : this.getOpList()) {
             for (Operand operand : op.getArgs()) {
                 if (operand.getType() == REG) {
-                    registers.add(((Reg) operand).getName());
+                    registers.addIfAbsent(((Reg) operand).getName());
                 }
             }
         }
-        return registers;
+        return new ArrayList<>(registers);
     }
 
 

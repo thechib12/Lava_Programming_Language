@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class RegisterMinimizer {
     private Program program;
-    public final static Set<String> sprilRegisters = new HashSet<>();
+    public final static List<String> sprilRegisters = new ArrayList<>();
 
     static {
         sprilRegisters.add("regA");
@@ -47,9 +47,10 @@ public class RegisterMinimizer {
 
     public Program minimizeRegisters(Program programx) {
         this.program = programx;
+//        System.out.println(program);
         int i = 0;
         if (program.getRegisters().size() > 20) {
-            i++;
+//            TODO minimize amount of register
         }
         renameRegisters();
         return program;
@@ -57,8 +58,8 @@ public class RegisterMinimizer {
 
 
     private void renameRegisters() {
-        Set<String> programRegisters = program.getRegisters();
-        List<String> tempRegisters = new LinkedList<>(sprilRegisters);
+        List<String> programRegisters = program.getRegisters();
+        List<String> tempRegisters = new ArrayList<>(sprilRegisters);
         Map<String, String> registerMapping = new HashMap<>();
 
         for (String reg : programRegisters) {

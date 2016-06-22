@@ -70,17 +70,19 @@ public class Generator extends LavaBaseVisitor<Op>{
         int statCount = ctx.block().size();
         int elseifCount = ctx.IF().size()-1;
         boolean hasElse = ctx.ELSE() != null && ctx.ELSE().size() == ctx.IF().size();
-
+        System.out.println("Elseifcount :" + elseifCount);
+        System.out.println("Has else: " + hasElse);
 
         List<Label> ifLabels = new ArrayList<>();
         for (int i = 1; i <= elseifCount; i++) {
             Label label1 = createLabel(ctx.expr(i),"elseif");
             ifLabels.add(label1);
-            labels.put(ctx.block(i),label1);
+            labels.put(ctx.expr(i), label1);
         }
         if (hasElse){
             Label label1 = createLabel(ctx.block(statCount-1),"else");
             labels.put(ctx.block(statCount-1),label1);
+            ifLabels.add(label1);
         }
         Label label3 = createLabel(ctx,"endif");
         if (statCount == 1){
@@ -88,6 +90,7 @@ public class Generator extends LavaBaseVisitor<Op>{
             emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
             emit(OpCode.Sub, reg(ctx), reg(ctx.expr(0)), reg(ctx));
             emit(OpCode.Branch, reg(ctx), label3);
+            visit(ctx.block(0));
         } else {
             visit(ctx.expr(0));
             emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
@@ -95,36 +98,37 @@ public class Generator extends LavaBaseVisitor<Op>{
             emit(OpCode.Branch,reg(ctx.expr(0)), ifLabels.get(0));
             visit(ctx.block(0));
             emit(OpCode.Jump,label3);
-            if (hasElse){
-                for (int i = 1; i <= elseifCount; i++) {
-                    visit(ctx.expr(i));
-                    emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
-                    emit(OpCode.Sub, reg(ctx), reg(ctx.expr(i)), reg(ctx.expr(i)));
-                    emit(OpCode.Branch, reg(ctx.expr(i)),ifLabels.get(i));
-                    visit(ctx.block(i));
-                    emit(OpCode.Jump, label3);
-                }
 
-                visit(ctx.block(statCount-1));
-            } else {
-                for (int i = 1; i < elseifCount; i++) {
-                    visit(ctx.expr(i));
-                    emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
-                    emit(OpCode.Sub, reg(ctx), reg(ctx.expr(i)), reg(ctx.expr(i)));
-                    emit(OpCode.Branch, reg(ctx.expr(i)), ifLabels.get(i));
-                    visit(ctx.block(i));
-                    emit(OpCode.Jump, label3);
-                }
+            for (int i = 1; i < elseifCount; i++) {
+                visit(ctx.expr(i));
+                emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+                emit(OpCode.Sub, reg(ctx), reg(ctx.expr(i)), reg(ctx.expr(i)));
+                emit(OpCode.Branch, reg(ctx.expr(i)), ifLabels.get(i));
+                visit(ctx.block(i));
+                emit(OpCode.Jump, label3);
+            }
+
+            if (hasElse){
                 visit(ctx.expr(elseifCount));
+                emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+                emit(OpCode.Sub, reg(ctx), reg(ctx.expr(elseifCount)), reg(ctx.expr(elseifCount)));
+                emit(OpCode.Branch, reg(ctx.expr(elseifCount)), ifLabels.get(ifLabels.size() - 1));
+                visit(ctx.block(elseifCount));
+                emit(OpCode.Jump, label3);
+                visit(ctx.block(elseifCount + 1));
+
+
+            } else {
+                visit(ctx.expr(elseifCount));
+                emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+                emit(OpCode.Sub, reg(ctx), reg(ctx.expr(elseifCount)), reg(ctx.expr(elseifCount)));
                 emit(OpCode.Branch, reg(ctx.expr(elseifCount)), label3);
                 visit(ctx.block(elseifCount));
                 emit(OpCode.Jump, label3);
-
             }
 
 
         }
-
 
 
 

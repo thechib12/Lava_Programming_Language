@@ -1,0 +1,18 @@
+chamber ifelse {
+    /^\ Created by Rogier on 21-06-16 in Enschede.
+    erupt() {
+        rock $a = 1;
+        if (1 == 2) then{
+            $a = 2;
+        } else if (2 == 3) then {
+            $a = 3;
+        } else if (hot and not cold) then {
+           $a = 6;
+        } else {
+            $a = 4;
+        }
+
+
+
+    }
+}
