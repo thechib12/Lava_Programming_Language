@@ -24,7 +24,7 @@ public class Checker extends LavaBaseListener {
 
     /* The list of errors that occured while checking.*/
     private List<String> errors;
-    private Type currentReturnType;
+    private String currentFunction;
 
     /**
      * @return the list of all errors.
@@ -98,13 +98,8 @@ public class Checker extends LavaBaseListener {
 
 
     @Override
-    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
-        Type returnType = getType(ctx.type().getChild(0));
-        if (returnType == Type.INT && currentReturnType == Type.CHAR) {
-            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
-        } else if (returnType != currentReturnType) {
-            addError(ctx, "Incompatible Return type!");
-        }
+    public void enterFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+        currentFunction = ctx.ID().getText();
     }
 
     @Override
@@ -225,7 +220,12 @@ public class Checker extends LavaBaseListener {
     public void exitReturnStat(LavaParser.ReturnStatContext ctx) {
         setType(ctx, getType(ctx.expr()));
         setEntry(ctx, ctx);
-        currentReturnType = getType(ctx.expr());
+        Type returnType = getType(ctx.expr());
+        if (returnType == Type.INT && currentReturnType == Type.CHAR) {
+            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
+        } else if (returnType != currentReturnType) {
+            addError(ctx, "Incompatible Return type!");
+        }
 
     }
 
