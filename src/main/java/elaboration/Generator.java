@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Rogier on 20-06-16 in Enschede.
@@ -41,6 +42,11 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** Association of expression and target nodes to registers. */
     private ParseTreeProperty<Reg> regs;
 
+    private String currentFunction;
+
+
+    private Map<String, Label> funcmap;
+
 
     /**
      * Generates Lava IR from the {@link CheckerResult} and {@link ParseTree}. Generating is done by visiting nodes
@@ -54,6 +60,8 @@ public class Generator extends LavaBaseVisitor<Op>{
         this.checkResult = checkResult;
         this.regs = new ParseTreeProperty<>();
         this.labels = new ParseTreeProperty<>();
+        this.funcmap = new FunctionLabeler().labelFunc(tree);
+
         this.regCount = 0;
         tree.accept(this);
         emit(OpCode.EndProg);
@@ -67,6 +75,8 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (hasLabel(ctx)){
             label = labels.get(ctx);
         }
+
+//        TODO Look at label
         labels.put(ctx.expr(0), label);
         int statCount = ctx.block().size();
         int elseifCount = ctx.IF().size()-1;
@@ -186,8 +196,6 @@ public class Generator extends LavaBaseVisitor<Op>{
             emit(label,OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue,0),reg(ctx));
             return emit( OpCode.StoreD, reg(ctx),new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)));
         }
-
-
     }
 
     @Override
@@ -218,12 +226,14 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     @Override
     public Op visitBody(LavaParser.BodyContext ctx) {
-        return super.visitBody(ctx);
-    }
-
-    @Override
-    public Op visitProgram(LavaParser.ProgramContext ctx) {
-        return super.visitProgram(ctx);
+        for (LavaParser.LocalVariableDeclarationStatementContext decl : ctx.localVariableDeclarationStatement()) {
+            visit(decl);
+        }
+        visit(ctx.main());
+        for (LavaParser.FunctiondeclContext func : ctx.functiondecl()) {
+            visit(func);
+        }
+        return emit(OpCode.Nop);
     }
 
     @Override
@@ -236,7 +246,6 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (hasLabel(ctx)){
             labels.put(ctx.expr(),labels.get(ctx));
         }
-        visit(ctx.expr());
         return super.visitParExpr(ctx);
     }
 
@@ -291,7 +300,6 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (ctx.boolOp().AND() != null){
             opCode = OpCode.And;
         } else if (ctx.boolOp().XOR() != null) {
-
             opCode = OpCode.Xor;
         } else {
             opCode = OpCode.Or;
@@ -398,6 +406,66 @@ public class Generator extends LavaBaseVisitor<Op>{
             label = labels.get(ctx);
         }
         return emit(label,OpCode.LoadD,new Addr(Addr.AddrType.DirAddr,checkResult.getOffset(ctx)),reg(ctx));
+    }
+
+    @Override
+    public Op visitFunctionExpr(LavaParser.FunctionExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        visitChildren(ctx);
+        return emit(label, OpCode.Jump, funcmap.get(ctx.function().ID()));
+    }
+
+    @Override
+    public Op visitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+        currentFunction = ctx.ID().getText();
+        Label label = createLabel(ctx, currentFunction);
+//        if (ctx.parametersdecl().VARID().size() > 0){
+//            labels.put(ctx.parametersdecl(),label);
+//        } else {
+        labels.put(ctx.block(), label);
+//        }
+
+        return super.visitFunctiondecl(ctx);
+    }
+
+    @Override
+    public Op visitParametersdecl(LavaParser.ParametersdeclContext ctx) {
+//        Label label = null;
+//        if (hasLabel(ctx)){
+//            label = labels.get(ctx);
+//        }
+//        if (ctx.VARID().size() > 0){
+//
+//            for (int i = 1; i < ; i++) {
+//
+//            }
+//        }
+
+
+        return super.visitParametersdecl(ctx);
+    }
+
+    @Override
+    public Op visitParameters(LavaParser.ParametersContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        Op operation = null;
+        if (ctx.expr().size() > 0) {
+            labels.put(ctx.expr(0), label);
+            List<Integer> pars = checkResult.getFuncParameters(currentFunction);
+            for (int i = 0; i < ctx.expr().size(); i++) {
+                visit(ctx.expr(i));
+                operation = emit(OpCode.StoreD, reg(ctx.expr(i)),
+                        new Addr(Addr.AddrType.DirAddr, pars.get(i)));
+            }
+        }
+
+        return operation;
     }
 
     /**
