@@ -37,7 +37,7 @@ public class Checker extends LavaBaseListener {
      */
     public CheckerResult check(ParseTree tree){
         checkerResult = new CheckerResult();
-        scope = new SingleScope();
+        scope = new MultiScope();
         errors = new ArrayList<>();
         new ParseTreeWalker().walk(this,tree);
         return checkerResult;

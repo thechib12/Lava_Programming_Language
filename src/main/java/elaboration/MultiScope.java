@@ -15,7 +15,7 @@ public class MultiScope implements Scope {
 
     private Stack<Map<String, Integer>> scopes;
 
-    private final int initialSize = 1;
+    private final int initialSize = 0;
 
 
     public MultiScope() {
@@ -49,12 +49,12 @@ public class MultiScope implements Scope {
         boolean notDefinedInScope = !this.scopes.peek().containsKey(id);
 
         if (sameType && notDefinedInScope) {
-            int size = initialSize;
+            int size = 0;
             Map<String, Integer> scope = scopes.peek();
             for (String var : scope.keySet()) {
-                size += scope.get(var);
+                size += types.get(var).size();
             }
-
+            size += type.size();
             types.put(id, type);
             scope.put(id, size);
 

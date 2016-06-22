@@ -70,8 +70,6 @@ public class Generator extends LavaBaseVisitor<Op>{
         int statCount = ctx.block().size();
         int elseifCount = ctx.IF().size()-1;
         boolean hasElse = ctx.ELSE() != null && ctx.ELSE().size() == ctx.IF().size();
-        System.out.println("Elseifcount :" + elseifCount);
-        System.out.println("Has else: " + hasElse);
 
         List<Label> ifLabels = new ArrayList<>();
         for (int i = 1; i <= elseifCount; i++) {
