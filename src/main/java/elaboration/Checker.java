@@ -105,6 +105,32 @@ public class Checker extends LavaBaseListener {
     @Override
     public void enterFunctiondecl(LavaParser.FunctiondeclContext ctx) {
         currentFunction = ctx.ID().getText();
+        scope.openScope();
+    }
+
+    @Override
+    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+        scope.closeScope();
+    }
+
+    @Override
+    public void exitParametersdecl(LavaParser.ParametersdeclContext ctx) {
+        for (int i = 0; i < ctx.type().size(); i++) {
+            Type type = getType(ctx.type(i));
+            if (type.getKind() == TypeKind.VOID) {
+                addError(ctx, "Void is not a type for a variable");
+            } else {
+                if (!this.scope.put(ctx.VARID(i).getText(), type)) {
+                    addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
+                }
+
+                setOffset(ctx, this.scope.offset(ctx.VARID(i).getText()));
+                setType(ctx, type);
+                setType(ctx.VARID(i), type);
+            }
+        }
+
+
     }
 
     @Override
