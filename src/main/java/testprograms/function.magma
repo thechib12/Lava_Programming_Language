@@ -1,0 +1,16 @@
+chamber basic {
+     /^\ Created by Rogier on 16-06-16 in Enschede.
+     rock $a;
+
+     rupture rock func(rock $d, rock $e){
+        return ($d + $e);
+     }
+
+     erupt() {
+        $a = 1;
+        rock $b = 2;
+        rock $c = func($a, $b);
+        rock $f = func($b, $c);
+     }
+
+ }

@@ -109,11 +109,14 @@ public class SPRILGenerator {
                     case Jump:
                         result.add("Jump " + "(Abs " + program.getLine(instr.label(0)) + ")");
                         break;
+                    case JumpI:
+                        result.add("Jump " + "(" + instr.target(0).toString() + ")");
+                        break;
                     case Push:
                         result.add("Push " + instr.reg(0).toString());
                         break;
                     case Pop:
-                        result.add("Pop " + instr.reg(1).toString());
+                        result.add("Pop " + instr.reg(0).toString());
                         break;
                     case Nop:
                         result.add("Nop");
@@ -155,7 +158,7 @@ public class SPRILGenerator {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/basic.magma");
+        File file = new File("src/main/java/testprograms/function.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));
