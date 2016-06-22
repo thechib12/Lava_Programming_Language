@@ -42,6 +42,7 @@ public class Checker extends LavaBaseListener {
         scope = new MultiScope();
         errors = new ArrayList<>();
         functions = new FunctionExplorer().explore(tree);
+        System.out.println(functions);
         new ParseTreeWalker().walk(this,tree);
         return checkerResult;
     }
@@ -269,6 +270,11 @@ public class Checker extends LavaBaseListener {
 
     }
 
+    @Override
+    public void exitFunctionExpr(LavaParser.FunctionExprContext ctx) {
+        setType(ctx, functions.get(ctx.function().ID().getText()));
+        setEntry(ctx, ctx);
+    }
 
     @Override
     public void exitIntType(LavaParser.IntTypeContext ctx) {

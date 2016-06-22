@@ -95,7 +95,7 @@ public class CheckerTest {
         check(parseString(program1));
         check(parseString(program2));
         check(parseString(program3));
-//        check(parseString(program4));
+        check(parseString(program4));
         check(parseString(program5));
     }
     @Test

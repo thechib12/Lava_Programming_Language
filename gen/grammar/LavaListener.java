@@ -1,4 +1,4 @@
-// Generated from D:/UTwente/Module 8/Lava Programming Language/src/main/java/grammar\Lava.g4 by ANTLR 4.5.1
+// Generated from /Users/Rogier/Library/Mobile Documents/com~apple~CloudDocs/Universiteit Twente/Programming Paradigms/Compiler Construction/Lava_Programming_Language/src/main/java/grammar/Lava.g4 by ANTLR 4.5.3
 package grammar;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -356,18 +356,6 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitArrayInitExpr(LavaParser.ArrayInitExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code inputExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterInputExpr(LavaParser.InputExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code inputExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitInputExpr(LavaParser.InputExprContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code fieldExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
@@ -415,6 +403,18 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPlusExpr(LavaParser.PlusExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code functionExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionExpr(LavaParser.FunctionExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code functionExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionExpr(LavaParser.FunctionExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code parExpr}
 	 * labeled alternative in {@link LavaParser#expr}.

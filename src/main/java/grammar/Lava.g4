@@ -108,7 +108,7 @@ expr:
     | TRUE              #trueExpr
 //    | STATIC_STRING     #staticstringExpr
     | FALSE             #falseExpr
-    | function             #inputExpr
+    | function             #functionExpr
     | arrayInit             #arrayInitExpr
     | VARID LBLOCK expr RBLOCK #arrayExpr
     | VARID                #idExpr
