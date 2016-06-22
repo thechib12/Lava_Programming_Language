@@ -3,7 +3,6 @@ package elaboration;
 import grammar.LavaBaseListener;
 import grammar.LavaParser;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -38,25 +37,25 @@ public class Checker extends LavaBaseListener {
      */
     public CheckerResult check(ParseTree tree){
         checkerResult = new CheckerResult();
-        scope = new Scope();
+        scope = new SingleScope();
         errors = new ArrayList<>();
         new ParseTreeWalker().walk(this,tree);
         return checkerResult;
     }
 
-    @Override
-    public void exitMain(LavaParser.MainContext ctx) {
-        setEntry(ctx,getEntry(ctx.block()));
-    }
+//  Program ------------
+
+
+//  Block --------------
 
     @Override
-    public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
-        setType(ctx,getType(ctx.localVariableDeclaration()));
-        setEntry(ctx,getEntry(ctx.localVariableDeclaration()));
+    public void enterBlock(LavaParser.BlockContext ctx) {
+        scope.openScope();
     }
 
     @Override
     public void exitBlock(LavaParser.BlockContext ctx) {
+        scope.closeScope();
         setEntry(ctx,getEntry(ctx.blockStatements()));
     }
 
@@ -73,6 +72,12 @@ public class Checker extends LavaBaseListener {
         } else {
             setEntry(ctx,getEntry(ctx.statement()));
         }
+    }
+
+    @Override
+    public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
+        setType(ctx, getType(ctx.localVariableDeclaration()));
+        setEntry(ctx, getEntry(ctx.localVariableDeclaration()));
     }
 
     @Override
