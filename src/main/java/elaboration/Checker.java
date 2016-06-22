@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class Checker extends LavaBaseListener {
 
     /* The current scope of the the type checker, a single scope at this time.*/
     private Scope scope;
-
+    private Map<String, Type> functions;
     /* The list of errors that occured while checking.*/
     private List<String> errors;
     private String currentFunction;
@@ -42,6 +41,7 @@ public class Checker extends LavaBaseListener {
         checkerResult = new CheckerResult();
         scope = new MultiScope();
         errors = new ArrayList<>();
+        functions = new FunctionExplorer().explore(tree);
         new ParseTreeWalker().walk(this,tree);
         return checkerResult;
     }
@@ -95,6 +95,7 @@ public class Checker extends LavaBaseListener {
             setEntry(ctx, ctx);
         }
     }
+
 
 
     @Override
@@ -251,7 +252,10 @@ public class Checker extends LavaBaseListener {
         if (type.getKind() == TypeKind.VOID){
             addError(ctx,"Void is not a type for a variable");
         } else {
-            this.scope.put(ctx.VARID().getText(),type);
+            if (!this.scope.put(ctx.VARID().getText(), type)) {
+                addError(ctx, "Variable already declared: " + ctx.VARID().getText());
+            }
+
             setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
             setType(ctx, type);
             setType(ctx.VARID(),type);
