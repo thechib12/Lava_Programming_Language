@@ -283,7 +283,7 @@ public class Checker extends LavaBaseListener {
             varTypes.add(getType(ctx.parameters().expr(i)));
         }
         if (!varTypes.equals(functionParameters.get(id))) {
-            addError(ctx, "Invalid parameteres used");
+            addError(ctx, "Invalid parameters used");
         }
     }
 
