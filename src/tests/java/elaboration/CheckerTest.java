@@ -86,17 +86,24 @@ public class CheckerTest {
                 "return ($b  == $c );" +
                 "}" +
                 "}";
-        String program5 = "chamber test1 { temperature $a;" +
+        String program5 = "chamber test5 { temperature $a;" +
                 "rupture temperature doSomething() {" +
                 "return ($a xor cold); " +
                 "}" +
                 "}";
+        String program6 = "chamber test6 { rock $a = 5; temperature $b = hot;" +
+                "rupture rock doSomething(rock $c) {" +
+                //"$a = $c;" +
+                "return $c;" +
+                "}" +
+                "}";
 
-        check(parseString(program1));
-        check(parseString(program2));
-        check(parseString(program3));
-        check(parseString(program4));
-        check(parseString(program5));
+//        check(parseString(program1));
+//        check(parseString(program2));
+//        check(parseString(program3));
+//        check(parseString(program4));
+//        check(parseString(program5));
+//        check(parseString(program6));
     }
     @Test
     public void checkProgram() throws IOException, ParseException {
