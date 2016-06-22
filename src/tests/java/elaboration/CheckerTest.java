@@ -55,6 +55,49 @@ public class CheckerTest {
 
     }
 
+
+    @Test
+    public void testReturnType() throws IOException, ParseException {
+        String program1 = "chamber test1 { mineral $a;" +
+                "rupture mineral doSomething() {" +
+                "$a = 'a';" +
+                "return $a;" +
+                "}" +
+                "}";
+        String program2 = "chamber test2 { rock $a;" +
+                "rupture rock doSomething() {" +
+                "$a = 5;" +
+                "return (($a *5 ) / 3);" +
+                "}" +
+                "}";
+        String program3 = "chamber test3 { " +
+                "rupture temperature doSomething() {" +
+                "return (hot and cold);" +
+                "}" +
+                "}";
+        String program4 = "chamber test1 { rock $a; rock $b;" +
+                "rupture rock veryLargeComputation() {" +
+                "$a = (($a *1010101) / 512)+5;" +
+                "return $a;" +
+                "}" +
+
+                "rupture temperature test4(rock $b){" +
+                "rock $c = veryLargeComputation();" +
+                "return ($b  == $c );" +
+                "}" +
+                "}";
+        String program5 = "chamber test1 { temperature $a;" +
+                "rupture temperature doSomething() {" +
+                "return ($a xor cold); " +
+                "}" +
+                "}";
+
+        check(parseString(program1));
+        check(parseString(program2));
+        check(parseString(program3));
+//        check(parseString(program4));
+        check(parseString(program5));
+    }
     @Test
     public void checkProgram() throws IOException, ParseException {
         String program1 = "chamber test1 { mineral $a; " +

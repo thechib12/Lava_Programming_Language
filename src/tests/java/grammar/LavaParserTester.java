@@ -65,6 +65,7 @@ public class LavaParserTester {
         parse("bank", true, "program");
         parse("basic", true, "program");
         parse("fib", true, "program");
+        parse("ifelse", true, "program");
     }
 
     @Test

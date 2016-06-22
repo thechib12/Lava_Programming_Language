@@ -41,6 +41,7 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** Association of expression and target nodes to registers. */
     private ParseTreeProperty<Reg> regs;
 
+
     /**
      * Generates Lava IR from the {@link CheckerResult} and {@link ParseTree}. Generating is done by visiting nodes
      * in the parse tree.

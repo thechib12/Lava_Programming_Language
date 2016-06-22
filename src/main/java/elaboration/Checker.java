@@ -8,7 +8,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Rogier + Christiaan on 16-06-16 in Enschede.
@@ -23,6 +25,7 @@ public class Checker extends LavaBaseListener {
 
     /* The list of errors that occured while checking.*/
     private List<String> errors;
+    private Type currentReturnType;
 
     /**
      * @return the list of all errors.
@@ -85,6 +88,17 @@ public class Checker extends LavaBaseListener {
             setType(ctx, type);
             setOffset(ctx, this.scope.offset(id));
             setEntry(ctx, ctx);
+        }
+    }
+
+
+    @Override
+    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+        Type returnType = getType(ctx.type().getChild(0));
+        if (returnType == Type.INT && currentReturnType == Type.CHAR) {
+            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
+        } else if (returnType != currentReturnType) {
+            addError(ctx, "Incompatible Return type!");
         }
     }
 
@@ -206,6 +220,8 @@ public class Checker extends LavaBaseListener {
     public void exitReturnStat(LavaParser.ReturnStatContext ctx) {
         setType(ctx, getType(ctx.expr()));
         setEntry(ctx, ctx);
+        currentReturnType = getType(ctx.expr());
+
     }
 
     @Override
