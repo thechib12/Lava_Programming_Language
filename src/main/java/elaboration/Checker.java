@@ -222,6 +222,7 @@ public class Checker extends LavaBaseListener {
         setType(ctx, getType(ctx.expr()));
         setEntry(ctx, ctx);
         Type returnType = getType(ctx.expr());
+        Type currentReturnType = functions.get(currentFunction);
         if (returnType == Type.INT && currentReturnType == Type.CHAR) {
             addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
         } else if (returnType != currentReturnType) {
