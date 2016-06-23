@@ -19,6 +19,17 @@ public class FunctionExplorer extends LavaBaseListener {
     private ParseTreeProperty<Type> types;
 
     private Map<String, List<Type>> functionParameterTypes;
+    private static final List<Type> fork = new ArrayList<>();
+
+    static {
+        fork.add(Type.VOID);
+    }
+
+    private static final List<Type> join = new ArrayList<>();
+
+    static {
+        join.add(Type.INT);
+    }
 
 
     public void explore(ParseTree tree) {
@@ -26,7 +37,10 @@ public class FunctionExplorer extends LavaBaseListener {
         functionParameterTypes = new HashMap<>();
         types = new ParseTreeProperty<>();
         new ParseTreeWalker().walk(this, tree);
-
+        functionReturnTypes.put("fork", Type.VOID);
+        functionReturnTypes.put("join", Type.VOID);
+        functionParameterTypes.put("fork", fork);
+        functionParameterTypes.put("join", join);
 
 
     }

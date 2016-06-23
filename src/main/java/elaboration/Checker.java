@@ -161,6 +161,7 @@ public class Checker extends LavaBaseListener {
         } else {
             if (!this.scope.put(id, type)) {
                 addError(ctx, "Variable already declared: " + id);
+                System.out.println("error");
             }
             setOffset(ctx, this.scope.offset(id));
             setType(ctx, type);
@@ -464,9 +465,9 @@ public class Checker extends LavaBaseListener {
      * @param entry the node the control flow graph should point to.
      */
     private void setEntry(ParseTree node, ParserRuleContext entry) {
-        if (entry == null) {
-            throw new IllegalArgumentException("Null flow graph entry");
-        }
+//        if (entry == null) {
+//            throw new IllegalArgumentException("Null flow graph entry");
+//        }
         this.checkerResult.setEntry(node, entry);
     }
 
