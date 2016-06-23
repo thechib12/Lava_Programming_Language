@@ -1,16 +1,33 @@
-chamber basic {
+chamber function {
      /^\ Created by Rogier on 16-06-16 in Enschede.
      rock $a;
 
-     rupture rock func(rock $d, rock $e){
-        return ($d + $e);
+     rupture temperature func(){
+        temperature $c = func1() ;
+        return $c;
+     }
+
+     rupture temperature func1(){
+        return (func2() < func3());
+     }
+
+     rupture rock func2(){
+        return 4;
+     }
+
+     rupture rock func3(){
+        return 4;
      }
 
      erupt() {
-        $a = 1;
+        $a = 2;
         rock $b = 2;
-        rock $c = func($a, $b);
-        rock $f = func($b, $c);
+        if (func()) then {
+            $a = 3;
+        } else {
+            $a = 4;
+        }
+
      }
 
  }

@@ -54,14 +54,12 @@ public class SPRILGenerator {
                 "prog :: [Instruction]\n");
 
         builder.append("prog = [\n");
-        for (String instr : instruction) {
-            if (instruction.indexOf(instr) == instruction.size() - 1) {
-                builder.append("          " + instr + " \n");
-            } else {
-                builder.append("          " + instr + ", \n");
-            }
+        for (int i = 0; i < instruction.size() - 1; i++) {
+            builder.append("          " + instruction.get(i) + ", \n");
 
         }
+        builder.append("          " + instruction.get(instruction.size() - 1) + " \n");
+
         builder.append("       ] \n");
 
         builder.append("demoTest = sysTest [prog]");
@@ -172,7 +170,6 @@ public class SPRILGenerator {
 
         ParseTree tree = parser.program();
         Program program = generator.generate(tree, checker.check(tree));
-        System.out.println(program.toString());
         RegisterMinimizer minimizer = new RegisterMinimizer();
         Program program2 = minimizer.minimizeRegisters(program);
         SPRILGenerator sprilgen = new SPRILGenerator();

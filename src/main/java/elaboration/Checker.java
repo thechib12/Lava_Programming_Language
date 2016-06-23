@@ -213,7 +213,6 @@ public class Checker extends LavaBaseListener {
         if (!this.scope.put(returnVar, getType(ctx.expr()))) {
             addError(ctx, "Variable already declared: " + returnVar);
         }
-        setOffset(ctx, this.scope.offset(returnVar));
     }
 
     @Override
