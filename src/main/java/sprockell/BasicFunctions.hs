@@ -24,7 +24,25 @@ regP          = 17    :: Int
 regQ          = 18    :: Int
 regR          = 19    :: Int
 regS          = 20    :: Int
-
+regA1         = 21    :: Int
+regB1         = 22    :: Int
+regC1 = 23    :: Int
+regD1 = 24    :: Int
+regE1 = 25    :: Int
+regF1 = 26    :: Int
+regG1 = 27    :: Int
+regH1 = 28    :: Int
+regI1 = 29    :: Int
+regJ1 = 30    :: Int
+regK1 = 31    :: Int
+regL1 = 32    :: Int
+regM1 = 33    :: Int
+regN1 = 34    :: Int
+regO1 = 35    :: Int
+regP1 = 36    :: Int
+regQ1 = 37    :: Int
+regR1 = 38    :: Int
+regS1     = 39    :: Int
 
 
 

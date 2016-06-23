@@ -1,0 +1,18 @@
+/^\Simple input-output programs for system tests
+/^\input: 5
+/^\expected output: 500
+chamber test1 {
+    rock $input = 2;
+    rock $counter = 1;
+    temperature $switch = hot;
+    rock $output = 0;
+    erupt(){
+       while ( $counter <= 100 ) {
+            rock $lol = 3;
+            if ( $switch ) then { $output = $output + $input; }
+            $counter = $counter +1;
+            $switch = not $switch;
+       }
+
+    }
+}
