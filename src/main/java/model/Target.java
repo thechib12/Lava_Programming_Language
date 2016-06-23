@@ -20,6 +20,15 @@ public class Target extends Operand {
         register = null;
     }
 
+    public Target(TargetType type, int value) {
+        super(Type.TARGET);
+        prefix = type;
+        this.label = null;
+        this.value = value;
+        register = null;
+    }
+
+
     public Target(int value) {
         super(Type.TARGET);
         prefix = Rel;

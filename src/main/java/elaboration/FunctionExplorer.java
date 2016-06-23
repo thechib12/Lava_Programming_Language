@@ -18,7 +18,6 @@ public class FunctionExplorer extends LavaBaseListener {
     private Map<String, Type> functionReturnTypes;
     private ParseTreeProperty<Type> types;
 
-
     private Map<String, List<Type>> functionParameterTypes;
 
 
@@ -39,8 +38,10 @@ public class FunctionExplorer extends LavaBaseListener {
         functionReturnTypes.put(id, types.get(ctx.type()));
         int typeCount = ctx.parametersdecl().type().size();
         List<Type> types1 = new ArrayList<>();
+        List<String> names = new ArrayList<>();
         for (int i = 0; i < typeCount; i++) {
             types1.add(types.get(ctx.parametersdecl().type(i)));
+
         }
         functionParameterTypes.put(id, types1);
     }
@@ -77,4 +78,5 @@ public class FunctionExplorer extends LavaBaseListener {
     public Map<String, List<Type>> getFunctionParameterTypes() {
         return functionParameterTypes;
     }
+
 }

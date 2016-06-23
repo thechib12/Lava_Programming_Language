@@ -35,26 +35,81 @@ public class Checker extends LavaBaseListener {
 
     /**
      * This method walks the parse tree and checks the types of the program.
+     *
      * @param tree input {@link ParseTree} of the Lava Program.
      * @return a {@link CheckerResult} object which stores all revelant data of the checking phase.
      */
-    public CheckerResult check(ParseTree tree){
-        checkerResult = new CheckerResult();
+    public CheckerResult check(ParseTree tree) {
         scope = new MultiScope();
         errors = new ArrayList<>();
         FunctionExplorer explorer = new FunctionExplorer();
         explorer.explore(tree);
         functionReturnTypes = explorer.getFunctionReturnTypes();
         functionParameters = explorer.getFunctionParameterTypes();
-        new ParseTreeWalker().walk(this,tree);
+        checkerResult = new CheckerResult();
+        new ParseTreeWalker().walk(this, tree);
         return checkerResult;
     }
 
-//  Program ------------
+//  Program ------------------------------------------------------------------------------------------------------------
 
 
-//  Block --------------
+    //  Functions ----------------------------------------------------------------------------------------------------------
+    @Override
+    public void enterFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+        currentFunction = ctx.ID().getText();
+        scope.openScope();
+    }
 
+    @Override
+    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+        List<Integer> pars = new ArrayList<>();
+        for (int i = 0; i < ctx.parametersdecl().VARID().size(); i++) {
+            pars.add(this.scope.offset(ctx.parametersdecl().VARID(i).getText()));
+        }
+        checkerResult.setFunctionParameters(ctx.ID().getText(), pars);
+        scope.closeScope();
+    }
+
+    @Override
+    public void exitParametersdecl(LavaParser.ParametersdeclContext ctx) {
+        for (int i = 0; i < ctx.type().size(); i++) {
+            Type type = getType(ctx.type(i));
+            if (type.getKind() == TypeKind.VOID) {
+                addError(ctx, "Void is not a type for a variable");
+            } else {
+                if (!this.scope.put(ctx.VARID(i).getText(), type)) {
+                    addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
+                }
+                setOffset(ctx.VARID(i), this.scope.offset(ctx.VARID(i).getText()));
+                setType(ctx.VARID(i), type);
+            }
+        }
+    }
+
+    @Override
+    public void exitFunction(LavaParser.FunctionContext ctx) {
+        String id = ctx.ID().getText();
+        setEntry(ctx, ctx.parameters());
+        int varCount = ctx.parameters().expr().size();
+        List<Type> varTypes = new ArrayList<>();
+        for (int i = 0; i < varCount; i++) {
+            varTypes.add(getType(ctx.parameters().expr(i)));
+        }
+        if (!varTypes.equals(functionParameters.get(id))) {
+            addError(ctx, "Invalid parameters used");
+        }
+    }
+
+    @Override
+    public void exitParameters(LavaParser.ParametersContext ctx) {
+        if (ctx.expr().size() > 0) {
+            setEntry(ctx, ctx.expr(0));
+        }
+
+    }
+
+    //  Block --------------------------------------------------------------------------------------------------------------
     @Override
     public void enterBlock(LavaParser.BlockContext ctx) {
         scope.openScope();
@@ -63,7 +118,7 @@ public class Checker extends LavaBaseListener {
     @Override
     public void exitBlock(LavaParser.BlockContext ctx) {
         scope.closeScope();
-        setEntry(ctx,getEntry(ctx.blockStatements()));
+        setEntry(ctx, getEntry(ctx.blockStatements()));
     }
 
     @Override
@@ -74,18 +129,102 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitBlockStatement(LavaParser.BlockStatementContext ctx) {
-        if (ctx.localVariableDeclarationStatement() != null){
-            setEntry(ctx,getEntry(ctx.localVariableDeclarationStatement()));
+        if (ctx.localVariableDeclarationStatement() != null) {
+            setEntry(ctx, getEntry(ctx.localVariableDeclarationStatement()));
         } else {
-            setEntry(ctx,getEntry(ctx.statement()));
+            setEntry(ctx, getEntry(ctx.statement()));
         }
     }
 
+    //  Variable Declarations and assignment -------------------------------------------------------------------------------
     @Override
     public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
         setType(ctx, getType(ctx.localVariableDeclaration()));
         setEntry(ctx, getEntry(ctx.localVariableDeclaration()));
     }
+
+    @Override
+    public void exitVariableTarget(LavaParser.VariableTargetContext ctx) {
+        this.setType(ctx, this.scope.type(ctx.VARID().getText()));
+        this.setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
+    }
+
+    @Override
+    public void exitPrimDecl(LavaParser.PrimDeclContext ctx) {
+        Type type = getType(ctx.primitiveType());
+        if (type.getKind() == TypeKind.VOID) {
+            addError(ctx, "Void is not a type for a variable");
+        } else {
+            if (!this.scope.put(ctx.VARID().getText(), type)) {
+                addError(ctx, "Variable already declared: " + ctx.VARID().getText());
+            }
+            setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
+            setType(ctx, type);
+            setType(ctx.VARID(), type);
+        }
+        if (ctx.expr() != null) {
+            setEntry(ctx, getEntry(ctx.expr()));
+        } else {
+            setEntry(ctx, ctx);
+        }
+
+    }
+
+
+    //  Statements ---------------------------------------------------------------------------------------------------------
+    @Override
+    public void exitAssignStat(LavaParser.AssignStatContext ctx) {
+        Type type = this.getType(ctx.expr());
+        Type type1 = this.getType(ctx.target());
+        if (type == type1) {
+            setType(ctx, type);
+        } else {
+            errors.add("Assignment type error");
+        }
+        this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
+        this.setEntry(ctx, getEntry(ctx.expr()));
+    }
+
+    @Override
+    public void exitIfStat(LavaParser.IfStatContext ctx) {
+        int exprCount = ctx.expr().size();
+        for (int i = 0; i < exprCount; i++) {
+            checkType(ctx.expr(i), Type.BOOL);
+        }
+        int statementCount = ctx.block().size();
+        for (int j = 0; j < statementCount; j++) {
+            setEntry(ctx, ctx.block(j));
+        }
+        setEntry(ctx, ctx.expr(0));
+    }
+
+    @Override
+    public void exitReturnStat(LavaParser.ReturnStatContext ctx) {
+        setType(ctx, getType(ctx.expr()));
+        setEntry(ctx, ctx);
+        Type returnType = getType(ctx.expr());
+        Type currentReturnType = functionReturnTypes.get(currentFunction);
+        if (returnType == Type.INT && currentReturnType == Type.CHAR) {
+            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
+        } else if (returnType != currentReturnType) {
+            addError(ctx, "Incompatible Return type!");
+        }
+        String returnVar = "#return";
+        if (!this.scope.put(returnVar, getType(ctx.expr()))) {
+            addError(ctx, "Variable already declared: " + returnVar);
+        }
+        setOffset(ctx, this.scope.offset(returnVar));
+    }
+
+    @Override
+    public void exitWhileStat(LavaParser.WhileStatContext ctx) {
+        checkType(ctx.expr(), Type.BOOL);
+        setEntry(ctx, ctx.expr());
+
+    }
+
+
+//  Expressions --------------------------------------------------------------------------------------------------------
 
     @Override
     public void exitIdExpr(LavaParser.IdExprContext ctx) {
@@ -100,55 +239,17 @@ public class Checker extends LavaBaseListener {
         }
     }
 
-
-
-    @Override
-    public void enterFunctiondecl(LavaParser.FunctiondeclContext ctx) {
-        currentFunction = ctx.ID().getText();
-        scope.openScope();
-    }
-
-    @Override
-    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
-        scope.closeScope();
-    }
-
-    @Override
-    public void exitParametersdecl(LavaParser.ParametersdeclContext ctx) {
-        for (int i = 0; i < ctx.type().size(); i++) {
-            Type type = getType(ctx.type(i));
-            if (type.getKind() == TypeKind.VOID) {
-                addError(ctx, "Void is not a type for a variable");
-            } else {
-                if (!this.scope.put(ctx.VARID(i).getText(), type)) {
-                    addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
-                }
-
-                setOffset(ctx, this.scope.offset(ctx.VARID(i).getText()));
-                setType(ctx, type);
-                setType(ctx.VARID(i), type);
-            }
-        }
-
-
-    }
-
-    @Override
-    public void exitType(LavaParser.TypeContext ctx) {
-        setType(ctx, getType(ctx.primitiveType()));
-    }
-
     @Override
     public void exitBoolExpr(LavaParser.BoolExprContext ctx) {
         checkType(ctx.expr(0), Type.BOOL);
         checkType(ctx.expr(1), Type.BOOL);
-        setType(ctx,Type.BOOL);
+        setType(ctx, Type.BOOL);
         setEntry(ctx, ctx.expr(0));
     }
 
     @Override
     public void exitFalseExpr(LavaParser.FalseExprContext ctx) {
-        setType(ctx,Type.BOOL);
+        setType(ctx, Type.BOOL);
         setEntry(ctx, ctx);
     }
 
@@ -190,38 +291,6 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitAssignStat(LavaParser.AssignStatContext ctx) {
-        Type type = this.getType(ctx.expr());
-        Type type1 = this.getType(ctx.target());
-        if (type == type1) {
-            setType(ctx, type);
-        } else {
-            errors.add("Assignment type error");
-        }
-        this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
-        this.setEntry(ctx, getEntry(ctx.expr()));
-    }
-
-    @Override
-    public void exitVariableTarget(LavaParser.VariableTargetContext ctx) {
-        this.setType(ctx, this.scope.type(ctx.VARID().getText()));
-        this.setOffset(ctx,this.scope.offset(ctx.VARID().getText()));
-    }
-
-    @Override
-    public void exitArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx) {
-        if (getType(ctx.expr()).getKind() != TypeKind.INT ){
-            addError(ctx,"Array index must be a rock.");
-        } else {
-//            int size = ctx.expr();
-            this.setType(ctx, this.scope.type(ctx.VARID().getText()));
-            this.setOffset(ctx,this.scope.offset(ctx.VARID().getText()) );
-        }
-
-    }
-
-
-    @Override
     public void exitCharExpr(LavaParser.CharExprContext ctx) {
         setType(ctx, Type.CHAR);
         setEntry(ctx, ctx);
@@ -240,41 +309,6 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitIfStat(LavaParser.IfStatContext ctx) {
-        int exprCount = ctx.expr().size();
-        for (int i = 0; i < exprCount; i++) {
-            checkType(ctx.expr(i), Type.BOOL);
-        }
-
-        int statementCount = ctx.block().size();
-        for (int j = 0; j < statementCount; j++) {
-            setEntry(ctx, ctx.block(j));
-        }
-        setEntry(ctx, ctx.expr(0));
-    }
-
-    @Override
-    public void exitReturnStat(LavaParser.ReturnStatContext ctx) {
-        setType(ctx, getType(ctx.expr()));
-        setEntry(ctx, ctx);
-        Type returnType = getType(ctx.expr());
-        Type currentReturnType = functionReturnTypes.get(currentFunction);
-        if (returnType == Type.INT && currentReturnType == Type.CHAR) {
-            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
-        } else if (returnType != currentReturnType) {
-            addError(ctx, "Incompatible Return type!");
-        }
-
-    }
-
-    @Override
-    public void exitWhileStat(LavaParser.WhileStatContext ctx) {
-        checkType(ctx.expr(), Type.BOOL);
-        setEntry(ctx, ctx.expr());
-
-    }
-
-    @Override
     public void exitMultExpr(LavaParser.MultExprContext ctx) {
         checkType(ctx.expr(0), Type.INT);
         checkType(ctx.expr(0), Type.INT);
@@ -284,81 +318,45 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitPrimDecl(LavaParser.PrimDeclContext ctx) {
-        Type type = getType(ctx.primitiveType());
-        if (type.getKind() == TypeKind.VOID){
-            addError(ctx,"Void is not a type for a variable");
-        } else {
-            if (!this.scope.put(ctx.VARID().getText(), type)) {
-                addError(ctx, "Variable already declared: " + ctx.VARID().getText());
-            }
-
-            setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
-            setType(ctx, type);
-            setType(ctx.VARID(),type);
-        }
-        if (ctx.expr() != null){
-            setEntry(ctx,getEntry(ctx.expr()));
-        } else {
-            setEntry(ctx,ctx);
-        }
-
-    }
-
-    @Override
-    public void exitFunction(LavaParser.FunctionContext ctx) {
-        String id = ctx.ID().getText();
-        setEntry(ctx, ctx.parameters());
-        int varCount = ctx.parameters().expr().size();
-        List<Type> varTypes = new ArrayList<>();
-        for (int i = 0; i < varCount; i++) {
-            varTypes.add(getType(ctx.parameters().expr(i)));
-        }
-        if (!varTypes.equals(functionParameters.get(id))) {
-            addError(ctx, "Invalid parameters used");
-        }
-    }
-
-    @Override
-    public void exitParameters(LavaParser.ParametersContext ctx) {
-        if (ctx.expr().size() > 0) {
-            setEntry(ctx, ctx.expr(0));
-        }
-
-    }
-
-    @Override
     public void exitFunctionExpr(LavaParser.FunctionExprContext ctx) {
         setType(ctx, functionReturnTypes.get(ctx.function().ID().getText()));
         setEntry(ctx, ctx);
     }
 
+//   Types -------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public void exitType(LavaParser.TypeContext ctx) {
+        setType(ctx, getType(ctx.primitiveType()));
+    }
+
     @Override
     public void exitIntType(LavaParser.IntTypeContext ctx) {
-        setType(ctx,Type.INT);
+        setType(ctx, Type.INT);
     }
 
     @Override
     public void exitBoolType(LavaParser.BoolTypeContext ctx) {
-        setType(ctx,Type.BOOL);
+        setType(ctx, Type.BOOL);
     }
 
 
     @Override
     public void exitCharType(LavaParser.CharTypeContext ctx) {
-        setType(ctx,Type.CHAR);
+        setType(ctx, Type.CHAR);
     }
 
 
     @Override
     public void exitVoidType(LavaParser.VoidTypeContext ctx) {
-        setType(ctx,Type.VOID);
+        setType(ctx, Type.VOID);
     }
 
 
     /**
      * Checks this node for its correct type and throws errors if its type is not correct.
-     * @param node current node in the parse tree.
+     *
+     * @param node     current node in the parse tree.
      * @param expected type that is expected
      */
     private void checkType(ParserRuleContext node, Type expected) {
@@ -375,7 +373,8 @@ public class Checker extends LavaBaseListener {
 
     /**
      * Variation to the above method. This method checks if the node belongs to any of the expected types.
-     * @param node current node in the parse tree.
+     *
+     * @param node     current node in the parse tree.
      * @param expected types that should be expected
      */
     private void checkType(ParserRuleContext node, Type... expected) {
@@ -390,7 +389,7 @@ public class Checker extends LavaBaseListener {
                 matchedType = true;
             }
         }
-        if (!matchedType){
+        if (!matchedType) {
             addError(node, "Expected type '%s' but found '%s'", expected,
                     actual);
         }
@@ -398,9 +397,10 @@ public class Checker extends LavaBaseListener {
 
     /**
      * This method formats the error given and adds the error to the list of errors.
-     * @param node current node in the parse tree.
+     *
+     * @param node    current node in the parse tree.
      * @param message the input error message.
-     * @param args optional arguments.
+     * @param args    optional arguments.
      */
     private void addError(ParserRuleContext node, String message, Object... args) {
         int line = node.getStart().getLine();
@@ -412,7 +412,8 @@ public class Checker extends LavaBaseListener {
 
     /**
      * Sets the offset of this node.
-     * @param node current node.
+     *
+     * @param node   current node.
      * @param offset memory offset of this node.
      */
     private void setOffset(ParseTree node, Integer offset) {
@@ -421,6 +422,7 @@ public class Checker extends LavaBaseListener {
 
     /**
      * Sets the type for this node.
+     *
      * @param node current node.
      * @param type type of this node.
      */
@@ -429,7 +431,6 @@ public class Checker extends LavaBaseListener {
     }
 
     /**
-     *
      * @param node current node.
      * @return the type of this node.
      */
@@ -439,7 +440,8 @@ public class Checker extends LavaBaseListener {
 
     /**
      * Sets the entry for this node.
-     * @param node current node in the parse tree.
+     *
+     * @param node  current node in the parse tree.
      * @param entry the node the control flow graph should point to.
      */
     private void setEntry(ParseTree node, ParserRuleContext entry) {
@@ -450,7 +452,6 @@ public class Checker extends LavaBaseListener {
     }
 
     /**
-     *
      * @param node input node.
      * @return a node which should be the entry of the control flow graph for this node.
      */

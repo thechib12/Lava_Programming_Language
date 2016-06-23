@@ -214,6 +214,7 @@ public class CheckerTest {
 
     private CheckerResult check(ParseTree tree) throws ParseException {
         CheckerResult result = this.compiler.check(tree);
+        System.out.println(this.compiler.getChecker().getErrors());
         assertEquals(0, this.compiler.getChecker().getErrors().size());
         return result;
     }
