@@ -23,7 +23,7 @@ public class FunctionLabeler extends LavaBaseListener {
     }
 
     @Override
-    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+    public void exitFunctionDecl(LavaParser.FunctionDeclContext ctx) {
         labels.put(ctx.ID().getText(), new Label(ctx.ID().getText()));
     }
 }

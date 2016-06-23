@@ -184,15 +184,15 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitMain(LavaParser.MainContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#functiondecl}.
+	 * Enter a parse tree produced by {@link LavaParser#functionDecl}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctiondecl(LavaParser.FunctiondeclContext ctx);
+	void enterFunctionDecl(LavaParser.FunctionDeclContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#functiondecl}.
+	 * Exit a parse tree produced by {@link LavaParser#functionDecl}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctiondecl(LavaParser.FunctiondeclContext ctx);
+	void exitFunctionDecl(LavaParser.FunctionDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#function}.
 	 * @param ctx the parse tree
@@ -204,15 +204,15 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitFunction(LavaParser.FunctionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#parametersdecl}.
+	 * Enter a parse tree produced by {@link LavaParser#parametersDecl}.
 	 * @param ctx the parse tree
 	 */
-	void enterParametersdecl(LavaParser.ParametersdeclContext ctx);
+	void enterParametersDecl(LavaParser.ParametersDeclContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#parametersdecl}.
+	 * Exit a parse tree produced by {@link LavaParser#parametersDecl}.
 	 * @param ctx the parse tree
 	 */
-	void exitParametersdecl(LavaParser.ParametersdeclContext ctx);
+	void exitParametersDecl(LavaParser.ParametersDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code variableTarget}
 	 * labeled alternative in {@link LavaParser#target}.

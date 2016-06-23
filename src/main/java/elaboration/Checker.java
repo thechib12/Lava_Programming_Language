@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class Checker extends LavaBaseListener {
     private Scope scope;
     private Map<String, Type> functionReturnTypes;
     private Map<String, List<Type>> functionParameters;
+    private Map<String, Boolean> sharedVars;
     /* The list of errors that occured while checking.*/
     private List<String> errors;
     private String currentFunction;
@@ -42,6 +44,7 @@ public class Checker extends LavaBaseListener {
     public CheckerResult check(ParseTree tree) {
         scope = new MultiScope();
         errors = new ArrayList<>();
+        sharedVars = new HashMap<>();
         FunctionExplorer explorer = new FunctionExplorer();
         explorer.explore(tree);
         functionReturnTypes = explorer.getFunctionReturnTypes();
@@ -56,23 +59,21 @@ public class Checker extends LavaBaseListener {
 
     //  Functions ----------------------------------------------------------------------------------------------------------
     @Override
-    public void enterFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+    public void enterFunctionDecl(LavaParser.FunctionDeclContext ctx) {
         currentFunction = ctx.ID().getText();
         scope.openScope();
     }
 
     @Override
-    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
-        List<Integer> pars = new ArrayList<>();
-        for (int i = 0; i < ctx.parametersdecl().VARID().size(); i++) {
-            pars.add(this.scope.offset(ctx.parametersdecl().VARID(i).getText()));
+    public void exitFunctionDecl(LavaParser.FunctionDeclContext ctx) {
+        if (ctx.type().shared() != null) {
+            addError(ctx, "functions cannot return a shared variable");
         }
-        checkerResult.setFunctionParameters(ctx.ID().getText(), pars);
         scope.closeScope();
     }
 
     @Override
-    public void exitParametersdecl(LavaParser.ParametersdeclContext ctx) {
+    public void exitParametersDecl(LavaParser.ParametersDeclContext ctx) {
         for (int i = 0; i < ctx.type().size(); i++) {
             Type type = getType(ctx.type(i));
             if (type.getKind() == TypeKind.VOID) {
@@ -145,20 +146,23 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitVariableTarget(LavaParser.VariableTargetContext ctx) {
-        this.setType(ctx, this.scope.type(ctx.VARID().getText()));
-        this.setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
+        String id = ctx.VARID().getText();
+        this.setType(ctx, this.scope.type(id));
+        this.setOffset(ctx, this.scope.offset(id));
+        this.setShared(ctx, getSharedVar(id));
     }
 
     @Override
     public void exitPrimDecl(LavaParser.PrimDeclContext ctx) {
         Type type = getType(ctx.primitiveType());
+        String id = ctx.VARID().getText();
         if (type.getKind() == TypeKind.VOID) {
             addError(ctx, "Void is not a type for a variable");
         } else {
-            if (!this.scope.put(ctx.VARID().getText(), type)) {
-                addError(ctx, "Variable already declared: " + ctx.VARID().getText());
+            if (!this.scope.put(id, type)) {
+                addError(ctx, "Variable already declared: " + id);
             }
-            setOffset(ctx, this.scope.offset(ctx.VARID().getText()));
+            setOffset(ctx, this.scope.offset(id));
             setType(ctx, type);
             setType(ctx.VARID(), type);
         }
@@ -168,6 +172,12 @@ public class Checker extends LavaBaseListener {
             setEntry(ctx, ctx);
         }
 
+        if (ctx.shared() != null) {
+            sharedVars.put(id, true);
+        } else {
+            sharedVars.put(id, false);
+        }
+        setShared(ctx, getSharedVar(id));
     }
 
 
@@ -182,6 +192,7 @@ public class Checker extends LavaBaseListener {
             errors.add("Assignment type error");
         }
         this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
+        this.setShared(ctx, checkerResult.getSharedVar(ctx.target()));
         this.setEntry(ctx, getEntry(ctx.expr()));
     }
 
@@ -234,6 +245,7 @@ public class Checker extends LavaBaseListener {
         } else {
             setType(ctx, type);
             setOffset(ctx, this.scope.offset(id));
+            setShared(ctx, getSharedVar(id));
             setEntry(ctx, ctx);
         }
     }
@@ -409,6 +421,10 @@ public class Checker extends LavaBaseListener {
         this.errors.add(message);
     }
 
+    private Boolean getSharedVar(String id) {
+        return sharedVars.get(id);
+    }
+
     /**
      * Sets the offset of this node.
      *
@@ -435,6 +451,10 @@ public class Checker extends LavaBaseListener {
      */
     private Type getType(ParseTree node) {
         return this.checkerResult.getType(node);
+    }
+
+    private void setShared(ParseTree node, boolean shared) {
+        this.checkerResult.setSharedVar(node, shared);
     }
 
     /**

@@ -4,10 +4,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by Rogier + Christiaan on 15-06-16 in Enschede.
  */
@@ -20,7 +16,8 @@ public class CheckerResult {
     /** Mapping from variables to coordinates. */
     private final ParseTreeProperty<Integer> offsets = new ParseTreeProperty<>();
 
-    private final Map<String, List<Integer>> functionParameters = new HashMap<>();
+    private final ParseTreeProperty<Boolean> sharedVar = new ParseTreeProperty<>();
+
 
 
     /** Adds an association from parse tree node to the flow graph entry. */
@@ -58,11 +55,11 @@ public class CheckerResult {
         return this.types.get(node);
     }
 
-    public void setFunctionParameters(String id, List<Integer> pars) {
-        functionParameters.put(id, pars);
+    public void setSharedVar(ParseTree node, boolean shared) {
+        this.sharedVar.put(node, shared);
     }
 
-    public List<Integer> getFuncParameters(String id) {
-        return functionParameters.get(id);
+    public Boolean getSharedVar(ParseTree node) {
+        return sharedVar.get(node);
     }
 }

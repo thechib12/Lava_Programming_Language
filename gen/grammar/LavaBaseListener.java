@@ -208,13 +208,13 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctiondecl(LavaParser.FunctiondeclContext ctx) { }
+	@Override public void enterFunctionDecl(LavaParser.FunctionDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) { }
+	@Override public void exitFunctionDecl(LavaParser.FunctionDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -232,13 +232,13 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParametersdecl(LavaParser.ParametersdeclContext ctx) { }
+	@Override public void enterParametersDecl(LavaParser.ParametersDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParametersdecl(LavaParser.ParametersdeclContext ctx) { }
+	@Override public void exitParametersDecl(LavaParser.ParametersDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

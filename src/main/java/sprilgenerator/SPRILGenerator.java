@@ -23,13 +23,9 @@ import java.util.List;
  * Created by Rogier on 21-06-16 in Enschede.
  */
 public class SPRILGenerator {
-    private static final OpCode[] computationsOpcodes = {OpCode.Add, OpCode.Sub, OpCode.Mul, OpCode.Equal, OpCode.NEQ,
+    public static final OpCode[] computationsOpcodes = {OpCode.Add, OpCode.Sub, OpCode.Mul, OpCode.Equal, OpCode.NEQ,
             OpCode.Gt, OpCode.GtE, OpCode.Lt, OpCode.LtE, OpCode.And, OpCode.Or, OpCode.Xor, OpCode.LShift, OpCode.RShift};
 
-    public SPRILGenerator() {
-
-
-    }
 
     public void writeFile(String text) {
         try {
@@ -41,7 +37,7 @@ public class SPRILGenerator {
         }
     }
 
-    public String formatSpril(List<String> instruction) {
+    public String formatSpril(List<List<String>> instruction) {
         StringBuilder builder = new StringBuilder();
         builder.append("module Program where\n" +
                 "\n" +
@@ -50,21 +46,26 @@ public class SPRILGenerator {
                 "import Sprockell\n" +
                 "import System\n" +
                 "import Simulation\n" +
-                "\n" +
-                "prog :: [Instruction]\n");
+                "\n");
 
-        builder.append("prog = [\n");
-        for (int i = 0; i < instruction.size() - 1; i++) {
-            builder.append("          " + instruction.get(i) + ", \n");
+        List<String> progNames = new ArrayList<>();
+        for (int i = 0; i < instruction.size(); i++) {
 
+            String progName = "prog" + i;
+            progNames.add(progName);
+            builder.append(progName + " :: [Instruction]\n");
+            builder.append(progName + " = [\n");
+            List<String> instrs = instruction.get(i);
+            for (int j = 0; j < instrs.size() - 1; j++) {
+                builder.append("          " + instrs.get(j) + ", \n");
+
+            }
+            builder.append("          " + instrs.get(instrs.size() - 1) + " \n");
+
+            builder.append("       ] \n");
         }
-        builder.append("          " + instruction.get(instruction.size() - 1) + " \n");
 
-        builder.append("       ] \n");
-
-        builder.append("demoTest = sysTest [prog]");
-
-
+        builder.append("demoTest = sysTest " + progNames.toString());
         return builder.toString();
 
     }
@@ -123,17 +124,15 @@ public class SPRILGenerator {
                         result.add("EndProg");
                         break;
                     case ReadD:
-                        result.add("Load " + instr.addr(0).toString());
-                        break;
                     case ReadInd:
-                        result.add("Load " + instr.addr(0).toString());
+                        result.add("ReadInstr " + " (" + instr.addr(0).toString() + ")");
                         break;
                     case Receive:
                         result.add("Receive " + instr.reg(0).toString());
                         break;
                     case WriteD:
                     case WriteInd:
-                        result.add("Write " + instr.reg(0).toString() + " (" + instr.addr(1) + ")");
+                        result.add("WriteInstr " + instr.reg(0).toString() + " (" + instr.addr(1) + ")");
                         break;
                     case TestAndSetD:
                     case TestAndSetInd:
@@ -169,12 +168,16 @@ public class SPRILGenerator {
 
 
         ParseTree tree = parser.program();
-        Program program = generator.generate(tree, checker.check(tree));
+        List<Program> programs = generator.generate(tree, checker.check(tree));
         RegisterMinimizer minimizer = new RegisterMinimizer();
-        Program program2 = minimizer.minimizeRegisters(program);
         SPRILGenerator sprilgen = new SPRILGenerator();
-        List<String> spril = sprilgen.generateSpril(program2);
-        sprilgen.writeFile(sprilgen.formatSpril(spril));
+        List<List<String>> sprils = new ArrayList<>();
+        for (Program prog : programs) {
+            prog = minimizer.minimizeRegisters(prog);
+            sprils.add(sprilgen.generateSpril(prog));
+        }
+
+        sprilgen.writeFile(sprilgen.formatSpril(sprils));
 
     }
 }

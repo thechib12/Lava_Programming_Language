@@ -228,9 +228,9 @@ nextPC branch tgtCode (x,reply) (pc,n,y) =
 
         case  (branch, tgtCode, x/=0,  reply  )  of
 
-              ( True , TAbs   , True,    _    )  -> n
-              ( True , TRel   , True,    _    )  -> pc + n
-              ( True , TInd   , True,    _    )  -> y
+              ( True , TAbs   , False,    _    )  -> n
+              ( True , TRel   , False,    _    )  -> pc + n
+              ( True , TInd   , False,    _    )  -> y
 
               ( False, TAbs   ,  _  ,    _    )  -> n
               ( False, TRel   ,  _  ,    _    )  -> pc + n

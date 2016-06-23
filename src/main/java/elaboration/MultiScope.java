@@ -51,7 +51,6 @@ public class MultiScope implements Scope {
         if (sameType && notDefinedInScope) {
             int size = 0;
             Map<String, Integer> scope = scopes.peek();
-            System.out.println(scope);
             for (String var : scope.keySet()) {
                 size += types.get(var).size();
             }

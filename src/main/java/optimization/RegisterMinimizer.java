@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Rogier on 21-06-16 in Enschede.
@@ -75,12 +74,58 @@ public class RegisterMinimizer {
 
         }
         renameRegisters();
+//        TODO: Optimize registers here
         return program;
+    }
+
+    private boolean unusedLater(String name, int line) {
+        boolean result = true;
+        Set<Integer> reglines = program.getRegLines().get(name);
+        for (Integer lineNmbr : reglines) {
+            if (lineNmbr > line) {
+                result = false;
+            }
+        }
+
+
+        return result;
     }
 
     public void printErrors() {
         for (int i = 0; i < errors.size(); i++) {
             System.out.println(errors.get(i));
+        }
+    }
+
+    private void renameSingleRegister(String oldReg, String newReg, int line) {
+        Set<Integer> lines = program.getRegLines().get(oldReg);
+        for (Integer i : lines) {
+            if (i > line) {
+                for (Operand operand : program.getOpList().get(i).getArgs()) {
+                    if (operand.getType() == Operand.Type.REG) {
+                        if (((Reg) operand).getName().equals(oldReg)) {
+                            ((Reg) operand).setName(newReg);
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+
+
+    private void renameSingleRegister(String oldReg, String newReg) {
+        Set<Integer> lines = program.getRegLines().get(oldReg);
+        for (Integer i : lines) {
+            for (Operand operand : program.getOpList().get(i).getArgs()) {
+                if (operand.getType() == Operand.Type.REG) {
+                    if (((Reg) operand).getName().equals(oldReg)) {
+                        ((Reg) operand).setName(newReg);
+                    }
+
+                }
+            }
         }
     }
 
@@ -91,23 +136,14 @@ public class RegisterMinimizer {
 
         for (String reg : programRegisters) {
 
-
-            registerMapping.put(reg, tempRegisters.remove(0));
-        }
-        Map<String, Set<Integer>> reglines = program.getRegLines();
-        for (String reg : registerMapping.keySet()) {
-
-            Set<Integer> lines = reglines.get(reg);
-            for (Integer i : lines) {
-                for (Operand operand : program.getOpList().get(i).getArgs()) {
-                    if (operand.getType() == Operand.Type.REG) {
-                        if (((Reg) operand).getName().equals(reg)) {
-                            ((Reg) operand).setName(registerMapping.get(reg));
-                        }
-
-                    }
-                }
+            if (!reg.equals("reg0")) {
+                registerMapping.put(reg, tempRegisters.remove(0));
             }
+
+        }
+        for (String reg : registerMapping.keySet()) {
+            renameSingleRegister(reg, registerMapping.get(reg));
+
         }
 
     }
@@ -131,7 +167,7 @@ public class RegisterMinimizer {
 
 
         ParseTree tree = parser.program();
-        Program program = generator.generate(tree, checker.check(tree));
+        Program program = generator.generate(tree, checker.check(tree)).get(0);
         System.out.println(program.toString());
 
         RegisterMinimizer minimizer = new RegisterMinimizer();

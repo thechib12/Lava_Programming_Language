@@ -129,7 +129,7 @@ public class LavaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements L
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFunctiondecl(LavaParser.FunctiondeclContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFunctionDecl(LavaParser.FunctionDeclContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -143,7 +143,7 @@ public class LavaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements L
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParametersdecl(LavaParser.ParametersdeclContext ctx) { return visitChildren(ctx); }
+	@Override public T visitParametersDecl(LavaParser.ParametersDeclContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

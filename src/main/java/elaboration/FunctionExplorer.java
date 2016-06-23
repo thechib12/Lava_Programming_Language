@@ -33,14 +33,14 @@ public class FunctionExplorer extends LavaBaseListener {
 
 
     @Override
-    public void exitFunctiondecl(LavaParser.FunctiondeclContext ctx) {
+    public void exitFunctionDecl(LavaParser.FunctionDeclContext ctx) {
         String id = ctx.ID().getText();
         functionReturnTypes.put(id, types.get(ctx.type()));
-        int typeCount = ctx.parametersdecl().type().size();
+        int typeCount = ctx.parametersDecl().type().size();
         List<Type> types1 = new ArrayList<>();
         List<String> names = new ArrayList<>();
         for (int i = 0; i < typeCount; i++) {
-            types1.add(types.get(ctx.parametersdecl().type(i)));
+            types1.add(types.get(ctx.parametersDecl().type(i)));
 
         }
         functionParameterTypes.put(id, types1);

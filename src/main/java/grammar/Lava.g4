@@ -5,7 +5,7 @@ import LavaVocab;
 program: CHAMBER ID LBRACE body  RBRACE EOF;
 
 
-body: localVariableDeclarationStatement* functiondecl* main?;
+body: localVariableDeclarationStatement* functionDecl* main?;
 
 
 statement :
@@ -40,7 +40,7 @@ emptyStatement:
     ;
 
 localVariableDeclaration :
-      primitiveType VARID (ASS expr)?                       #primDecl
+      shared? primitiveType VARID (ASS expr)?                       #primDecl
     | primitiveType arrayType VARID ASS WITH SIZE NUM #arrayDecl
     ;
 
@@ -49,15 +49,15 @@ main:
     ERUPT LPAR RPAR block
     ;
 
-functiondecl:
-      (RUPTURE type ID LPAR parametersdecl RPAR block )
+functionDecl:
+      (RUPTURE type ID LPAR parametersDecl RPAR block )
     ;
 
 function:
     ID LPAR parameters RPAR
     ;
 
-parametersdecl:
+parametersDecl:
     (type VARID(COMMA type VARID)*)?
     ;
 

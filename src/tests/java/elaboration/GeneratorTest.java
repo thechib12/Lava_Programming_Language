@@ -3,14 +3,12 @@ package elaboration;
 import grammar.LavaLexer;
 import grammar.LavaParser;
 import model.Program;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -89,7 +87,7 @@ public class GeneratorTest {
 
 
         ParseTree tree = parser.program();
-        Program prog = generator.generate(tree, checker.check(tree));
+        Program prog = generator.generate(tree, checker.check(tree)).get(0);
         return removeSpaces(prog.toString());
     }
 }

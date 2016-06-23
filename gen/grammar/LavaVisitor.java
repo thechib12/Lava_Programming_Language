@@ -115,11 +115,11 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMain(LavaParser.MainContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#functiondecl}.
+	 * Visit a parse tree produced by {@link LavaParser#functionDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctiondecl(LavaParser.FunctiondeclContext ctx);
+	T visitFunctionDecl(LavaParser.FunctionDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#function}.
 	 * @param ctx the parse tree
@@ -127,11 +127,11 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunction(LavaParser.FunctionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#parametersdecl}.
+	 * Visit a parse tree produced by {@link LavaParser#parametersDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParametersdecl(LavaParser.ParametersdeclContext ctx);
+	T visitParametersDecl(LavaParser.ParametersDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code variableTarget}
 	 * labeled alternative in {@link LavaParser#target}.
