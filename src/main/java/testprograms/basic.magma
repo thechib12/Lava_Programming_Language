@@ -10,7 +10,6 @@ chamber basic {
         $a = 0;
         $b = 'c';
         $c = hot and cold;
-        rock $d = 4;
      }
 
  }

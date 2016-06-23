@@ -155,7 +155,7 @@ public class SPRILGenerator {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/basic.magma");
+        File file = new File("src/main/java/testprograms/simpletest3.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));
@@ -169,6 +169,7 @@ public class SPRILGenerator {
 
         ParseTree tree = parser.program();
         Program program = generator.generate(tree, checker.check(tree));
+        System.out.println(program.toString());
         RegisterMinimizer minimizer = new RegisterMinimizer();
         Program program2 = minimizer.minimizeRegisters(program);
         SPRILGenerator sprilgen = new SPRILGenerator();

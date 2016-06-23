@@ -236,8 +236,10 @@ public class Generator extends LavaBaseVisitor<Op>{
         if (hasLabel(ctx)){
             labels.put(ctx.expr(),labels.get(ctx));
         }
+
         visit(ctx.expr());
-        return super.visitParExpr(ctx);
+        emit(OpCode.LoadIm, new Addr(Addr.AddrType.ImmValue, 0), reg(ctx));
+        return emit(OpCode.Add, reg(ctx.expr()), reg(ctx), reg(ctx));
     }
 
     @Override

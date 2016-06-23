@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Rogier on 21-06-16 in Enschede.
@@ -21,7 +22,7 @@ import java.util.*;
 public class RegisterMinimizer {
     private Program program;
     public final static List<String> sprilRegisters = new ArrayList<>();
-
+    List<String> errors = new ArrayList<>();
     static {
         sprilRegisters.add("regA");
         sprilRegisters.add("regB");
@@ -42,6 +43,25 @@ public class RegisterMinimizer {
         sprilRegisters.add("regQ");
         sprilRegisters.add("regR");
         sprilRegisters.add("regS");
+        sprilRegisters.add("regA1");
+        sprilRegisters.add("regB1");
+        sprilRegisters.add("regC1");
+        sprilRegisters.add("regD1");
+        sprilRegisters.add("regE1");
+        sprilRegisters.add("regF1");
+        sprilRegisters.add("regG1");
+        sprilRegisters.add("regH1");
+        sprilRegisters.add("regI1");
+        sprilRegisters.add("regJ1");
+        sprilRegisters.add("regK1");
+        sprilRegisters.add("regL1");
+        sprilRegisters.add("regM1");
+        sprilRegisters.add("regN1");
+        sprilRegisters.add("regO1");
+        sprilRegisters.add("regP1");
+        sprilRegisters.add("regQ1");
+        sprilRegisters.add("regR1");
+        sprilRegisters.add("regS1");
     }
 
 
@@ -49,13 +69,20 @@ public class RegisterMinimizer {
         this.program = programx;
 //        System.out.println(program);
         int i = 0;
-        if (program.getRegisters().size() > 20) {
-//            TODO minimize amount of register
+        if (program.getRegisters().size() > 40) {
+            //            TODO minimize amount of register;
+            errors.add("To much registers used!");
+
         }
         renameRegisters();
         return program;
     }
 
+    public void printErrors() {
+        for (int i = 0; i < errors.size(); i++) {
+            System.out.println(errors.get(i));
+        }
+    }
 
     private void renameRegisters() {
         List<String> programRegisters = program.getRegisters();
@@ -109,6 +136,7 @@ public class RegisterMinimizer {
 
         RegisterMinimizer minimizer = new RegisterMinimizer();
         program = minimizer.minimizeRegisters(program);
+        minimizer.printErrors();
         System.out.println(program);
     }
 }
