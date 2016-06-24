@@ -193,7 +193,7 @@ public class Checker extends LavaBaseListener {
         if (type == type1) {
             setType(ctx, type);
         } else {
-            errors.add("Assignment type error");
+            addError(ctx, "You cant assign a " + type.toString() + " to a " + type1.toString());
         }
         this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
         this.setShared(ctx, checkerResult.getSharedVar(ctx.target()));
@@ -220,7 +220,7 @@ public class Checker extends LavaBaseListener {
         Type returnType = getType(ctx.expr());
         Type currentReturnType = functionReturnTypes.get(currentFunction);
         if (returnType == Type.INT && currentReturnType == Type.CHAR) {
-            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks!");
+            addError(ctx, "Jesus Christ Marie, they're minerals, not rocks! - Hank Schrader ");
         } else if (returnType != currentReturnType) {
             addError(ctx, "Incompatible Return type!");
         }
