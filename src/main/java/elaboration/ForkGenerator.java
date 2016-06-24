@@ -59,12 +59,14 @@ public class ForkGenerator extends Generator {
         Label label = new Label("begin");
         Reg reg = new Reg("r_go");
         Reg reg1 = new Reg("r_busy");
+        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg1);
+        emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
+
         emit(label, TestAndSetD, new Addr(Addr.AddrType.DirAddr, memAddr));
         emit(Receive, reg);
 
 //        emit(Sub, reg1,reg ,reg);
         emit(Branch, reg, label);
-        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg1);
         emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
 
 //        for (LavaParser.LocalVariableDeclarationStatementContext local: ctx.localVariableDeclarationStatement()) {
