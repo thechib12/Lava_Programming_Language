@@ -172,25 +172,25 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrimDecl(LavaParser.PrimDeclContext ctx) { }
+	@Override public void enterPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrimDecl(LavaParser.PrimDeclContext ctx) { }
+	@Override public void exitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayDecl(LavaParser.ArrayDeclContext ctx) { }
+	@Override public void enterArrayDeclaration(LavaParser.ArrayDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArrayDecl(LavaParser.ArrayDeclContext ctx) { }
+	@Override public void exitArrayDeclaration(LavaParser.ArrayDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -208,13 +208,13 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionDecl(LavaParser.FunctionDeclContext ctx) { }
+	@Override public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionDecl(LavaParser.FunctionDeclContext ctx) { }
+	@Override public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -232,13 +232,13 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParametersDecl(LavaParser.ParametersDeclContext ctx) { }
+	@Override public void enterParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParametersDecl(LavaParser.ParametersDeclContext ctx) { }
+	@Override public void exitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

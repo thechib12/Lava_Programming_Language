@@ -27,17 +27,17 @@ public class LavaParser extends Parser {
 	public static final int
 		RULE_program = 0, RULE_body = 1, RULE_statement = 2, RULE_block = 3, RULE_blockStatements = 4, 
 		RULE_blockStatement = 5, RULE_localVariableDeclarationStatement = 6, RULE_emptyStatement = 7, 
-		RULE_localVariableDeclaration = 8, RULE_main = 9, RULE_functionDecl = 10, 
-		RULE_function = 11, RULE_parametersDecl = 12, RULE_target = 13, RULE_arrayInit = 14, 
-		RULE_parameters = 15, RULE_compOp = 16, RULE_boolOp = 17, RULE_multOp = 18, 
-		RULE_plusOp = 19, RULE_negaOp = 20, RULE_expr = 21, RULE_type = 22, RULE_arrayType = 23, 
-		RULE_shared = 24, RULE_primitiveType = 25;
+		RULE_localVariableDeclaration = 8, RULE_main = 9, RULE_functionDeclaration = 10, 
+		RULE_function = 11, RULE_parametersDeclaration = 12, RULE_target = 13, 
+		RULE_arrayInit = 14, RULE_parameters = 15, RULE_compOp = 16, RULE_boolOp = 17, 
+		RULE_multOp = 18, RULE_plusOp = 19, RULE_negaOp = 20, RULE_expr = 21, 
+		RULE_type = 22, RULE_arrayType = 23, RULE_shared = 24, RULE_primitiveType = 25;
 	public static final String[] ruleNames = {
 		"program", "body", "statement", "block", "blockStatements", "blockStatement", 
 		"localVariableDeclarationStatement", "emptyStatement", "localVariableDeclaration", 
-		"main", "functionDecl", "function", "parametersDecl", "target", "arrayInit", 
-		"parameters", "compOp", "boolOp", "multOp", "plusOp", "negaOp", "expr", 
-		"type", "arrayType", "shared", "primitiveType"
+		"main", "functionDeclaration", "function", "parametersDeclaration", "target", 
+		"arrayInit", "parameters", "compOp", "boolOp", "multOp", "plusOp", "negaOp", 
+		"expr", "type", "arrayType", "shared", "primitiveType"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -172,11 +172,11 @@ public class LavaParser extends Parser {
 		public LocalVariableDeclarationStatementContext localVariableDeclarationStatement(int i) {
 			return getRuleContext(LocalVariableDeclarationStatementContext.class,i);
 		}
-		public List<FunctionDeclContext> functionDecl() {
-			return getRuleContexts(FunctionDeclContext.class);
+		public List<FunctionDeclarationContext> functionDeclaration() {
+			return getRuleContexts(FunctionDeclarationContext.class);
 		}
-		public FunctionDeclContext functionDecl(int i) {
-			return getRuleContext(FunctionDeclContext.class,i);
+		public FunctionDeclarationContext functionDeclaration(int i) {
+			return getRuleContext(FunctionDeclarationContext.class,i);
 		}
 		public MainContext main() {
 			return getRuleContext(MainContext.class,0);
@@ -228,7 +228,7 @@ public class LavaParser extends Parser {
 				{
 				{
 				setState(65);
-				functionDecl();
+				functionDeclaration();
 				}
 				}
 				setState(70);
@@ -848,7 +848,7 @@ public class LavaParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class PrimDeclContext extends LocalVariableDeclarationContext {
+	public static class PrimitiveDeclarationContext extends LocalVariableDeclarationContext {
 		public PrimitiveTypeContext primitiveType() {
 			return getRuleContext(PrimitiveTypeContext.class,0);
 		}
@@ -860,22 +860,22 @@ public class LavaParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public PrimDeclContext(LocalVariableDeclarationContext ctx) { copyFrom(ctx); }
+		public PrimitiveDeclarationContext(LocalVariableDeclarationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterPrimDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterPrimitiveDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitPrimDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitPrimitiveDeclaration(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitPrimDecl(this);
+			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitPrimitiveDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ArrayDeclContext extends LocalVariableDeclarationContext {
+	public static class ArrayDeclarationContext extends LocalVariableDeclarationContext {
 		public PrimitiveTypeContext primitiveType() {
 			return getRuleContext(PrimitiveTypeContext.class,0);
 		}
@@ -887,18 +887,18 @@ public class LavaParser extends Parser {
 		public TerminalNode WITH() { return getToken(LavaParser.WITH, 0); }
 		public TerminalNode SIZE() { return getToken(LavaParser.SIZE, 0); }
 		public TerminalNode NUM() { return getToken(LavaParser.NUM, 0); }
-		public ArrayDeclContext(LocalVariableDeclarationContext ctx) { copyFrom(ctx); }
+		public ArrayDeclarationContext(LocalVariableDeclarationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterArrayDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterArrayDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitArrayDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitArrayDeclaration(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitArrayDecl(this);
+			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitArrayDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -912,7 +912,7 @@ public class LavaParser extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
 			case 1:
-				_localctx = new PrimDeclContext(_localctx);
+				_localctx = new PrimitiveDeclarationContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(139);
@@ -942,7 +942,7 @@ public class LavaParser extends Parser {
 				}
 				break;
 			case 2:
-				_localctx = new ArrayDeclContext(_localctx);
+				_localctx = new ArrayDeclarationContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(147);
@@ -1027,42 +1027,42 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
-	public static class FunctionDeclContext extends ParserRuleContext {
+	public static class FunctionDeclarationContext extends ParserRuleContext {
 		public TerminalNode RUPTURE() { return getToken(LavaParser.RUPTURE, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(LavaParser.ID, 0); }
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
-		public ParametersDeclContext parametersDecl() {
-			return getRuleContext(ParametersDeclContext.class,0);
+		public ParametersDeclarationContext parametersDeclaration() {
+			return getRuleContext(ParametersDeclarationContext.class,0);
 		}
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
-		public FunctionDeclContext(ParserRuleContext parent, int invokingState) {
+		public FunctionDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_functionDecl; }
+		@Override public int getRuleIndex() { return RULE_functionDeclaration; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterFunctionDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterFunctionDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitFunctionDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitFunctionDeclaration(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitFunctionDecl(this);
+			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitFunctionDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final FunctionDeclContext functionDecl() throws RecognitionException {
-		FunctionDeclContext _localctx = new FunctionDeclContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_functionDecl);
+	public final FunctionDeclarationContext functionDeclaration() throws RecognitionException {
+		FunctionDeclarationContext _localctx = new FunctionDeclarationContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_functionDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1076,7 +1076,7 @@ public class LavaParser extends Parser {
 			setState(165);
 			match(LPAR);
 			setState(166);
-			parametersDecl();
+			parametersDeclaration();
 			setState(167);
 			match(RPAR);
 			setState(168);
@@ -1148,7 +1148,7 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ParametersDeclContext extends ParserRuleContext {
+	public static class ParametersDeclarationContext extends ParserRuleContext {
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
 		}
@@ -1163,28 +1163,28 @@ public class LavaParser extends Parser {
 		public TerminalNode COMMA(int i) {
 			return getToken(LavaParser.COMMA, i);
 		}
-		public ParametersDeclContext(ParserRuleContext parent, int invokingState) {
+		public ParametersDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_parametersDecl; }
+		@Override public int getRuleIndex() { return RULE_parametersDeclaration; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterParametersDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterParametersDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitParametersDecl(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitParametersDeclaration(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitParametersDecl(this);
+			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitParametersDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ParametersDeclContext parametersDecl() throws RecognitionException {
-		ParametersDeclContext _localctx = new ParametersDeclContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_parametersDecl);
+	public final ParametersDeclarationContext parametersDeclaration() throws RecognitionException {
+		ParametersDeclarationContext _localctx = new ParametersDeclarationContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_parametersDeclaration);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

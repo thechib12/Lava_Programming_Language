@@ -67,19 +67,15 @@ public class ForkGenerator extends Generator {
         emit(label, TestAndSetD, new Addr(Addr.AddrType.DirAddr, memAddr));
         emit(Receive, reg);
 
-//        emit(Sub, reg1,reg ,reg);
         emit(Branch, reg, label);
         emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
 
-//        for (LavaParser.LocalVariableDeclarationStatementContext local: ctx.localVariableDeclarationStatement()) {
-//            visitLocalVariableDeclarationStatement(local);
-//        }
-        for (LavaParser.FunctionDeclContext func : ctx.functionDecl()) {
+        for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (func.ID().getText().equals(currentFunction)) {
                 visit(func.block());
             }
         }
-        for (LavaParser.FunctionDeclContext func : ctx.functionDecl()) {
+        for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (!func.ID().getText().equals(currentFunction)) {
                 visit(func);
             }

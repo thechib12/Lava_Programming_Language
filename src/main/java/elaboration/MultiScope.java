@@ -11,7 +11,7 @@ public class MultiScope implements Scope {
     /**
      * Map from declared variables to their types.
      */
-    private Map<String, Type> types;
+    private Stack<Map<String, Type>> types;
 
     private Stack<Map<String, Integer>> scopes;
 
@@ -19,14 +19,16 @@ public class MultiScope implements Scope {
 
 
     public MultiScope() {
-        types = new HashMap<>();
+        types = new Stack<>();
         scopes = new Stack<>();
+        this.types.add(new HashMap<>());
         this.scopes.add(new HashMap<>());
     }
 
 
     @Override
     public void openScope() {
+        this.types.add(new HashMap<>(this.types.peek()));
         this.scopes.add(new HashMap<>(this.scopes.peek()));
     }
 
@@ -35,6 +37,7 @@ public class MultiScope implements Scope {
         if (this.scopes.size() == 1) {
             throw new RuntimeException();
         }
+        this.types.pop();
         this.scopes.pop();
     }
 
@@ -45,28 +48,28 @@ public class MultiScope implements Scope {
 
     @Override
     public boolean put(String id, Type type) {
-        boolean sameType = (!types.containsKey(id)) || (types.containsKey(id) && types.get(id) != type);
+        boolean typeNotDefined = !types.peek().containsKey(id);
         boolean notDefinedInScope = !this.scopes.peek().containsKey(id);
 
-        if (sameType && notDefinedInScope) {
+        if (typeNotDefined && notDefinedInScope) {
             int size = 0;
             Map<String, Integer> scope = scopes.peek();
             for (String var : scope.keySet()) {
-                size += types.get(var).size();
+                size += types.peek().get(var).size();
             }
             size += type.size();
-            types.put(id, type);
+            types.peek().put(id, type);
             scope.put(id, size);
 
 
         }
 
-        return sameType && notDefinedInScope;
+        return typeNotDefined && notDefinedInScope;
     }
 
     @Override
     public Type type(String id) {
-        return types.get(id);
+        return types.peek().get(id);
     }
 
     @Override

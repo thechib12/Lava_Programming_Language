@@ -24,38 +24,48 @@ import static model.OpCode.*;
  * Generator for the Lava IR language. The Lava IR has already the form of the Sprill, but is not one-to-one.
  * It misses some important keywords and uses unlimited registers. The Lava IR is saved into a {@link Program} object.
  */
-public class Generator extends LavaBaseVisitor<Op>{
-    /** The representation of the boolean value <code>false</code>. */
-    public final static Addr FALSE_VALUE = new Addr(Addr.AddrType.ImmValue,0);
-    /** The representation of the boolean value <code>true</code>. */
-    public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue,1);
+public class Generator extends LavaBaseVisitor<Op> {
+    /**
+     * The representation of the boolean value <code>false</code>.
+     */
+    private final static Addr FALSE_VALUE = new Addr(Addr.AddrType.ImmValue, 0);
+    /**
+     * The representation of the boolean value <code>true</code>.
+     */
+    private final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue, 1);
 
 
-    public final static int MAX_THREADS = 8;
+    private final static int MAX_THREADS = 8;
 
-    public final static int SHARED_OFFSET = MAX_THREADS;
+    private final static int SHARED_OFFSET = MAX_THREADS;
 
-    public final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
+    private final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
 
-    private int forkcount = 0;
+    private int forkCount = 0;
 
     /**
      * All labels belonging mapped to their correct nodes.
      */
     private ParseTreeProperty<Label> labels;
 
-    /** The outcome of the checker phase. */
+    /**
+     * The outcome of the checker phase.
+     */
     private CheckerResult checkResult;
 
-    /** The program being built. */
+    /**
+     * The program being built.
+     */
     private Program prog;
-    /** Register count, used to generate fresh registers. */
+    /**
+     * Register count, used to generate fresh registers.
+     */
     private int regCount;
-    /** Association of expression and target nodes to registers. */
+    /**
+     * Association of expression and target nodes to registers.
+     */
     private ParseTreeProperty<Reg> regs;
-
-    private String currentFunction;
 
     private List<Program> programs;
 
@@ -82,11 +92,11 @@ public class Generator extends LavaBaseVisitor<Op>{
     }
 
 
-
     /**
      * Generates Lava IR from the {@link CheckerResult} and {@link ParseTree}. Generating is done by visiting nodes
      * in the parse tree.
-     * @param tree given parse tree from the {@link LavaParser}.
+     *
+     * @param tree        given parse tree from the {@link LavaParser}.
      * @param checkResult the result of the type checking phase.
      * @return a Program object containing all instructions in Lava IR language.
      */
@@ -100,227 +110,15 @@ public class Generator extends LavaBaseVisitor<Op>{
         return this.programs;
     }
 
-
-    @Override
-    public Op visitIfStat(LavaParser.IfStatContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-
-//        TODO Look at label
-        labels.put(ctx.expr(0), label);
-        int statCount = ctx.block().size();
-        int elseifCount = ctx.IF().size()-1;
-        boolean hasElse = ctx.ELSE() != null && ctx.ELSE().size() == ctx.IF().size();
-
-        List<Label> ifLabels = new ArrayList<>();
-        for (int i = 1; i <= elseifCount; i++) {
-            Label label1 = createLabel(ctx.expr(i),"elseif");
-            ifLabels.add(label1);
-            labels.put(ctx.expr(i), label1);
-        }
-        if (hasElse){
-            Label label1 = createLabel(ctx.block(statCount-1),"else");
-            labels.put(ctx.block(statCount-1),label1);
-            ifLabels.add(label1);
-        }
-        Label label3 = createLabel(ctx,"endif");
-        if (statCount == 1){
-            visit(ctx.expr(0));
-            emit(Branch, reg(ctx), label3);
-            visit(ctx.block(0));
-        } else {
-            visit(ctx.expr(0));
-            emit(Branch, reg(ctx.expr(0)), ifLabels.get(0));
-            visit(ctx.block(0));
-            emit(Jump, label3);
-
-            for (int i = 1; i < elseifCount; i++) {
-                visit(ctx.expr(i));
-                emit(Branch, reg(ctx.expr(i)), ifLabels.get(i));
-                visit(ctx.block(i));
-                emit(Jump, label3);
-            }
-
-            if (hasElse){
-                visit(ctx.expr(elseifCount));
-                emit(Branch, reg(ctx.expr(elseifCount)), ifLabels.get(ifLabels.size() - 1));
-                visit(ctx.block(elseifCount));
-                emit(Jump, label3);
-                visit(ctx.block(elseifCount + 1));
-
-
-            } else {
-                visit(ctx.expr(elseifCount));
-                emit(Branch, reg(ctx.expr(elseifCount)), label3);
-                visit(ctx.block(elseifCount));
-                emit(Jump, label3);
-            }
-
-
-        }
-
-
-        return emit(label3, Nop);
-    }
-
-    @Override
-    public Op visitAssignStat(LavaParser.AssignStatContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(),label);
-        visit(ctx.expr());
-        if (checkResult.getSharedVar(ctx)) {
-//            Label label1 = createLabel(ctx, "lock");
-//            emit(label1, TestAndSetD, LOCK);
-//            emit(Receive, reg(ctx));
-//            emit(Branch, reg(ctx), label1);
-            return emit(WriteD, reg(ctx.expr()),
-                    new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-//            return emit(WriteD, REG_ZERO, LOCK);
-        } else {
-            return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
-        }
-    }
-
-    @Override
-    public Op visitFunctionStat(LavaParser.FunctionStatContext ctx) {
-        if (ctx.function().ID().getText().equals("fork") && forkcount < MAX_THREADS - 1) {
-//            TODO: check for correct func call;
-            String forkfunc = ((LavaParser.FunctionExprContext) ctx.function().parameters().expr(0)).function().ID().getText();
-            ForkGenerator forkGenerator = new ForkGenerator();
-            forkcount++;
-            try {
-                programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkcount));
-            } catch (ParseException e) {
-                errors.addAll(e.getMessages());
-            }
-
-            emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, forkcount));
-        } else if (ctx.function().ID().getText().equals("fork") && forkcount >= MAX_THREADS - 1) {
-//            adderror.
-            String error = "to many forks for this sprockell";
-        } else if (ctx.function().ID().getText().equals("join")) {
-            visit(ctx.function().parameters().expr(0));
-            Label label = createLabel(ctx, "join");
-            emit(label, TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
-            emit(Receive, reg(ctx));
-            emit(Branch, reg(ctx), label);
-        } else if (ctx.function().ID().getText().equals("lock")) {
-            Label label1 = createLabel(ctx, "lock");
-            emit(label1, TestAndSetD, LOCK);
-            emit(Receive, reg(ctx));
-            emit(Branch, reg(ctx), label1);
-        } else if (ctx.function().ID().getText().equals("unlock")) {
-            emit(WriteD, REG_ZERO, LOCK);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Op visitWhileStat(LavaParser.WhileStatContext ctx) {
-        Label label1 = createLabel(ctx,"while");
-        labels.put(ctx.expr(),label1);
-        Label label2 = createLabel(ctx, "body");
-        labels.put(ctx.block(),label2);
-        Label label3 = createLabel(ctx,"endwhile");
-        visit(ctx.expr());
-        emit(Branch, reg(ctx.expr()), label3);
-        visit(ctx.block());
-        emit(Jump, label1);
-        return emit(label3, Nop);
-    }
-
-    @Override
-    public Op visitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.localVariableDeclaration(),label);
-
-        return super.visitLocalVariableDeclarationStatement(ctx);
-    }
-
-    public Program getProg() {
-        return prog;
-    }
-
-    @Override
-    public Op visitPrimDecl(LavaParser.PrimDeclContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        if (ctx.expr() != null){
-            labels.put(ctx.expr(),label);
-            visit(ctx.expr());
-            if (checkResult.getSharedVar(ctx)) {
-//                Label label1 = createLabel(ctx, "lock");
-//                emit(label1, TestAndSetD, LOCK);
-//                emit(Receive, reg(ctx));
-//                emit(Branch, reg(ctx), label1);
-                return emit(WriteD, reg(ctx.expr()),
-                        new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-//                return emit(WriteD, REG_ZERO, LOCK);
-            } else {
-                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
-            }
-
-        } else {
-            if (checkResult.getSharedVar(ctx)) {
-//                Label label1 = createLabel(ctx, "lock");
-//                emit(label1, TestAndSetD, LOCK);
-//                emit(Receive, reg(ctx));
-//                emit(Branch, reg(ctx), label1);
-                return emit(WriteD, REG_ZERO,
-                        new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-//                return emit(WriteD, REG_ZERO, LOCK);
-            } else {
-                return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
-            }
-        }
-    }
-
-    @Override
-    public Op visitBlock(LavaParser.BlockContext ctx) {
-        if (hasLabel(ctx)){
-            labels.put(ctx.blockStatements(),labels.get(ctx));
-        }
-        return super.visitBlock(ctx);
-    }
-
-    @Override
-    public Op visitBlockStatements(LavaParser.BlockStatementsContext ctx) {
-        if (hasLabel(ctx)){
-            labels.put(ctx.blockStatement(0),labels.get(ctx));
-        }
-
-        return super.visitBlockStatements(ctx);
-    }
-
-    @Override
-    public Op visitBlockStatement(LavaParser.BlockStatementContext ctx) {
-        if (hasLabel(ctx)){
-            labels.put(ctx.getChild(0),labels.get(ctx));
-        }
-
-        return super.visitBlockStatement(ctx);
-    }
+//    Program ---------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public Op visitBody(LavaParser.BodyContext ctx) {
-        for (LavaParser.LocalVariableDeclarationStatementContext decl : ctx.localVariableDeclarationStatement()) {
-            visit(decl);
-        }
+        ctx.localVariableDeclarationStatement().forEach(this::visit);
         visit(ctx.main());
-        for (LavaParser.FunctionDeclContext func : ctx.functionDecl()) {
-            visit(func);
-        }
+        ctx.functionDeclaration().forEach(this::visit);
         return null;
     }
 
@@ -330,222 +128,18 @@ public class Generator extends LavaBaseVisitor<Op>{
         return emit(EndProg);
     }
 
-    @Override
-    public Op visitParExpr(LavaParser.ParExprContext ctx) {
-        if (hasLabel(ctx)){
-            labels.put(ctx.expr(),labels.get(ctx));
-        }
-        visit(ctx.expr());
-
-        return emit(Add, reg(ctx.expr()), REG_ZERO, reg(ctx));
-    }
+//    Function --------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Op visitMultExpr(LavaParser.MultExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(0),label);
-        visit(ctx.expr(0));
-        visit(ctx.expr(1));
-        OpCode opCode = null;
-        if (ctx.multOp().STAR() != null){
-            opCode = Mul;
-        }
-        return emit(opCode,reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
-    }
-
-
-    @Override
-    public Op visitPlusExpr(LavaParser.PlusExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(0),label);
-        visit(ctx.expr(0));
-        visit(ctx.expr(1));
-
-        OpCode opCode;
-        if (ctx.plusOp().PLUS() != null){
-            opCode = Add;
-        } else {
-            opCode = Sub;
-        }
-
-        return emit(opCode,reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
-    }
-
-    @Override
-    public Op visitBoolExpr(LavaParser.BoolExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(0),label);
-        visit(ctx.expr(0));
-        visit(ctx.expr(1));
-
-        OpCode opCode;
-        if (ctx.boolOp().AND() != null){
-            opCode = And;
-        } else if (ctx.boolOp().XOR() != null) {
-            opCode = Xor;
-        } else {
-            opCode = Or;
-        }
-
-        return emit(opCode,reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
-    }
-
-    @Override
-    public Op visitCompExpr(LavaParser.CompExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(0),label);
-        visit(ctx.expr(0));
-        visit(ctx.expr(1));
-
-        int ruleIndex = ((TerminalNode) ctx.compOp().getChild(0)).getSymbol().getType();
-        OpCode opCode = null;
-        switch (ruleIndex){
-            case LavaParser.LE:
-                opCode = LtE;
-                break;
-            case LavaParser.LT:
-                opCode = Lt;
-                break;
-            case LavaParser.GE:
-                opCode = GtE;
-                break;
-            case LavaParser.GT:
-                opCode = Gt;
-                break;
-            case LavaParser.EQ:
-                opCode = Equal;
-                break;
-
-
-        }
-
-        return emit(opCode, reg(ctx.expr(0)),reg(ctx.expr(1)),reg(ctx));
-    }
-
-    @Override
-    public Op visitNotExpr(LavaParser.NotExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(),label);
-        visit(ctx.expr());
-        Op operation;
-        if (ctx.negaOp().MINUS() != null){
-            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 0), reg(ctx));
-            operation = emit(Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
-        } else {
-            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
-            operation = emit(Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
-        }
-        return operation;
-    }
-
-
-    @Override
-    public Op visitCharExpr(LavaParser.CharExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, Character.getNumericValue(ctx.CHARACTER().getText().charAt(1))), reg(ctx));
-    }
-
-    @Override
-    public Op visitTrueExpr(LavaParser.TrueExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        return emit(label, LoadIm, TRUE_VALUE, reg(ctx));
-    }
-
-    @Override
-    public Op visitNumExpr(LavaParser.NumExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, Integer.parseInt(ctx.NUM().getText())), reg(ctx));
-    }
-
-    @Override
-    public Op visitFalseExpr(LavaParser.FalseExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        return emit(label, LoadIm, FALSE_VALUE, reg(ctx));
-    }
-
-    @Override
-    public Op visitIdExpr(LavaParser.IdExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)){
-            label = labels.get(ctx);
-        }
-        if (checkResult.getSharedVar(ctx)) {
-//            Label label1 = createLabel(ctx, "lock");
-//            emit(label, Nop);
-//            emit(label1, TestAndSetD, LOCK);
-//            emit(Receive, reg(ctx));
-//            emit(Branch, reg(ctx), label1);
-            emit(ReadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-            return emit(Receive, reg(ctx));
-//            return emit(WriteD, REG_ZERO, LOCK);
-        } else {
-            return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)), reg(ctx));
-        }
-
-    }
-
-    @Override
-    public Op visitFunctionExpr(LavaParser.FunctionExprContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)) {
-            label = labels.get(ctx);
-        }
-        visitChildren(ctx);
-        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, prog.size() + SHARED_OFFSET), reg(ctx));
-        emit(Push, reg(ctx));
-        emit(label, Jump, funcmap.get(ctx.function().ID().getText()));
-        return emit(Pop, reg(ctx));
-    }
-
-    @Override
-    public Op visitReturnStat(LavaParser.ReturnStatContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)) {
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.expr(), label);
-        visit(ctx.expr());
-        emit(Pop, reg(ctx));
-        emit(Push, reg(ctx.expr()));
-        return emit(JumpI, new Target(reg(ctx)));
-    }
-
-
-    @Override
-    public Op visitFunctionDecl(LavaParser.FunctionDeclContext ctx) {
-        currentFunction = ctx.ID().getText();
+    public Op visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
+        String currentFunction = ctx.ID().getText();
         Label label = funcmap.get(currentFunction);
 
         List<Reg> regs = new ArrayList<>();
         emit(label, Pop, reg(ctx));
-        for (int i = 0; i < ctx.parametersDecl().VARID().size(); i++) {
+        for (int i = 0; i < ctx.parametersDeclaration().VARID().size(); i++) {
             Reg reg = new Reg("r_1_" + i);
             regs.add(reg);
             emit(Pop, reg);
@@ -556,13 +150,13 @@ public class Generator extends LavaBaseVisitor<Op>{
         }
 
 
-        visitParametersDecl(ctx.parametersDecl());
+        visitParametersDeclaration(ctx.parametersDeclaration());
         visitBlock(ctx.block());
         return emit(JumpI, new Target(reg(ctx)));
     }
 
     @Override
-    public Op visitParametersDecl(LavaParser.ParametersDeclContext ctx) {
+    public Op visitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) {
         Label label = null;
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
@@ -572,7 +166,7 @@ public class Generator extends LavaBaseVisitor<Op>{
             for (int i = 0; i < ctx.VARID().size(); i++) {
                 emit(Pop, reg(ctx));
 
-                operation = emit(StoreD, reg(ctx), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx.VARID(i))));
+                operation = emit(StoreD, reg(ctx), new Addr(Addr.AddrType.DirAddr, offset(ctx.VARID(i))));
             }
         }
 
@@ -598,16 +192,438 @@ public class Generator extends LavaBaseVisitor<Op>{
         return operation;
     }
 
+
+//    Block -----------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Op visitBlock(LavaParser.BlockContext ctx) {
+        if (hasLabel(ctx)) {
+            labels.put(ctx.blockStatements(), labels.get(ctx));
+        }
+        return super.visitBlock(ctx);
+    }
+
+    @Override
+    public Op visitBlockStatements(LavaParser.BlockStatementsContext ctx) {
+        if (hasLabel(ctx)) {
+            labels.put(ctx.blockStatement(0), labels.get(ctx));
+        }
+
+        return super.visitBlockStatements(ctx);
+    }
+
+    @Override
+    public Op visitBlockStatement(LavaParser.BlockStatementContext ctx) {
+        if (hasLabel(ctx)) {
+            labels.put(ctx.getChild(0), labels.get(ctx));
+        }
+
+        return super.visitBlockStatement(ctx);
+    }
+
+
+//    Variable declaration and assignment -----------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Op visitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.localVariableDeclaration(), label);
+
+        return super.visitLocalVariableDeclarationStatement(ctx);
+    }
+
+    public Program getProg() {
+        return prog;
+    }
+
+    @Override
+    public Op visitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        if (ctx.expr() != null) {
+            labels.put(ctx.expr(), label);
+            visit(ctx.expr());
+            if (checkResult.getSharedVar(ctx)) {
+                return emit(WriteD, reg(ctx.expr()),
+                        new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            } else {
+                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+            }
+
+        } else {
+            if (checkResult.getSharedVar(ctx)) {
+                return emit(WriteD, REG_ZERO,
+                        new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            } else {
+                return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+            }
+        }
+    }
+
+
+//    Statement -------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Op visitIfStat(LavaParser.IfStatContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+
+        // TODO Look at label
+        labels.put(ctx.expr(0), label);
+        int statCount = ctx.block().size();
+        int elseifCount = ctx.IF().size() - 1;
+        boolean hasElse = ctx.ELSE() != null && ctx.ELSE().size() == ctx.IF().size();
+
+        List<Label> ifLabels = new ArrayList<>();
+        for (int i = 1; i <= elseifCount; i++) {
+            Label label1 = createLabel(ctx.expr(i), "elseif");
+            ifLabels.add(label1);
+            labels.put(ctx.expr(i), label1);
+        }
+        if (hasElse) {
+            Label label1 = createLabel(ctx.block(statCount - 1), "else");
+            labels.put(ctx.block(statCount - 1), label1);
+            ifLabels.add(label1);
+        }
+        Label label3 = createLabel(ctx, "endif");
+        if (statCount == 1) {
+            visit(ctx.expr(0));
+            emit(Branch, reg(ctx), label3);
+            visit(ctx.block(0));
+        } else {
+            visit(ctx.expr(0));
+            emit(Branch, reg(ctx.expr(0)), ifLabels.get(0));
+            visit(ctx.block(0));
+            emit(Jump, label3);
+
+            for (int i = 1; i < elseifCount; i++) {
+                visit(ctx.expr(i));
+                emit(Branch, reg(ctx.expr(i)), ifLabels.get(i));
+                visit(ctx.block(i));
+                emit(Jump, label3);
+            }
+
+            if (hasElse) {
+                visit(ctx.expr(elseifCount));
+                emit(Branch, reg(ctx.expr(elseifCount)), ifLabels.get(ifLabels.size() - 1));
+                visit(ctx.block(elseifCount));
+                emit(Jump, label3);
+                visit(ctx.block(elseifCount + 1));
+
+
+            } else {
+                visit(ctx.expr(elseifCount));
+                emit(Branch, reg(ctx.expr(elseifCount)), label3);
+                visit(ctx.block(elseifCount));
+                emit(Jump, label3);
+            }
+
+
+        }
+
+
+        return emit(label3, Nop);
+    }
+
+    @Override
+    public Op visitAssignStat(LavaParser.AssignStatContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(), label);
+        visit(ctx.expr());
+        if (checkResult.getSharedVar(ctx)) {
+            Addr addr = new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET);
+            return emit(WriteD, reg(ctx.expr()), addr);
+        } else {
+            return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+        }
+    }
+
+    @Override
+    public Op visitFunctionStat(LavaParser.FunctionStatContext ctx) {
+        if (ctx.function().ID().getText().equals("fork") && forkCount < MAX_THREADS - 1) {
+            String forkfunc = ((LavaParser.FunctionExprContext) ctx.function().parameters().expr(0)).function().ID().getText();
+            ForkGenerator forkGenerator = new ForkGenerator();
+            forkCount++;
+            try {
+                programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkCount));
+            } catch (ParseException e) {
+                errors.addAll(e.getMessages());
+            }
+
+            emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, forkCount));
+        } else if (ctx.function().ID().getText().equals("fork") && forkCount >= MAX_THREADS - 1) {
+            String error = "to many forks for this sprockell";
+            errors.add(error);
+        } else if (ctx.function().ID().getText().equals("join")) {
+            visit(ctx.function().parameters().expr(0));
+            Label label = createLabel(ctx, "join");
+            emit(label, TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
+            emit(Receive, reg(ctx));
+            emit(Branch, reg(ctx), label);
+        } else if (ctx.function().ID().getText().equals("lock")) {
+            Label label1 = createLabel(ctx, "lock");
+            emit(label1, TestAndSetD, LOCK);
+            emit(Receive, reg(ctx));
+            emit(Branch, reg(ctx), label1);
+        } else if (ctx.function().ID().getText().equals("unlock")) {
+            emit(WriteD, REG_ZERO, LOCK);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Op visitWhileStat(LavaParser.WhileStatContext ctx) {
+        Label label1 = createLabel(ctx, "while");
+        labels.put(ctx.expr(), label1);
+        Label label2 = createLabel(ctx, "body");
+        labels.put(ctx.block(), label2);
+        Label label3 = createLabel(ctx, "endwhile");
+        visit(ctx.expr());
+        emit(Branch, reg(ctx.expr()), label3);
+        visit(ctx.block());
+        emit(Jump, label1);
+        return emit(label3, Nop);
+    }
+
+    @Override
+    public Op visitReturnStat(LavaParser.ReturnStatContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(), label);
+        visit(ctx.expr());
+        emit(Pop, reg(ctx));
+        emit(Push, reg(ctx.expr()));
+        return emit(JumpI, new Target(reg(ctx)));
+    }
+
+//    Expression ------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Op visitParExpr(LavaParser.ParExprContext ctx) {
+        if (hasLabel(ctx)) {
+            labels.put(ctx.expr(), labels.get(ctx));
+        }
+        visit(ctx.expr());
+
+        return emit(Add, reg(ctx.expr()), REG_ZERO, reg(ctx));
+    }
+
+    @Override
+    public Op visitMultExpr(LavaParser.MultExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(0), label);
+        visit(ctx.expr(0));
+        visit(ctx.expr(1));
+        OpCode opCode = null;
+        if (ctx.multOp().STAR() != null) {
+            opCode = Mul;
+        }
+        return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+    }
+
+
+    @Override
+    public Op visitPlusExpr(LavaParser.PlusExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(0), label);
+        visit(ctx.expr(0));
+        visit(ctx.expr(1));
+
+        OpCode opCode;
+        if (ctx.plusOp().PLUS() != null) {
+            opCode = Add;
+        } else {
+            opCode = Sub;
+        }
+
+        return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+    }
+
+    @Override
+    public Op visitBoolExpr(LavaParser.BoolExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(0), label);
+        visit(ctx.expr(0));
+        visit(ctx.expr(1));
+
+        OpCode opCode;
+        if (ctx.boolOp().AND() != null) {
+            opCode = And;
+        } else if (ctx.boolOp().XOR() != null) {
+            opCode = Xor;
+        } else {
+            opCode = Or;
+        }
+
+        return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+    }
+
+    @Override
+    public Op visitCompExpr(LavaParser.CompExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(0), label);
+        visit(ctx.expr(0));
+        visit(ctx.expr(1));
+
+        int ruleIndex = ((TerminalNode) ctx.compOp().getChild(0)).getSymbol().getType();
+        OpCode opCode = null;
+        switch (ruleIndex) {
+            case LavaParser.LE:
+                opCode = LtE;
+                break;
+            case LavaParser.LT:
+                opCode = Lt;
+                break;
+            case LavaParser.GE:
+                opCode = GtE;
+                break;
+            case LavaParser.GT:
+                opCode = Gt;
+                break;
+            case LavaParser.EQ:
+                opCode = Equal;
+                break;
+
+
+        }
+
+        return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+    }
+
+    @Override
+    public Op visitNotExpr(LavaParser.NotExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        labels.put(ctx.expr(), label);
+        visit(ctx.expr());
+        Op operation;
+        if (ctx.negaOp().MINUS() != null) {
+            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 0), reg(ctx));
+            operation = emit(Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
+        } else {
+            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+            operation = emit(Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
+        }
+        return operation;
+    }
+
+
+    @Override
+    public Op visitCharExpr(LavaParser.CharExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, Character.getNumericValue(ctx.CHARACTER().getText().charAt(1))), reg(ctx));
+    }
+
+    @Override
+    public Op visitTrueExpr(LavaParser.TrueExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        return emit(label, LoadIm, TRUE_VALUE, reg(ctx));
+    }
+
+    @Override
+    public Op visitNumExpr(LavaParser.NumExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, Integer.parseInt(ctx.NUM().getText())), reg(ctx));
+    }
+
+    @Override
+    public Op visitFalseExpr(LavaParser.FalseExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        return emit(label, LoadIm, FALSE_VALUE, reg(ctx));
+    }
+
+    @Override
+    public Op visitIdExpr(LavaParser.IdExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        if (checkResult.getSharedVar(ctx)) {
+            emit(ReadD, new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            return emit(Receive, reg(ctx));
+        } else {
+            return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, offset(ctx)), reg(ctx));
+        }
+
+    }
+
+    @Override
+    public Op visitFunctionExpr(LavaParser.FunctionExprContext ctx) {
+        Label label = null;
+        if (hasLabel(ctx)) {
+            label = labels.get(ctx);
+        }
+        visitChildren(ctx);
+        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, prog.size() + SHARED_OFFSET), reg(ctx));
+        emit(Push, reg(ctx));
+        emit(label, Jump, funcmap.get(ctx.function().ID().getText()));
+        return emit(Pop, reg(ctx));
+    }
+
+//    Types -----------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+
     /**
      * @param node current node.
      * @return if this node has a label
      */
-    private boolean hasLabel(ParseTree node){
+    private boolean hasLabel(ParseTree node) {
         return labels.get(node) != null;
     }
 
 
-    /** Creates a label for a given parse tree node and prefix. */
+    /**
+     * Creates a label for a given parse tree node and prefix.
+     */
     private Label createLabel(ParserRuleContext node, String prefix) {
         Token token = node.getStart();
         int line = token.getLine();
@@ -616,9 +632,10 @@ public class Generator extends LavaBaseVisitor<Op>{
         return new Label(result);
     }
 
-    // Override the visitor methods
-    /** Constructs an operation from the parameters
-     * and adds it to the program under construction. */
+    /**
+     * Constructs an operation from the parameters
+     * and adds it to the program under construction.
+     */
     protected Op emit(Label label, OpCode opCode, Operand... args) {
         Op result = new Op(label, opCode, args);
         if (prog == null) {
@@ -628,15 +645,19 @@ public class Generator extends LavaBaseVisitor<Op>{
         return result;
     }
 
-    /** Constructs an operation from the parameters
-     * and adds it to the program under construction. */
+    /**
+     * Constructs an operation from the parameters
+     * and adds it to the program under construction.
+     */
     protected Op emit(OpCode opCode, Operand... args) {
         return emit(null, opCode, args);
     }
 
 
-    /** Returns a register for a given parse tree node,
-     * creating a fresh register if there is none for that node. */
+    /**
+     * Returns a register for a given parse tree node,
+     * creating a fresh register if there is none for that node.
+     */
     private Reg reg(ParseTree node) {
         Reg result = this.regs.get(node);
         if (result == null) {
@@ -661,7 +682,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/tester.magma");
+        File file = new File("src/main/java/testprograms/scopetester.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));
@@ -674,7 +695,7 @@ public class Generator extends LavaBaseVisitor<Op>{
 
 
         ParseTree tree = parser.program();
-        List<Program> program = null;
+        List<Program> program;
         try {
             CheckerResult result = checker.check(tree);
             program = generator.generate(tree, result);
