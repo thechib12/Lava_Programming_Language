@@ -84,6 +84,10 @@ data Instruction = Compute Operator RegAddr RegAddr RegAddr     -- Compute op r0
                  | Branch RegAddr Target                        -- Branch r t: conditional jump, depending on register r
                                                                 --      if r contains 0: don't jump; otherwise: jump
 
+
+                 | I2I RegAddr RegAddr                          -- shift register
+                 | IncrSP                                       -- Increase Stack Pointer
+                 | DecrSP                                       -- Decrease Stack Pointer
                  | Load AddrImmDI RegAddr                       -- Load (ImmValue n) r: put value n in register r
                                                                 -- Load (DirAddr a) r : put value on memory address a in r
                                                                 -- Load (IndAddr p) r : ibid, but memory address is in register p
@@ -140,6 +144,7 @@ data LdCode     = LdImm                                         -- code that ind
                 | LdMem
                 | LdPC
                 | LdInp
+                | LdReg
                 deriving (Eq,Show)
 
 data StCode     = StNone                                        -- code to tell which value to put in memory

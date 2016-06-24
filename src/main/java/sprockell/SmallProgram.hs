@@ -9,21 +9,9 @@ import Simulation
 prog :: [Instruction]
 prog = [
          Load (ImmValue 12) 2,
-         Load (ImmValue 12) 1,
-         Compute Add 1 2 3,
-          Push 3,
-          Store 3 (DirAddr 0),
-          Store 3 (DirAddr 1),
-          Compute LtE 1 2 3,
-          Load (ImmValue 88) 4,
-          Nop,
-          Nop,
-          Nop,
-          Nop,
-                    Nop,
-                    Nop,
-                    Nop,
-          EndProg
+         I2I 2 3,
+         Store 3 (DirAddr 100000),
+         EndProg
        ]
 
 demoTest = sysTest [prog]

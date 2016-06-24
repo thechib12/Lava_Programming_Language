@@ -40,7 +40,7 @@ sprockell instrs sprState reply = (sprState', request)
 
         address      = agu aguCode (addrImm,x,sp)
 
-        loadValue    = load ldCode (immValue, aluOutput, localMem!address, pc, reply)
+        loadValue    = load ldCode (immValue, aluOutput, localMem!address, pc, reply,x)
         regbank'     = regbank <~! (loadReg, loadValue)
 
         localMem'    = store localMem stCode (address,y)
@@ -79,6 +79,12 @@ decode :: Instruction -> MachCode
 decode instr = case instr of
 
   Compute c rx ry toReg       -> nullcode {ldCode=LdAlu, aluCode=c, regX=rx, regY=ry, loadReg=toReg}
+
+  I2I fromReg toReg           -> nullcode {ldCode=LdReg, regX=fromReg, loadReg=toReg}
+
+  IncrSP                      -> nullcode {spCode=Up}
+
+  DecrSP                     -> nullcode {spCode=Down}
 
   Jump target                 -> case target of
                                    Abs n       -> nullcode {tgtCode=TAbs, immValue=n}
@@ -200,12 +206,13 @@ agu aguCode (addrImm,x,sp) = case aguCode of
 -- =====================================================================================
 -- load: calculates the value that has to be put in a register
 -- =====================================================================================
-load :: LdCode -> (Value, Value, Value, Value, Reply) -> Value
-load ldCode (immval,aluOutput,memval,pc,reply) = case (ldCode, reply) of
+load :: LdCode -> (Value, Value, Value, Value, Reply,Value) -> Value
+load ldCode (immval,aluOutput,memval,pc,reply,regval) = case (ldCode, reply) of
         (LdImm, Nothing) -> immval
         (LdAlu, Nothing) -> aluOutput
         (LdMem, Nothing) -> memval
         (LdPC , Nothing) -> pc
+        (LdReg, Nothing) -> regval
 
         (LdInp, Just rx) -> rx
         (LdInp, Nothing) -> 0
@@ -219,7 +226,8 @@ store :: LocalMem -> StCode -> (MemAddr, Value) -> LocalMem
 store mem stCode (address,value) = case stCode of
         StNone -> mem
         StMem  -> mem <~! (address, value)
-
+--        StMem     | address == 100000 ->  mem <~! (address, trace ("\nOutput: " ++ show value) value)
+--                          | otherwise  -> mem <~! (address, value)
 -- =====================================================================================
 -- nextPC: to calculate next program counter
 -- =====================================================================================
