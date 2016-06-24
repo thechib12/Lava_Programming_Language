@@ -282,12 +282,9 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitNotExpr(LavaParser.NotExprContext ctx) {
-        Type type;
+        Type type = Type.INT;
         if (ctx.negaOp().NOT() != null) {
             type = Type.BOOL;
-        } else {
-            assert ctx.negaOp().MINUS() != null;
-            type = Type.INT;
         }
         checkType(ctx.expr(), type);
         setType(ctx, type);
@@ -306,7 +303,6 @@ public class Checker extends LavaBaseListener {
         checkType(ctx.expr(1), Type.INT);
         setType(ctx, Type.INT);
         setEntry(ctx, getEntry(ctx.expr(0)));
-
     }
 
     @Override
@@ -382,8 +378,7 @@ public class Checker extends LavaBaseListener {
         Type actual = getType(node);
         if (actual == null) {
             addError(node, "Missing inferred type of " + node.getText());
-        }
-        if (!actual.equals(expected)) {
+        } else if (!actual.equals(expected)) {
             addError(node, "Expected type '%s' but found '%s'", expected,
                     actual);
         }
