@@ -1,0 +1,12 @@
+chamber scopetester {
+    /^\ Created by Rogier on 24-06-16 in Enschede.
+    rock $a;
+
+    rupture void func() {
+        rock $b;
+    }
+
+    erupt(){
+        rock $b;
+    }
+}
