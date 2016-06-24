@@ -281,10 +281,53 @@ public class CheckerTest {
                 "else { rock $b = $a * 2; } " +
                 "}" +
                 "}";
+        String program4 = "chamber test4 {" +
+                "rock $a;" +
+                "erupt(){" +
+                "rock $b = $a + 2; " +
+                "}" +
+                "}";
 
         checkFail(program1);
         checkFail(program2);
         checkFail(program3);
+        checkFail(program4);
+    }
+
+    @Test
+    public void scopeTest() throws IOException, ParseException {
+        String program1 = "chamber test1 { rock $a =2; " +
+                "erupt(){" +
+                "rock $b = 3;" +
+                "$a = $b; " +
+                "}" +
+                "}";
+        String program2 = "chamber test2 { rock $a; " +
+                "rupture rock func(){" +
+                "rock $b = $a *2;" +
+                "return $b;" +
+                "}" +
+                "erupt(){" +
+                "$a = 2; " +
+                "}" +
+                "" +
+                "}";
+        String program3 = "chamber test3 { rock $a =2 ; temperature $b = cold; mineral $c = 'b';" +
+                "rupture mineral func1(){" +
+                "if ($b) then {" +
+                "$a = 3;" +
+                "}" +
+                "return $c;" +
+                "} " +
+                "erupt(){" +
+                "$a = ( 2101 +3 ); " +
+                "$b = (hot and cold);" +
+                "$c = 'a'; " +
+                "}" +
+                "}";
+        check(parseString(program1));
+        check(parseString(program2));
+        check(parseString(program3));
     }
 
 

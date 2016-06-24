@@ -189,14 +189,19 @@ public class Checker extends LavaBaseListener {
     public void exitAssignStat(LavaParser.AssignStatContext ctx) {
         Type type = this.getType(ctx.expr());
         Type type1 = this.getType(ctx.target());
-        if (type == type1) {
-            setType(ctx, type);
+        if (type == null || type1 == null) {
+            addError(ctx, "Variable not defined!");
         } else {
-            addError(ctx, "You cant assign a " + type.toString() + " to a " + type1.toString());
+            if (type == type1) {
+                setType(ctx, type);
+            } else {
+                addError(ctx, "You cant assign a " + type.toString() + " to a " + type1.toString());
+            }
+            this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
+            this.setShared(ctx, checkerResult.getSharedVar(ctx.target()));
+            this.setEntry(ctx, getEntry(ctx.expr()));
         }
-        this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
-        this.setShared(ctx, checkerResult.getSharedVar(ctx.target()));
-        this.setEntry(ctx, getEntry(ctx.expr()));
+
     }
 
     @Override
