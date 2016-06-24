@@ -278,11 +278,10 @@ public class CheckerTest {
         String program3 = "chamber test3 { " +
                 "erupt(){" +
                 "if (hot) then { rock $a = 4;}" +
-                "else { rock $b = $a * 2; } " +
+                "  else { rock $b = $a * 2; } " +
                 "}" +
                 "}";
         String program4 = "chamber test4 {" +
-                "rock $a;" +
                 "erupt(){" +
                 "rock $b = $a + 2; " +
                 "}" +
