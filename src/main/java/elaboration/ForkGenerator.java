@@ -43,13 +43,15 @@ public class ForkGenerator extends Generator {
      * @param checkResult the result of the type checking phase.
      * @return a Program object containing all instructions in Lava IR language.
      */
-    public Program generate(ParseTree tree, CheckerResult checkResult, String forkFunctionName, int memAddr) {
+    public Program generate(ParseTree tree, CheckerResult checkResult, String forkFunctionName, int memAddr) throws ParseException {
 
         init(tree, checkResult);
         currentFunction = forkFunctionName;
         this.memAddr = memAddr;
         tree.accept(this);
-
+        if (super.getErrors().size() > 0) {
+            throw new ParseException(super.getErrors());
+        }
         return super.getProg();
     }
 
@@ -104,10 +106,16 @@ public class ForkGenerator extends Generator {
 
 
         ParseTree tree = parser.program();
-        CheckerResult result = checker.check(tree);
-        System.out.println(checker.getErrors());
-        Program program = generator.generate(tree, result).get(0);
-        System.out.println(program.toString());
+        Program program = null;
+        try {
+            CheckerResult result = checker.check(tree);
+
+            program = generator.generate(tree, result).get(0);
+            System.out.println(program.toString());
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
+
     }
 
 }

@@ -2,6 +2,7 @@ package sprilgenerator;
 
 import elaboration.Checker;
 import elaboration.Generator;
+import elaboration.ParseException;
 import grammar.LavaLexer;
 import grammar.LavaParser;
 import model.Op;
@@ -168,16 +169,21 @@ public class SPRILGenerator {
 
 
         ParseTree tree = parser.program();
-        List<Program> programs = generator.generate(tree, checker.check(tree));
         RegisterMinimizer minimizer = new RegisterMinimizer();
         SPRILGenerator sprilgen = new SPRILGenerator();
         List<List<String>> sprils = new ArrayList<>();
-        for (Program prog : programs) {
-            prog = minimizer.minimizeRegisters(prog);
-            sprils.add(sprilgen.generateSpril(prog));
+        try {
+            List<Program> programs = generator.generate(tree, checker.check(tree));
+            for (Program prog : programs) {
+                prog = minimizer.minimizeRegisters(prog);
+                sprils.add(sprilgen.generateSpril(prog));
+            }
+
+            sprilgen.writeFile(sprilgen.formatSpril(sprils));
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
         }
 
-        sprilgen.writeFile(sprilgen.formatSpril(sprils));
 
     }
 }

@@ -2,6 +2,7 @@ package optimization;
 
 import elaboration.Checker;
 import elaboration.Generator;
+import elaboration.ParseException;
 import grammar.LavaLexer;
 import grammar.LavaParser;
 import model.Operand;
@@ -167,12 +168,16 @@ public class RegisterMinimizer {
 
 
         ParseTree tree = parser.program();
-        Program program = generator.generate(tree, checker.check(tree)).get(0);
-        System.out.println(program.toString());
-
         RegisterMinimizer minimizer = new RegisterMinimizer();
-        program = minimizer.minimizeRegisters(program);
-        minimizer.printErrors();
-        System.out.println(program);
+        try {
+            Program program = generator.generate(tree, checker.check(tree)).get(0);
+            System.out.println(program.toString());
+            program = minimizer.minimizeRegisters(program);
+            System.out.println(program);
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
+
+
     }
 }

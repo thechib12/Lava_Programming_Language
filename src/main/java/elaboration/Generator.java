@@ -30,9 +30,12 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>true</code>. */
     public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue,1);
 
-    public final static int SHARED_OFFSET = 4;
 
-    public final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, 4);
+    public final static int MAX_THREADS = 8;
+
+    public final static int SHARED_OFFSET = MAX_THREADS;
+
+    public final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
 
     private int forkcount = 0;
@@ -62,9 +65,12 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     private ParseTree tree;
 
+    private List<String> errors;
+
 
     protected void init(ParseTree tree, CheckerResult checkResult) {
         this.tree = tree;
+        this.errors = new ArrayList<>();
         this.prog = new Program();
         this.checkResult = checkResult;
         this.regs = new ParseTreeProperty<>();
@@ -84,10 +90,13 @@ public class Generator extends LavaBaseVisitor<Op>{
      * @param checkResult the result of the type checking phase.
      * @return a Program object containing all instructions in Lava IR language.
      */
-    public List<Program> generate(ParseTree tree, CheckerResult checkResult) {
+    public List<Program> generate(ParseTree tree, CheckerResult checkResult) throws ParseException {
         this.init(tree, checkResult);
 
         tree.accept(this);
+        if (errors.size() > 0) {
+            throw new ParseException(errors);
+        }
         return this.programs;
     }
 
@@ -179,14 +188,19 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     @Override
     public Op visitFunctionStat(LavaParser.FunctionStatContext ctx) {
-        if (ctx.function().ID().getText().equals("fork") && forkcount < 3) {
+        if (ctx.function().ID().getText().equals("fork") && forkcount < MAX_THREADS - 1) {
 //            TODO: check for correct func call;
             String forkfunc = ((LavaParser.FunctionExprContext) ctx.function().parameters().expr(0)).function().ID().getText();
             ForkGenerator forkGenerator = new ForkGenerator();
             forkcount++;
-            programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkcount));
+            try {
+                programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkcount));
+            } catch (ParseException e) {
+                errors.addAll(e.getMessages());
+            }
+
             emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, forkcount));
-        } else if (ctx.function().ID().getText().equals("fork") && forkcount >= 3) {
+        } else if (ctx.function().ID().getText().equals("fork") && forkcount >= MAX_THREADS - 1) {
 //            adderror.
             String error = "to many forks for this sprockell";
         } else if (ctx.function().ID().getText().equals("join")) {
@@ -638,7 +652,9 @@ public class Generator extends LavaBaseVisitor<Op>{
         return this.checkResult.getOffset(node);
     }
 
-
+    public List<String> getErrors() {
+        return errors;
+    }
 
     public static void main(String[] args) {
         Checker checker = new Checker();
@@ -658,10 +674,16 @@ public class Generator extends LavaBaseVisitor<Op>{
 
 
         ParseTree tree = parser.program();
-        CheckerResult result = checker.check(tree);
-        System.out.println(checker.getErrors());
-        List<Program> program = generator.generate(tree, result);
-        System.out.println(program.toString());
+        List<Program> program = null;
+        try {
+            CheckerResult result = checker.check(tree);
+            program = generator.generate(tree, result);
+            System.out.println(program.toString());
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
+
+
     }
 
 }

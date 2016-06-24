@@ -54,7 +54,7 @@ systemSim instrss s (t:ts) | not sysHalted = (instrs,s') : systemSim instrss s' 
                   s'        = system nrOfSprockells instrss s t
                   sysHalted = and $ map (==EndProg) $ zipWith (!!) instrss $ map pc $ sprStates s
 
-nrOfSprockells  = 4 :: Int
+nrOfSprockells  = 8 :: Int
 shMemSize       = 32 :: Int
 channelDelay    = 4 :: Int
 
