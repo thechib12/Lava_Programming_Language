@@ -165,13 +165,13 @@ public class Generator extends LavaBaseVisitor<Op>{
         labels.put(ctx.expr(),label);
         visit(ctx.expr());
         if (checkResult.getSharedVar(ctx)) {
-            Label label1 = createLabel(ctx, "lock");
-            emit(label1, TestAndSetD, LOCK);
-            emit(Receive, reg(ctx));
-            emit(Branch, reg(ctx), label1);
-            emit(WriteD, reg(ctx.expr()),
+//            Label label1 = createLabel(ctx, "lock");
+//            emit(label1, TestAndSetD, LOCK);
+//            emit(Receive, reg(ctx));
+//            emit(Branch, reg(ctx), label1);
+            return emit(WriteD, reg(ctx.expr()),
                     new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-            return emit(WriteD, REG_ZERO, LOCK);
+//            return emit(WriteD, REG_ZERO, LOCK);
         } else {
             return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
         }
@@ -195,6 +195,13 @@ public class Generator extends LavaBaseVisitor<Op>{
             emit(label, TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
             emit(Receive, reg(ctx));
             emit(Branch, reg(ctx), label);
+        } else if (ctx.function().ID().getText().equals("lock")) {
+            Label label1 = createLabel(ctx, "lock");
+            emit(label1, TestAndSetD, LOCK);
+            emit(Receive, reg(ctx));
+            emit(Branch, reg(ctx), label1);
+        } else if (ctx.function().ID().getText().equals("unlock")) {
+            emit(WriteD, REG_ZERO, LOCK);
         }
 
         return null;
@@ -239,26 +246,26 @@ public class Generator extends LavaBaseVisitor<Op>{
             labels.put(ctx.expr(),label);
             visit(ctx.expr());
             if (checkResult.getSharedVar(ctx)) {
-                Label label1 = createLabel(ctx, "lock");
-                emit(label1, TestAndSetD, LOCK);
-                emit(Receive, reg(ctx));
-                emit(Branch, reg(ctx), label1);
-                emit(WriteD, reg(ctx.expr()),
+//                Label label1 = createLabel(ctx, "lock");
+//                emit(label1, TestAndSetD, LOCK);
+//                emit(Receive, reg(ctx));
+//                emit(Branch, reg(ctx), label1);
+                return emit(WriteD, reg(ctx.expr()),
                         new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-                return emit(WriteD, REG_ZERO, LOCK);
+//                return emit(WriteD, REG_ZERO, LOCK);
             } else {
                 return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
             }
 
         } else {
             if (checkResult.getSharedVar(ctx)) {
-                Label label1 = createLabel(ctx, "lock");
-                emit(label1, TestAndSetD, LOCK);
-                emit(Receive, reg(ctx));
-                emit(Branch, reg(ctx), label1);
-                emit(WriteD, REG_ZERO,
+//                Label label1 = createLabel(ctx, "lock");
+//                emit(label1, TestAndSetD, LOCK);
+//                emit(Receive, reg(ctx));
+//                emit(Branch, reg(ctx), label1);
+                return emit(WriteD, REG_ZERO,
                         new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-                return emit(WriteD, REG_ZERO, LOCK);
+//                return emit(WriteD, REG_ZERO, LOCK);
             } else {
                 return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
             }
@@ -476,14 +483,14 @@ public class Generator extends LavaBaseVisitor<Op>{
             label = labels.get(ctx);
         }
         if (checkResult.getSharedVar(ctx)) {
-            Label label1 = createLabel(ctx, "lock");
-            emit(label, Nop);
-            emit(label1, TestAndSetD, LOCK);
-            emit(Receive, reg(ctx));
-            emit(Branch, reg(ctx), label1);
+//            Label label1 = createLabel(ctx, "lock");
+//            emit(label, Nop);
+//            emit(label1, TestAndSetD, LOCK);
+//            emit(Receive, reg(ctx));
+//            emit(Branch, reg(ctx), label1);
             emit(ReadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-            emit(Receive, reg(ctx));
-            return emit(WriteD, REG_ZERO, LOCK);
+            return emit(Receive, reg(ctx));
+//            return emit(WriteD, REG_ZERO, LOCK);
         } else {
             return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)), reg(ctx));
         }
