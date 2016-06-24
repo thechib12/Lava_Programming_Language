@@ -95,19 +95,19 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEmptyStatement(LavaParser.EmptyStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code primDecl}
+	 * Visit a parse tree produced by the {@code primitiveDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrimDecl(LavaParser.PrimDeclContext ctx);
+	T visitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code arrayDecl}
+	 * Visit a parse tree produced by the {@code arrayDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArrayDecl(LavaParser.ArrayDeclContext ctx);
+	T visitArrayDeclaration(LavaParser.ArrayDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#main}.
 	 * @param ctx the parse tree
@@ -115,11 +115,11 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMain(LavaParser.MainContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#functionDecl}.
+	 * Visit a parse tree produced by {@link LavaParser#functionDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctionDecl(LavaParser.FunctionDeclContext ctx);
+	T visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#function}.
 	 * @param ctx the parse tree
@@ -127,11 +127,11 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunction(LavaParser.FunctionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#parametersDecl}.
+	 * Visit a parse tree produced by {@link LavaParser#parametersDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParametersDecl(LavaParser.ParametersDeclContext ctx);
+	T visitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code variableTarget}
 	 * labeled alternative in {@link LavaParser#target}.

@@ -62,13 +62,13 @@ public class Checker extends LavaBaseListener {
 
     //  Functions ----------------------------------------------------------------------------------------------------------
     @Override
-    public void enterFunctionDecl(LavaParser.FunctionDeclContext ctx) {
+    public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         currentFunction = ctx.ID().getText();
         scope.openScope();
     }
 
     @Override
-    public void exitFunctionDecl(LavaParser.FunctionDeclContext ctx) {
+    public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         if (ctx.type().shared() != null) {
             addError(ctx, "functions cannot return a shared variable");
         }
@@ -76,7 +76,7 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitParametersDecl(LavaParser.ParametersDeclContext ctx) {
+    public void exitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) {
         for (int i = 0; i < ctx.type().size(); i++) {
             Type type = getType(ctx.type(i));
             if (type.getKind() == TypeKind.VOID) {
@@ -156,7 +156,7 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitPrimDecl(LavaParser.PrimDeclContext ctx) {
+    public void exitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) {
         Type type = getType(ctx.primitiveType());
         String id = ctx.VARID().getText();
         if (type.getKind() == TypeKind.VOID) {

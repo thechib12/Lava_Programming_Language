@@ -26,16 +26,16 @@ import static model.OpCode.*;
  */
 public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>false</code>. */
-    public final static Addr FALSE_VALUE = new Addr(Addr.AddrType.ImmValue,0);
+    private final static Addr FALSE_VALUE = new Addr(Addr.AddrType.ImmValue, 0);
     /** The representation of the boolean value <code>true</code>. */
-    public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue,1);
+    private final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue, 1);
 
 
-    public final static int MAX_THREADS = 8;
+    private final static int MAX_THREADS = 8;
 
-    public final static int SHARED_OFFSET = MAX_THREADS;
+    private final static int SHARED_OFFSET = MAX_THREADS;
 
-    public final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
+    private final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
 
     private int forkcount = 0;
@@ -54,8 +54,6 @@ public class Generator extends LavaBaseVisitor<Op>{
     private int regCount;
     /** Association of expression and target nodes to registers. */
     private ParseTreeProperty<Reg> regs;
-
-    private String currentFunction;
 
     private List<Program> programs;
 
@@ -179,10 +177,10 @@ public class Generator extends LavaBaseVisitor<Op>{
 //            emit(Receive, reg(ctx));
 //            emit(Branch, reg(ctx), label1);
             return emit(WriteD, reg(ctx.expr()),
-                    new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
+                    new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
 //            return emit(WriteD, REG_ZERO, LOCK);
         } else {
-            return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
+            return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
         }
     }
 
@@ -203,6 +201,7 @@ public class Generator extends LavaBaseVisitor<Op>{
         } else if (ctx.function().ID().getText().equals("fork") && forkcount >= MAX_THREADS - 1) {
 //            adderror.
             String error = "to many forks for this sprockell";
+            errors.add(error);
         } else if (ctx.function().ID().getText().equals("join")) {
             visit(ctx.function().parameters().expr(0));
             Label label = createLabel(ctx, "join");
@@ -251,7 +250,7 @@ public class Generator extends LavaBaseVisitor<Op>{
     }
 
     @Override
-    public Op visitPrimDecl(LavaParser.PrimDeclContext ctx) {
+    public Op visitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) {
         Label label = null;
         if (hasLabel(ctx)){
             label = labels.get(ctx);
@@ -265,10 +264,10 @@ public class Generator extends LavaBaseVisitor<Op>{
 //                emit(Receive, reg(ctx));
 //                emit(Branch, reg(ctx), label1);
                 return emit(WriteD, reg(ctx.expr()),
-                        new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
+                        new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
 //                return emit(WriteD, REG_ZERO, LOCK);
             } else {
-                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
+                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
             }
 
         } else {
@@ -278,10 +277,10 @@ public class Generator extends LavaBaseVisitor<Op>{
 //                emit(Receive, reg(ctx));
 //                emit(Branch, reg(ctx), label1);
                 return emit(WriteD, REG_ZERO,
-                        new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
+                        new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
 //                return emit(WriteD, REG_ZERO, LOCK);
             } else {
-                return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
+                return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, offset(ctx)));
             }
         }
     }
@@ -314,13 +313,9 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     @Override
     public Op visitBody(LavaParser.BodyContext ctx) {
-        for (LavaParser.LocalVariableDeclarationStatementContext decl : ctx.localVariableDeclarationStatement()) {
-            visit(decl);
-        }
+        ctx.localVariableDeclarationStatement().forEach(this::visit);
         visit(ctx.main());
-        for (LavaParser.FunctionDeclContext func : ctx.functionDecl()) {
-            visit(func);
-        }
+        ctx.functionDeclaration().forEach(this::visit);
         return null;
     }
 
@@ -497,16 +492,10 @@ public class Generator extends LavaBaseVisitor<Op>{
             label = labels.get(ctx);
         }
         if (checkResult.getSharedVar(ctx)) {
-//            Label label1 = createLabel(ctx, "lock");
-//            emit(label, Nop);
-//            emit(label1, TestAndSetD, LOCK);
-//            emit(Receive, reg(ctx));
-//            emit(Branch, reg(ctx), label1);
-            emit(ReadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
+            emit(ReadD, new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
             return emit(Receive, reg(ctx));
-//            return emit(WriteD, REG_ZERO, LOCK);
         } else {
-            return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)), reg(ctx));
+            return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, offset(ctx)), reg(ctx));
         }
 
     }
@@ -539,13 +528,13 @@ public class Generator extends LavaBaseVisitor<Op>{
 
 
     @Override
-    public Op visitFunctionDecl(LavaParser.FunctionDeclContext ctx) {
-        currentFunction = ctx.ID().getText();
+    public Op visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
+        String currentFunction = ctx.ID().getText();
         Label label = funcmap.get(currentFunction);
 
         List<Reg> regs = new ArrayList<>();
         emit(label, Pop, reg(ctx));
-        for (int i = 0; i < ctx.parametersDecl().VARID().size(); i++) {
+        for (int i = 0; i < ctx.parametersDeclaration().VARID().size(); i++) {
             Reg reg = new Reg("r_1_" + i);
             regs.add(reg);
             emit(Pop, reg);
@@ -556,13 +545,13 @@ public class Generator extends LavaBaseVisitor<Op>{
         }
 
 
-        visitParametersDecl(ctx.parametersDecl());
+        visitParametersDeclaration(ctx.parametersDeclaration());
         visitBlock(ctx.block());
         return emit(JumpI, new Target(reg(ctx)));
     }
 
     @Override
-    public Op visitParametersDecl(LavaParser.ParametersDeclContext ctx) {
+    public Op visitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) {
         Label label = null;
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
@@ -572,7 +561,7 @@ public class Generator extends LavaBaseVisitor<Op>{
             for (int i = 0; i < ctx.VARID().size(); i++) {
                 emit(Pop, reg(ctx));
 
-                operation = emit(StoreD, reg(ctx), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx.VARID(i))));
+                operation = emit(StoreD, reg(ctx), new Addr(Addr.AddrType.DirAddr, offset(ctx.VARID(i))));
             }
         }
 
@@ -674,7 +663,7 @@ public class Generator extends LavaBaseVisitor<Op>{
 
 
         ParseTree tree = parser.program();
-        List<Program> program = null;
+        List<Program> program;
         try {
             CheckerResult result = checker.check(tree);
             program = generator.generate(tree, result);

@@ -150,29 +150,29 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitEmptyStatement(LavaParser.EmptyStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code primDecl}
+	 * Enter a parse tree produced by the {@code primitiveDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterPrimDecl(LavaParser.PrimDeclContext ctx);
+	void enterPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code primDecl}
+	 * Exit a parse tree produced by the {@code primitiveDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitPrimDecl(LavaParser.PrimDeclContext ctx);
+	void exitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code arrayDecl}
+	 * Enter a parse tree produced by the {@code arrayDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterArrayDecl(LavaParser.ArrayDeclContext ctx);
+	void enterArrayDeclaration(LavaParser.ArrayDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code arrayDecl}
+	 * Exit a parse tree produced by the {@code arrayDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitArrayDecl(LavaParser.ArrayDeclContext ctx);
+	void exitArrayDeclaration(LavaParser.ArrayDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#main}.
 	 * @param ctx the parse tree
@@ -184,15 +184,15 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitMain(LavaParser.MainContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#functionDecl}.
+	 * Enter a parse tree produced by {@link LavaParser#functionDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctionDecl(LavaParser.FunctionDeclContext ctx);
+	void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#functionDecl}.
+	 * Exit a parse tree produced by {@link LavaParser#functionDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctionDecl(LavaParser.FunctionDeclContext ctx);
+	void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#function}.
 	 * @param ctx the parse tree
@@ -204,15 +204,15 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitFunction(LavaParser.FunctionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#parametersDecl}.
+	 * Enter a parse tree produced by {@link LavaParser#parametersDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterParametersDecl(LavaParser.ParametersDeclContext ctx);
+	void enterParametersDeclaration(LavaParser.ParametersDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#parametersDecl}.
+	 * Exit a parse tree produced by {@link LavaParser#parametersDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitParametersDecl(LavaParser.ParametersDeclContext ctx);
+	void exitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code variableTarget}
 	 * labeled alternative in {@link LavaParser#target}.

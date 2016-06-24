@@ -108,14 +108,14 @@ public class LavaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements L
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPrimDecl(LavaParser.PrimDeclContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitArrayDecl(LavaParser.ArrayDeclContext ctx) { return visitChildren(ctx); }
+	@Override public T visitArrayDeclaration(LavaParser.ArrayDeclarationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -129,7 +129,7 @@ public class LavaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements L
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFunctionDecl(LavaParser.FunctionDeclContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -143,7 +143,7 @@ public class LavaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements L
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParametersDecl(LavaParser.ParametersDeclContext ctx) { return visitChildren(ctx); }
+	@Override public T visitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
