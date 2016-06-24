@@ -105,6 +105,52 @@ public class CheckerTest {
         check(parseString(program5));
         check(parseString(program6));
     }
+
+
+    @Test
+    public void testReturnTypeFailure() throws IOException, ParseException {
+        String program1 = "chamber test1 { mineral $a;" +
+                "rupture mineral doSomething() {" +
+                "$a = 3;" +
+                "rock $b = 4;" +
+                "return $b;" +
+                "}" +
+                "}";
+        String program2 = "chamber test2 { rock $a;" +
+                "rupture temperature doSomething() {" +
+                "return $a;" +
+                "}" +
+                "}";
+        String program3 = "chamber test3 { " +
+                "rupture temperature doSomething() {" +
+                "return (hot and cold);" +
+                "}" +
+                "rupture rock doSomethingElse(){" +
+                "return (doSomething());" +
+                "}" +
+                "}";
+        String program4 = "chamber test5 { temperature $a;" +
+                "rupture temperature doSomething() {" +
+                "return 3+ $a; " +
+                "}" +
+                "}";
+        String program5 = "chamber test5 { temperature $a;" +
+                "rupture temperature doSomething() {" +
+                "if ( cold ) then {" +
+                "return 3;" +
+                "} else {" +
+                "return ($a xor cold); " +
+                "}" +
+                "}" +
+                "}";
+
+
+        checkFail(parseString(program1));
+        checkFail(parseString(program2));
+        checkFail(parseString(program3));
+        checkFail(parseString(program4));
+        checkFail(parseString(program5));
+    }
     @Test
     public void checkProgram() throws IOException, ParseException {
         String program1 = "chamber test1 { mineral $a; " +
@@ -149,7 +195,7 @@ public class CheckerTest {
     }
 
     @Test
-    public void testFailures() throws IOException, ParseException {
+    public void testFailureAssignments() throws IOException, ParseException {
         String program1 = "chamber test1 { rock $a; " +
                 "erupt(){" +
                 "$a = 'a'; " +
@@ -187,6 +233,7 @@ public class CheckerTest {
                 "$b = (($c * 500) / 3) + 'a'; " +
                 "}" +
                 "}";
+
         checkFail(parseString(program1));
         checkFail(parseString(program2));
         checkFail(parseString(program3));
@@ -214,7 +261,6 @@ public class CheckerTest {
 
     private CheckerResult check(ParseTree tree) throws ParseException {
         CheckerResult result = this.compiler.check(tree);
-        System.out.println(this.compiler.getChecker().getErrors());
         assertEquals(0, this.compiler.getChecker().getErrors().size());
         return result;
     }

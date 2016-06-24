@@ -53,7 +53,9 @@ public class LavaVocabLexerTester {
         tester.yields(" rupture       rock     max (               rock[        ] $a){", LavaVocab.RUPTURE, LavaVocab.INTEGER,
                 LavaVocab.ID, LavaVocab.LPAR, LavaVocab.INTEGER,
                 LavaVocab.LBLOCK, LavaVocab.RBLOCK, LavaVocab.VARID, LavaVocab.RPAR, LavaVocab.LBRACE);
+        tester.yields("rock[] $a with size", LavaVocab.INTEGER, LavaVocab.LBLOCK, LavaVocab.RBLOCK, LavaVocab.VARID, LavaVocab.WITH, LavaVocab.SIZE);
     }
+
 
     @Test
     public void rejectsTest() {
