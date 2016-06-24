@@ -156,7 +156,7 @@ public class SPRILGenerator {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/tester.magma");
+        File file = new File("src/main/java/testprograms/bank.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));

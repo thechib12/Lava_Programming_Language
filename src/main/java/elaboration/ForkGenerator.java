@@ -69,12 +69,12 @@ public class ForkGenerator extends Generator {
 
         emit(Branch, reg, label);
         emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
-
         for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (func.ID().getText().equals(currentFunction)) {
                 visit(func.block());
             }
         }
+        emit(EndProg);
         for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (!func.ID().getText().equals(currentFunction)) {
                 visit(func);

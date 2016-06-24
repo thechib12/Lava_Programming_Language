@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 /**
@@ -16,8 +15,7 @@ import static org.junit.Assert.fail;
 public class CheckerTest {
     private final static String BASE_DIR = "src/main/java/testprograms/";
     private final static String EXT = ".magma";
-    private final LavaCompiler compiler = LavaCompiler
-            .instance();
+    private final LavaCompiler compiler = LavaCompiler.instance();
 
 
     @Test

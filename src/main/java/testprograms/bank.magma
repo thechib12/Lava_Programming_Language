@@ -1,21 +1,37 @@
 chamber bank {
     /^\ Created by Rogier on 15-06-16 in Enschede.
-
+    shared rock $balance = 0;
 
 
     rupture void consume(){
         rock $count = 0;
-        while ($count < 100){
-            doSomething();
+        while ($count < 10){
+            lock();
+            $balance = $balance + 1;
+            unlock();
+            $count = $count + 1;
         }
     }
 
     rupture void produce(){
-        ;
-
+        rock $count1 = 0;
+        while ($count1 < 10){
+            lock();
+            $balance = $balance + 1;
+            unlock();
+            $count1 = $count1 + 1;
+        }
     }
 
     erupt() {
-        ;
+/^\        fork(produce());
+/^\        fork(produce());
+/^\        produce();
+        rock $b = 0;
+        while ($b < 10){
+            $b = $b +1;
+        }
+/^\        join(1);
+/^\        join(2);
     }
 }

@@ -117,7 +117,9 @@ public class Generator extends LavaBaseVisitor<Op> {
     @Override
     public Op visitBody(LavaParser.BodyContext ctx) {
         ctx.localVariableDeclarationStatement().forEach(this::visit);
-        visit(ctx.main());
+        if (ctx.main() != null) {
+            visit(ctx.main());
+        }
         ctx.functionDeclaration().forEach(this::visit);
         return null;
     }
@@ -368,12 +370,12 @@ public class Generator extends LavaBaseVisitor<Op> {
 
             emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, forkCount));
         } else if (ctx.function().ID().getText().equals("fork") && forkCount >= MAX_THREADS - 1) {
-            String error = "to many forks for this sprockell";
-            errors.add(error);
+            addError(ctx, "Too many forks for this Sprockell");
         } else if (ctx.function().ID().getText().equals("join")) {
-            visit(ctx.function().parameters().expr(0));
             Label label = createLabel(ctx, "join");
-            emit(label, TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
+            labels.put(ctx.function().parameters().expr(0), label);
+            visit(ctx.function().parameters().expr(0));
+            emit(TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
             emit(Receive, reg(ctx));
             emit(Branch, reg(ctx), label);
         } else if (ctx.function().ID().getText().equals("lock")) {
@@ -383,6 +385,15 @@ public class Generator extends LavaBaseVisitor<Op> {
             emit(Branch, reg(ctx), label1);
         } else if (ctx.function().ID().getText().equals("unlock")) {
             emit(WriteD, REG_ZERO, LOCK);
+        } else {
+            Label label = null;
+            if (hasLabel(ctx)) {
+                label = labels.get(ctx);
+            }
+            visitChildren(ctx);
+            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, prog.size() + 3), reg(ctx));
+            emit(Push, reg(ctx));
+            return emit(label, Jump, funcmap.get(ctx.function().ID().getText()));
         }
 
         return null;
@@ -601,7 +612,7 @@ public class Generator extends LavaBaseVisitor<Op> {
             label = labels.get(ctx);
         }
         visitChildren(ctx);
-        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, prog.size() + SHARED_OFFSET), reg(ctx));
+        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, prog.size() + 3), reg(ctx));
         emit(Push, reg(ctx));
         emit(label, Jump, funcmap.get(ctx.function().ID().getText()));
         return emit(Pop, reg(ctx));
@@ -675,6 +686,13 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     public List<String> getErrors() {
         return errors;
+    }
+
+    private void addError(ParserRuleContext node, String message) {
+        int line = node.getStart().getLine();
+        int column = node.getStart().getCharPositionInLine();
+        message = String.format("Line %d:%d - %s", line, column, message);
+        this.errors.add(message);
     }
 
     public static void main(String[] args) {

@@ -3,7 +3,7 @@ chamber tester {
 
     rupture void func(){
 
-        rock $c =0
+        rock $c =0;
         while ($c < 5){
             lock();
             $counter = $counter +1;
@@ -25,6 +25,8 @@ chamber tester {
         }
         join(1);
         join(2);
+        $counter = 100;
+
     }
 
 
