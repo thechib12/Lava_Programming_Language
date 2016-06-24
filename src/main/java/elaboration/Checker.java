@@ -41,7 +41,7 @@ public class Checker extends LavaBaseListener {
      * @param tree input {@link ParseTree} of the Lava Program.
      * @return a {@link CheckerResult} object which stores all revelant data of the checking phase.
      */
-    public CheckerResult check(ParseTree tree) {
+    public CheckerResult check(ParseTree tree) throws ParseException {
         scope = new MultiScope();
         errors = new ArrayList<>();
         sharedVars = new HashMap<>();
@@ -51,6 +51,9 @@ public class Checker extends LavaBaseListener {
         functionParameters = explorer.getFunctionParameterTypes();
         checkerResult = new CheckerResult();
         new ParseTreeWalker().walk(this, tree);
+        if (errors.size() > 0) {
+            throw new ParseException(errors);
+        }
         return checkerResult;
     }
 

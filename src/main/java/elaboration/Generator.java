@@ -30,9 +30,12 @@ public class Generator extends LavaBaseVisitor<Op>{
     /** The representation of the boolean value <code>true</code>. */
     public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue,1);
 
-    public final static int SHARED_OFFSET = 4;
 
-    public final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, 4);
+    public final static int MAX_THREADS = 8;
+
+    public final static int SHARED_OFFSET = MAX_THREADS;
+
+    public final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
 
     private int forkcount = 0;
@@ -62,9 +65,12 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     private ParseTree tree;
 
+    private List<String> errors;
+
 
     protected void init(ParseTree tree, CheckerResult checkResult) {
         this.tree = tree;
+        this.errors = new ArrayList<>();
         this.prog = new Program();
         this.checkResult = checkResult;
         this.regs = new ParseTreeProperty<>();
@@ -84,10 +90,13 @@ public class Generator extends LavaBaseVisitor<Op>{
      * @param checkResult the result of the type checking phase.
      * @return a Program object containing all instructions in Lava IR language.
      */
-    public List<Program> generate(ParseTree tree, CheckerResult checkResult) {
+    public List<Program> generate(ParseTree tree, CheckerResult checkResult) throws ParseException {
         this.init(tree, checkResult);
 
         tree.accept(this);
+        if (errors.size() > 0) {
+            throw new ParseException(errors);
+        }
         return this.programs;
     }
 
@@ -165,13 +174,13 @@ public class Generator extends LavaBaseVisitor<Op>{
         labels.put(ctx.expr(),label);
         visit(ctx.expr());
         if (checkResult.getSharedVar(ctx)) {
-            Label label1 = createLabel(ctx, "lock");
-            emit(label1, TestAndSetD, LOCK);
-            emit(Receive, reg(ctx));
-            emit(Branch, reg(ctx), label1);
-            emit(WriteD, reg(ctx.expr()),
+//            Label label1 = createLabel(ctx, "lock");
+//            emit(label1, TestAndSetD, LOCK);
+//            emit(Receive, reg(ctx));
+//            emit(Branch, reg(ctx), label1);
+            return emit(WriteD, reg(ctx.expr()),
                     new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-            return emit(WriteD, REG_ZERO, LOCK);
+//            return emit(WriteD, REG_ZERO, LOCK);
         } else {
             return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
         }
@@ -179,14 +188,19 @@ public class Generator extends LavaBaseVisitor<Op>{
 
     @Override
     public Op visitFunctionStat(LavaParser.FunctionStatContext ctx) {
-        if (ctx.function().ID().getText().equals("fork") && forkcount < 3) {
+        if (ctx.function().ID().getText().equals("fork") && forkcount < MAX_THREADS - 1) {
 //            TODO: check for correct func call;
             String forkfunc = ((LavaParser.FunctionExprContext) ctx.function().parameters().expr(0)).function().ID().getText();
             ForkGenerator forkGenerator = new ForkGenerator();
             forkcount++;
-            programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkcount));
+            try {
+                programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkcount));
+            } catch (ParseException e) {
+                errors.addAll(e.getMessages());
+            }
+
             emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, forkcount));
-        } else if (ctx.function().ID().getText().equals("fork") && forkcount >= 3) {
+        } else if (ctx.function().ID().getText().equals("fork") && forkcount >= MAX_THREADS - 1) {
 //            adderror.
             String error = "to many forks for this sprockell";
         } else if (ctx.function().ID().getText().equals("join")) {
@@ -195,6 +209,13 @@ public class Generator extends LavaBaseVisitor<Op>{
             emit(label, TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
             emit(Receive, reg(ctx));
             emit(Branch, reg(ctx), label);
+        } else if (ctx.function().ID().getText().equals("lock")) {
+            Label label1 = createLabel(ctx, "lock");
+            emit(label1, TestAndSetD, LOCK);
+            emit(Receive, reg(ctx));
+            emit(Branch, reg(ctx), label1);
+        } else if (ctx.function().ID().getText().equals("unlock")) {
+            emit(WriteD, REG_ZERO, LOCK);
         }
 
         return null;
@@ -239,26 +260,26 @@ public class Generator extends LavaBaseVisitor<Op>{
             labels.put(ctx.expr(),label);
             visit(ctx.expr());
             if (checkResult.getSharedVar(ctx)) {
-                Label label1 = createLabel(ctx, "lock");
-                emit(label1, TestAndSetD, LOCK);
-                emit(Receive, reg(ctx));
-                emit(Branch, reg(ctx), label1);
-                emit(WriteD, reg(ctx.expr()),
+//                Label label1 = createLabel(ctx, "lock");
+//                emit(label1, TestAndSetD, LOCK);
+//                emit(Receive, reg(ctx));
+//                emit(Branch, reg(ctx), label1);
+                return emit(WriteD, reg(ctx.expr()),
                         new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-                return emit(WriteD, REG_ZERO, LOCK);
+//                return emit(WriteD, REG_ZERO, LOCK);
             } else {
                 return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
             }
 
         } else {
             if (checkResult.getSharedVar(ctx)) {
-                Label label1 = createLabel(ctx, "lock");
-                emit(label1, TestAndSetD, LOCK);
-                emit(Receive, reg(ctx));
-                emit(Branch, reg(ctx), label1);
-                emit(WriteD, REG_ZERO,
+//                Label label1 = createLabel(ctx, "lock");
+//                emit(label1, TestAndSetD, LOCK);
+//                emit(Receive, reg(ctx));
+//                emit(Branch, reg(ctx), label1);
+                return emit(WriteD, REG_ZERO,
                         new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-                return emit(WriteD, REG_ZERO, LOCK);
+//                return emit(WriteD, REG_ZERO, LOCK);
             } else {
                 return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)));
             }
@@ -476,14 +497,14 @@ public class Generator extends LavaBaseVisitor<Op>{
             label = labels.get(ctx);
         }
         if (checkResult.getSharedVar(ctx)) {
-            Label label1 = createLabel(ctx, "lock");
-            emit(label, Nop);
-            emit(label1, TestAndSetD, LOCK);
-            emit(Receive, reg(ctx));
-            emit(Branch, reg(ctx), label1);
+//            Label label1 = createLabel(ctx, "lock");
+//            emit(label, Nop);
+//            emit(label1, TestAndSetD, LOCK);
+//            emit(Receive, reg(ctx));
+//            emit(Branch, reg(ctx), label1);
             emit(ReadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx) + SHARED_OFFSET));
-            emit(Receive, reg(ctx));
-            return emit(WriteD, REG_ZERO, LOCK);
+            return emit(Receive, reg(ctx));
+//            return emit(WriteD, REG_ZERO, LOCK);
         } else {
             return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, checkResult.getOffset(ctx)), reg(ctx));
         }
@@ -631,7 +652,9 @@ public class Generator extends LavaBaseVisitor<Op>{
         return this.checkResult.getOffset(node);
     }
 
-
+    public List<String> getErrors() {
+        return errors;
+    }
 
     public static void main(String[] args) {
         Checker checker = new Checker();
@@ -651,10 +674,16 @@ public class Generator extends LavaBaseVisitor<Op>{
 
 
         ParseTree tree = parser.program();
-        CheckerResult result = checker.check(tree);
-        System.out.println(checker.getErrors());
-        List<Program> program = generator.generate(tree, result);
-        System.out.println(program.toString());
+        List<Program> program = null;
+        try {
+            CheckerResult result = checker.check(tree);
+            program = generator.generate(tree, result);
+            System.out.println(program.toString());
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
+
+
     }
 
 }

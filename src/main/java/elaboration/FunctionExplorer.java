@@ -41,8 +41,10 @@ public class FunctionExplorer extends LavaBaseListener {
         functionReturnTypes.put("join", Type.VOID);
         functionParameterTypes.put("fork", fork);
         functionParameterTypes.put("join", join);
-
-
+        functionReturnTypes.put("lock", Type.VOID);
+        functionReturnTypes.put("unlock", Type.VOID);
+        functionParameterTypes.put("lock", new ArrayList<>());
+        functionParameterTypes.put("unlock", new ArrayList<>());
     }
 
 

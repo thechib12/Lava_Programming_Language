@@ -2,26 +2,29 @@ chamber tester {
     shared rock $counter = 0;
 
     rupture void func(){
-        rock $c =0;
-        while ($c < 1){
+
+        rock $c =0
+        while ($c < 5){
+            lock();
             $counter = $counter +1;
+            unlock();
             $c = $c + 1;
         }
+
     }
 
     erupt(){
         fork(func());
         fork(func());
-/^\        fork(func());
-/^\        fork(func());
         rock $b = 0;
-        while ($b < 1){
+        while ($b < 5){
+            lock();
             $counter = $counter + 1;
+            unlock();
             $b = $b + 1;
         }
         join(1);
         join(2);
-/^\        join(3);
     }
 
 

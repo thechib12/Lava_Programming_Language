@@ -87,7 +87,12 @@ public class GeneratorTest {
 
 
         ParseTree tree = parser.program();
-        Program prog = generator.generate(tree, checker.check(tree)).get(0);
-        return removeSpaces(prog.toString());
+        try {
+            Program prog = generator.generate(tree, checker.check(tree)).get(0);
+            return removeSpaces(prog.toString());
+        } catch (ParseException e) {
+            return null;
+        }
+
     }
 }
