@@ -35,9 +35,9 @@ public class Generator extends LavaBaseVisitor<Op> {
     private final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue, 1);
 
 
-    private final static int MAX_THREADS = 8;
+    private final static int MAX_THREADS = 6;
 
-    private final static int SHARED_OFFSET = MAX_THREADS;
+    private final static int SHARED_OFFSET = MAX_THREADS * 2;
 
     private final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
@@ -363,19 +363,22 @@ public class Generator extends LavaBaseVisitor<Op> {
             ForkGenerator forkGenerator = new ForkGenerator();
             forkCount++;
             try {
-                programs.add(forkGenerator.generate(tree, checkResult, forkfunc, forkCount));
+                programs.add(forkGenerator.generate(tree, checkResult, forkfunc, (forkCount * 2) - 1));
             } catch (ParseException e) {
                 errors.addAll(e.getMessages());
             }
-
-            emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, forkCount));
+            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+            emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, (forkCount * 2) - 1));
+            emit(WriteD, reg(ctx), new Addr(Addr.AddrType.DirAddr, forkCount * 2));
         } else if (ctx.function().ID().getText().equals("fork") && forkCount >= MAX_THREADS - 1) {
             addError(ctx, "Too many forks for this Sprockell");
         } else if (ctx.function().ID().getText().equals("join")) {
             Label label = createLabel(ctx, "join");
             labels.put(ctx.function().parameters().expr(0), label);
             visit(ctx.function().parameters().expr(0));
-            emit(TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function().parameters().expr(0))));
+            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 2), reg(ctx.function()));
+            emit(Mul, reg(ctx.function()), reg(ctx.function().parameters().expr(0)), reg(ctx.function()));
+            emit(TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.function())));
             emit(Receive, reg(ctx));
             emit(Branch, reg(ctx), label);
         } else if (ctx.function().ID().getText().equals("lock")) {

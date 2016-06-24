@@ -7,7 +7,7 @@ chamber bank {
         rock $count = 0;
         while ($count < 10){
             lock();
-            $balance = $balance + 1;
+            $balance = $balance - 4;
             unlock();
             $count = $count + 1;
         }
@@ -17,21 +17,21 @@ chamber bank {
         rock $count1 = 0;
         while ($count1 < 10){
             lock();
-            $balance = $balance + 1;
+            $balance = $balance + 6;
             unlock();
             $count1 = $count1 + 1;
         }
     }
 
     erupt() {
+        fork(produce());
+        fork(consume());
 /^\        fork(produce());
-/^\        fork(produce());
-/^\        produce();
-        rock $b = 0;
-        while ($b < 10){
-            $b = $b +1;
-        }
-/^\        join(1);
-/^\        join(2);
+/^\        fork(consume());
+/^\        fork(consume());
+        consume();
+
+        join(1);
+        join(2);
     }
 }
