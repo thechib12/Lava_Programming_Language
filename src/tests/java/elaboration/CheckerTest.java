@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by Rogier on 16-06-16 in Enschede.
@@ -75,24 +76,13 @@ public class CheckerTest {
                 "return (hot and cold);" +
                 "}" +
                 "}";
-        String program4 = "chamber test1 { rock $a; rock $b;" +
-                "rupture rock veryLargeComputation() {" +
-                "$a = (($a *1010101) / 512)+5;" +
-                "return $a;" +
-                "}" +
-
-                "rupture temperature test4(rock $d){" +
-                "rock $c = veryLargeComputation();" +
-                "return ($c  == $d);" +
-                "}" +
-                "}";
-        String program5 = "chamber test5 { temperature $a;" +
+        String program4 = "chamber test5 { temperature $a;" +
                 "rupture temperature doSomething() {" +
                 "return ($a xor cold); " +
                 "}" +
                 "}";
-        String program6 = "chamber test6 { rock $a = 5; temperature $b = hot;" +
-                "rupture rock doSomething(rock $c) {" +
+        String program5 = "chamber test6 { rock $a = 5; temperature $b = hot;" +
+                "rupture rock doSomething() {" +
                 //"$a = $c;" +
                 "return $c;" +
                 "}" +
@@ -102,13 +92,12 @@ public class CheckerTest {
         check(parseString(program2));
         check(parseString(program3));
         check(parseString(program4));
-        check(parseString(program5));
-        check(parseString(program6));
+//        check(parseString(program5));
     }
 
 
     @Test
-    public void testReturnTypeFailure() throws IOException, ParseException {
+    public void testReturnTypeFailure() throws IOException {
         String program1 = "chamber test1 { mineral $a;" +
                 "rupture mineral doSomething() {" +
                 "$a = 3;" +
@@ -145,14 +134,14 @@ public class CheckerTest {
                 "}";
 
 
-        checkFail(parseString(program1));
-        checkFail(parseString(program2));
-        checkFail(parseString(program3));
-        checkFail(parseString(program4));
-        checkFail(parseString(program5));
+        checkFail((program1));
+        checkFail((program2));
+        checkFail((program3));
+        checkFail((program4));
+        checkFail((program5));
     }
     @Test
-    public void checkProgram() throws IOException, ParseException {
+    public void testAssignments() throws IOException, ParseException {
         String program1 = "chamber test1 { mineral $a; " +
                 "erupt(){" +
                 "$a = 'a'; " +
@@ -234,17 +223,80 @@ public class CheckerTest {
                 "}" +
                 "}";
 
-        checkFail(parseString(program1));
-        checkFail(parseString(program2));
-        checkFail(parseString(program3));
-        checkFail(parseString(program4));
-        checkFail(parseString(program5));
+        checkFail((program1));
+        checkFail((program2));
+        checkFail((program3));
+        checkFail((program4));
+        checkFail((program5));
+    }
+
+    @Test
+    public void testExpresionTypesFailure() throws IOException {
+        String program1 = "chamber test1 { mineral $a; " +
+                "erupt(){" +
+                "while ($a) {" +
+                "dosomething(); " +
+                "}" +
+                "}}";
+        String program2 = "chamber test2 {  " +
+                "erupt(){" +
+                "if (3*5) then { doSomething();} " +
+                "}" +
+                "}";
+        String program3 = "chamber test3 { rock $a; temperature $b; mineral $c;" +
+                "erupt(){" +
+                "if (3=='c') then { doSomething();}" +
+                "else if ( 'b' ) then {doSomethingelse();}" +
+                "else { doSomethingElseElse(); } " +
+                "}" +
+                "}";
+
+        checkFail(program1);
+        checkFail(program2);
+        checkFail(program3);
     }
 
 
-    private void checkFail(ParseTree tree) throws ParseException {
-        CheckerResult result = this.compiler.check(tree);
-        assertNotEquals(0, this.compiler.getChecker().getErrors().size());
+    @Test
+    public void scopeFailure() throws IOException {
+        String program1 = "chamber test1 { mineral $a; " +
+                "erupt(){" +
+                "rock $c = $a + 2;" +
+                "}" +
+                "}";
+        String program2 = "chamber test2 {" +
+                "rock $a = 2;" +
+                "rock $b = 1;  " +
+                "rupture rock func1(){" +
+                "rock $c = $a * $b;" +
+                "return $c;" +
+                "}" +
+                "rupture rock func2(){" +
+                "$a = $c;" +
+                "}" +
+                "}";
+        String program3 = "chamber test3 { " +
+                "erupt(){" +
+                "if (hot) then { rock $a = 4;}" +
+                "else { rock $b = $a * 2; } " +
+                "}" +
+                "}";
+
+        checkFail(program1);
+        checkFail(program2);
+        checkFail(program3);
+    }
+
+
+    private void checkFail(String program) {
+        try {
+            ParseTree tree = this.compiler.parse(program);
+            CheckerResult result = this.compiler.check(tree);
+            fail();
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
+
 
 
     }

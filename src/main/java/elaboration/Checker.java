@@ -377,8 +377,7 @@ public class Checker extends LavaBaseListener {
     private void checkType(ParserRuleContext node, Type expected) {
         Type actual = getType(node);
         if (actual == null) {
-            throw new IllegalArgumentException("Missing inferred type of "
-                    + node.getText());
+            addError(node, "Missing inferred type of " + node.getText());
         }
         if (!actual.equals(expected)) {
             addError(node, "Expected type '%s' but found '%s'", expected,
@@ -425,6 +424,10 @@ public class Checker extends LavaBaseListener {
         this.errors.add(message);
     }
 
+    private void addError(ParseTree node, String message) {
+        this.errors.add(node.getText() + " Variable not declared in this scope! ");
+    }
+
     private Boolean getSharedVar(String id) {
         return sharedVars.get(id);
     }
@@ -436,7 +439,11 @@ public class Checker extends LavaBaseListener {
      * @param offset memory offset of this node.
      */
     private void setOffset(ParseTree node, Integer offset) {
-        this.checkerResult.setOffset(node, offset);
+        if (offset != null) {
+            this.checkerResult.setOffset(node, offset);
+        } else {
+            addError(node, "Scoping error, variable already defined in other scope!");
+        }
     }
 
     /**
