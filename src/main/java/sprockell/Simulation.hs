@@ -21,7 +21,7 @@ sprockellSim instrs s (i:is) | instr /= EndProg    = (instr,s',o) : sprockellSim
                   (s',o) = sprockell instrs s i
                   instr  = instrs ! pc s
 
-localMemSize = 16 :: Int
+localMemSize = 1000 :: Int
 regbankSize  = 42  :: Int
 
 initSprockellState :: Value -> SprockellState

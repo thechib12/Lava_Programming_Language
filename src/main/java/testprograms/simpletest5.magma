@@ -1,4 +1,5 @@
 /^\Simple input-output programs for system tests
+/^\ Tests concurrency with a simple counter with locks. 4 threads concurrent first, then a other thread afterwards.
 /^\expected output: 48
 chamber simpletest5{
     shared rock $output = 0;
@@ -25,7 +26,6 @@ chamber simpletest5{
         join(4);
         fork(func());
         join(5);
-
 
     }
 
