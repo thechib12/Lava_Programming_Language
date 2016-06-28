@@ -1,0 +1,34 @@
+/^\Simple input-output programs for system tests
+/^\expected output: 47
+chamber test1 {
+    rock $output = 0;
+    rock $input = 2;
+    rock $counter = 1;
+    temperature $switch = hot;
+
+
+    rupture  void incrementOutput(){
+        $output = $output + 1;
+    }
+
+    erupt(){
+       while ( $counter <= 10 ) {
+            incrementOutput();
+            $output = $output - 1;
+            $counter = $counter + 1;
+       }
+       if($switch) then {
+            $output = $output - 47;
+            $switch = not $switch;
+       } else if ( not $switch) then {
+            /^\ this should not happen
+            $output = $output + 20;
+       } else  {
+            /^\ and this should not happen too
+            $output = $output + 25;
+       }
+
+
+    }
+
+}

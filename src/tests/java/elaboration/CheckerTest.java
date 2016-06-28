@@ -56,6 +56,27 @@ public class CheckerTest {
 
 
     @Test
+    public void testPrograms() throws IOException, ParseException {
+        check(parse("bank"));
+        check(parse("basic"));
+//        check(parse("fib"));
+        check(parse("function"));
+        check(parse("gauss"));
+//        check(parse("gcd"));
+//        check(parse("hello"));
+        check(parse("ifelse"));
+        check(parse("infiniteLoop"));
+//        check(parse("max"));
+//        check(parse("peterson2"));
+        check(parse("scopetester"));
+        check(parse("tester"));
+        check(parse("simpletest1"));
+        check(parse("simpletest2"));
+        check(parse("simpletest3"));
+
+    }
+
+    @Test
     public void testReturnType() throws IOException, ParseException {
         String program1 = "chamber test1 { mineral $a;" +
                 "rupture mineral doSomething() {" +
@@ -81,7 +102,8 @@ public class CheckerTest {
                 "}";
         String program5 = "chamber test6 { rock $a = 5; temperature $b = hot;" +
                 "rupture rock doSomething() {" +
-                //"$a = $c;" +
+                "rock $c = 2;" +
+                "$a = $c;" +
                 "return $c;" +
                 "}" +
                 "}";
@@ -96,6 +118,7 @@ public class CheckerTest {
 
     @Test
     public void testReturnTypeFailure() throws IOException {
+        System.out.println("Test Return Type Failure");
         String program1 = "chamber test1 { mineral $a;" +
                 "rupture mineral doSomething() {" +
                 "$a = 3;" +
@@ -130,13 +153,20 @@ public class CheckerTest {
                 "}" +
                 "}" +
                 "}";
+        String program6 = "chamber test6 { " +
+                "rupture void doSomething() {" +
+                "rock $a = 3;" +
+                "return $a; " +
+                "}" +
+                "}";
 
 
-        checkFail((program1));
-        checkFail((program2));
-        checkFail((program3));
-        checkFail((program4));
-        checkFail((program5));
+//        checkFail((program1));
+//        checkFail((program2));
+//        checkFail((program3));
+//        checkFail((program4));
+//        checkFail((program5));
+        checkFail((program6));
     }
     @Test
     public void testAssignments() throws IOException, ParseException {
@@ -183,6 +213,7 @@ public class CheckerTest {
 
     @Test
     public void testFailureAssignments() throws IOException, ParseException {
+        System.out.println("Test Failure Assignments");
         String program1 = "chamber test1 { rock $a; " +
                 "erupt(){" +
                 "$a = 'a'; " +
@@ -229,7 +260,8 @@ public class CheckerTest {
     }
 
     @Test
-    public void testExpresionTypesFailure() throws IOException {
+    public void testExpressionTypesFailure() throws IOException {
+        System.out.println("Test Expression Types Failure");
         String program1 = "chamber test1 { mineral $a; " +
                 "erupt(){" +
                 "while ($a) {" +
@@ -252,11 +284,14 @@ public class CheckerTest {
         checkFail(program1);
         checkFail(program2);
         checkFail(program3);
+        System.out.println("Test 4");
+        System.out.println("Test 5");
     }
 
 
     @Test
     public void scopeFailure() throws IOException {
+        System.out.println("Test Scope Failure");
         String program1 = "chamber test1 { mineral $a; " +
                 "erupt(){" +
                 "rock $c = $a + 2;" +

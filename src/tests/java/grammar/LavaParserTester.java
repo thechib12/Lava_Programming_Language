@@ -40,6 +40,7 @@ public class LavaParserTester {
 
     @Test
     public void simpleProgramFailTest() {
+        System.out.println("Simple Program Failure");
         String test1 = "chamber testChamber {doSomething();}";
         String test2 = "chaamber testChamber{}";
         String test3 = "chamber testChamber { ";
@@ -86,7 +87,7 @@ public class LavaParserTester {
 
     @Test
     public void statementsWrongTest() throws ParseException {
-
+        System.out.println("Statements Failure Test");
         String test1 = "if $a then { doSomething(); } ";
         String test2 = "return;";
         String test3 = "if then { doSomething(); }";
@@ -132,6 +133,7 @@ public class LavaParserTester {
 
     @Test
     public void exprFailTest() {
+        System.out.println("Expression Failure Test");
         String test1 = ".3";
         String test2 = "not";
         String test3 = "3.1 * ";
@@ -207,7 +209,7 @@ public class LavaParserTester {
         }
 
 
-
+        listener.printErrors();
         listener.throwException();
 
         return result;

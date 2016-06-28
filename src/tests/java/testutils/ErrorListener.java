@@ -31,7 +31,9 @@ public class ErrorListener extends BaseErrorListener {
         }
     }
 
-
+    public void printErrors() {
+        getErrors().forEach(System.out::println);
+    }
     /**
      * Indicates if the listener has collected any errors.
      */
