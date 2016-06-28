@@ -1,4 +1,5 @@
 /^\Simple input-output programs for system tests
+/^\ Tests if statements, while loop with method call.
 /^\expected output: 47
 chamber test1 {
     rock $output = 0;

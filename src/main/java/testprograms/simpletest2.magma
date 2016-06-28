@@ -1,10 +1,10 @@
 /^\Simple input-output programs for system tests
 /^\input: 5
 /^\expected output: 500
-chamber test1 {
+chamber test2 {
+    rock $output = 0;
     rock $input = 5;
     rock $counter = 1;
-    rock $output = 0;
     erupt(){
        while ( $counter <= 100 ) {
             $output = $output + $input;
