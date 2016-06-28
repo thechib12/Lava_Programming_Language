@@ -14,6 +14,8 @@ public class Addr extends Operand {
     /** Value representing the memory address or an immediate value depending on the prefix. */
     private int value;
 
+    private Label label;
+
     /**
      * Creates an Addr with a type and a register to point to.
      * @param type type should be {@link AddrType} IndAddr.
@@ -25,6 +27,7 @@ public class Addr extends Operand {
         this.prefix = type;
         this.register = register;
         this.value = -1;
+        this.label = null;
     }
 
     /**
@@ -39,24 +42,49 @@ public class Addr extends Operand {
         this.prefix = type;
         this.value = value;
         this.register = null;
+        this.label = null;
+    }
+
+
+    public Addr(AddrType type, Label label) {
+        super(Type.ADDR);
+        this.prefix = type;
+        this.value = -1;
+        this.register = null;
+        this.label = label;
     }
 
     @Override
     public String toString() {
-        if (register == null){
+        if (label != null) {
+            return prefix + " " + label.toString();
+        }
+
+
+        if (value != -1) {
             return prefix + " " + value;
         }
-        if (value == -1){
+
+        if (register != null) {
             return prefix + " " + register;
         }
 
         return super.toString();
     }
 
+    public AddrType getPrefix() {
+        return prefix;
+    }
+
+    public Label getLabel() {
+        return label;
+    }
+
     /**
      * Enum containing the various address types.
      */
     public enum AddrType {
+        ImmValueLab,
         IndAddr,
         ImmValue,
         DirAddr

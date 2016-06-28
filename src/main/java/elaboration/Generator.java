@@ -41,6 +41,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     private final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
+    private int localVarCount = 0;
 
     private int forkCount = 0;
 
@@ -76,6 +77,8 @@ public class Generator extends LavaBaseVisitor<Op> {
     private ParseTree tree;
 
     private List<String> errors;
+
+    private boolean globalVars;
 
 
     protected void init(ParseTree tree, CheckerResult checkResult) {
@@ -139,42 +142,18 @@ public class Generator extends LavaBaseVisitor<Op> {
         String currentFunction = ctx.ID().getText();
         Label label = funcmap.get(currentFunction);
 
-        List<Reg> regs = new ArrayList<>();
+
+//        Rearrange the stack layout
         emit(label, Pop, reg(ctx));
-        for (int i = 0; i < ctx.parametersDeclaration().VARID().size(); i++) {
-            Reg reg = new Reg("r_1_" + i);
-            regs.add(reg);
-            emit(Pop, reg);
-        }
-        emit(Push, reg(ctx));
-        for (Reg reg : regs) {
-            emit(Push, reg);
-        }
+//        Reset stackpointer
+        emit(DecrSP);
 
 
-        visitParametersDeclaration(ctx.parametersDeclaration());
+//        visitParametersDeclaration(ctx.parametersDeclaration());
         visitBlock(ctx.block());
         return emit(JumpI, new Target(reg(ctx)));
     }
 
-    @Override
-    public Op visitParametersDeclaration(LavaParser.ParametersDeclarationContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)) {
-            label = labels.get(ctx);
-        }
-        Op operation = null;
-        if (ctx.VARID().size() > 0) {
-            for (int i = 0; i < ctx.VARID().size(); i++) {
-                emit(Pop, reg(ctx));
-
-                operation = emit(StoreD, reg(ctx), new Addr(Addr.AddrType.DirAddr, offset(ctx.VARID(i))));
-            }
-        }
-
-
-        return operation;
-    }
 
     @Override
     public Op visitParameters(LavaParser.ParametersContext ctx) {
@@ -187,6 +166,7 @@ public class Generator extends LavaBaseVisitor<Op> {
             labels.put(ctx.expr(0), label);
             for (int i = 0; i < ctx.expr().size(); i++) {
                 visit(ctx.expr(i));
+                // push parameters on the stack
                 operation = emit(Push, reg(ctx.expr(i)));
             }
         }
@@ -201,6 +181,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     @Override
     public Op visitBlock(LavaParser.BlockContext ctx) {
+        localVarCount = 0;
         if (hasLabel(ctx)) {
             labels.put(ctx.blockStatements(), labels.get(ctx));
         }
@@ -251,6 +232,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
+
         if (ctx.expr() != null) {
             labels.put(ctx.expr(), label);
             visit(ctx.expr());
@@ -319,10 +301,13 @@ public class Generator extends LavaBaseVisitor<Op> {
             }
 
             if (hasElse) {
-                visit(ctx.expr(elseifCount));
-                emit(Branch, reg(ctx.expr(elseifCount)), ifLabels.get(ifLabels.size() - 1));
-                visit(ctx.block(elseifCount));
-                emit(Jump, label3);
+                if (elseifCount > 0) {
+                    visit(ctx.expr(elseifCount));
+                    emit(Branch, reg(ctx.expr(elseifCount)), ifLabels.get(ifLabels.size() - 1));
+                    visit(ctx.block(elseifCount));
+                    emit(Jump, label3);
+                }
+
                 visit(ctx.block(elseifCount + 1));
 
 
@@ -352,7 +337,26 @@ public class Generator extends LavaBaseVisitor<Op> {
             Addr addr = new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET);
             return emit(WriteD, reg(ctx.expr()), addr);
         } else {
-            return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+            if (isParameter(ctx)) {
+//                Set the stack pointer to the right variable
+                emit(label, Pop, REG_ZERO);
+                for (int i = 1; i < localVarCount + offset(ctx) + 1; i++) {
+                    emit(Pop, REG_ZERO);
+                }
+//                Pop the variable and put in this register
+                emit(Pop, REG_ZERO);
+//                Push the new variable
+                emit(Push, reg(ctx.expr()));
+//                Reset the stack pointer
+                for (int i = 0; i < localVarCount + offset(ctx) + 1; i++) {
+                    emit(DecrSP);
+                }
+                return null;
+            } else {
+                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+            }
+
+
         }
     }
 
@@ -424,8 +428,15 @@ public class Generator extends LavaBaseVisitor<Op> {
         }
         labels.put(ctx.expr(), label);
         visit(ctx.expr());
+//        Pop the return address
         emit(Pop, reg(ctx));
+//        Pop the return value which should be zero
+        emit(Pop, REG_ZERO);
+//        Push the return value
         emit(Push, reg(ctx.expr()));
+//        Push the return address
+        emit(Push, reg(ctx));
+//        Jump back
         return emit(JumpI, new Target(reg(ctx)));
     }
 
@@ -603,7 +614,23 @@ public class Generator extends LavaBaseVisitor<Op> {
             emit(ReadD, new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
             return emit(Receive, reg(ctx));
         } else {
-            return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, offset(ctx)), reg(ctx));
+            if (isParameter(ctx)) {
+//                Set the stack pointer to the right variable
+                emit(label, Pop, REG_ZERO);
+                for (int i = 1; i < localVarCount + offset(ctx) + 1; i++) {
+                    emit(Pop, REG_ZERO);
+                }
+//                Pop the variable and put in this register
+                emit(Pop, reg(ctx));
+//                Reset the stack pointer
+                for (int i = 0; i < localVarCount + offset(ctx) + 2; i++) {
+                    emit(DecrSP);
+                }
+                return null;
+            } else {
+                return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, offset(ctx)), reg(ctx));
+            }
+
         }
 
     }
@@ -614,11 +641,26 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
+        Label label1 = createLabel(ctx, "return_" + ctx.function().ID().getText());
+        // calculate value of parameters and put in on the stack
         visitChildren(ctx);
-        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, prog.size() + 3), reg(ctx));
+//        Allocate place for return value
+        emit(Push, REG_ZERO);
+//        Calculate the return address
+        emit(LoadIm, new Addr(Addr.AddrType.ImmValueLab, label1), reg(ctx));
+//        Push the return value on the stack
         emit(Push, reg(ctx));
+//        Jump to the function
         emit(label, Jump, funcmap.get(ctx.function().ID().getText()));
-        return emit(Pop, reg(ctx));
+//        Pop the return address
+        emit(label1, Pop, REG_ZERO);
+//        Pop the return value
+        emit(Pop, reg(ctx));
+//        Pop the parameters
+        for (int i = 0; i < ctx.function().parameters().expr().size(); i++) {
+            emit(Pop, REG_ZERO);
+        }
+        return null;
     }
 
 //    Types -----------------------------------------------------------------------------------------------------------
@@ -687,6 +729,10 @@ public class Generator extends LavaBaseVisitor<Op> {
         return this.checkResult.getOffset(node);
     }
 
+    private boolean isParameter(ParseTree node) {
+        return this.checkResult.getParameterVar(node);
+    }
+
     public List<String> getErrors() {
         return errors;
     }
@@ -703,7 +749,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/scopetester.magma");
+        File file = new File("src/main/java/testprograms/fib.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));

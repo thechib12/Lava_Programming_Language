@@ -1,8 +1,6 @@
 package elaboration;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by Rogier on 22-06-16 in Enschede.
@@ -13,7 +11,11 @@ public class MultiScope implements Scope {
      */
     private Stack<Map<String, Type>> types;
 
+    private Map<String, Integer> globalScope;
+
     private Stack<Map<String, Integer>> scopes;
+
+    private Stack<List<String>> parameters;
 
     private final int initialSize = 0;
 
@@ -21,8 +23,10 @@ public class MultiScope implements Scope {
     public MultiScope() {
         types = new Stack<>();
         scopes = new Stack<>();
+        parameters = new Stack<>();
         this.types.add(new HashMap<>());
         this.scopes.add(new HashMap<>());
+        this.parameters.add(new ArrayList<>());
     }
 
 
@@ -30,6 +34,7 @@ public class MultiScope implements Scope {
     public void openScope() {
         this.types.add(new HashMap<>(this.types.peek()));
         this.scopes.add(new HashMap<>(this.scopes.peek()));
+        this.parameters.add(new ArrayList<>(parameters.peek()));
     }
 
     @Override
@@ -39,6 +44,7 @@ public class MultiScope implements Scope {
         }
         this.types.pop();
         this.scopes.pop();
+        this.parameters.pop();
     }
 
     @Override
@@ -47,7 +53,7 @@ public class MultiScope implements Scope {
     }
 
     @Override
-    public boolean put(String id, Type type) {
+    public boolean put(String id, Type type, int stackIndex, boolean isParameter) {
         boolean typeNotDefined = !types.peek().containsKey(id);
         boolean notDefinedInScope = !this.scopes.peek().containsKey(id);
 
@@ -55,11 +61,20 @@ public class MultiScope implements Scope {
             int size = 0;
             Map<String, Integer> scope = scopes.peek();
             for (String var : scope.keySet()) {
-                size += types.peek().get(var).size();
+                if (!isParameter(var)) {
+                    size += types.peek().get(var).size();
+                }
+
             }
             size += type.size();
             types.peek().put(id, type);
-            scope.put(id, size);
+            if (!isParameter) {
+                scope.put(id, size);
+            } else {
+                scope.put(id, stackIndex);
+                parameters.peek().add(id);
+            }
+
 
 
         }
@@ -75,5 +90,9 @@ public class MultiScope implements Scope {
     @Override
     public Integer offset(String id) {
         return scopes.peek().get(id);
+    }
+
+    public boolean isParameter(String id) {
+        return parameters.peek().contains(id);
     }
 }

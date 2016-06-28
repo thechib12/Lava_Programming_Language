@@ -14,9 +14,10 @@ import java.util.Map;
 /**
  * Created by Rogier on 22-06-16 in Enschede.
  */
-public class FunctionExplorer extends LavaBaseListener {
+public class Explorer extends LavaBaseListener {
     private Map<String, Type> functionReturnTypes;
     private ParseTreeProperty<Type> types;
+
 
     private Map<String, List<Type>> functionParameterTypes;
     private static final List<Type> fork = new ArrayList<>();
@@ -54,7 +55,6 @@ public class FunctionExplorer extends LavaBaseListener {
         functionReturnTypes.put(id, types.get(ctx.type()));
         int typeCount = ctx.parametersDeclaration().type().size();
         List<Type> types1 = new ArrayList<>();
-        List<String> names = new ArrayList<>();
         for (int i = 0; i < typeCount; i++) {
             types1.add(types.get(ctx.parametersDeclaration().type(i)));
 

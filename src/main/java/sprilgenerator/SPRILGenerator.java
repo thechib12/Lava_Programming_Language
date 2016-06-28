@@ -5,6 +5,7 @@ import elaboration.Generator;
 import elaboration.ParseException;
 import grammar.LavaLexer;
 import grammar.LavaParser;
+import model.Addr;
 import model.Op;
 import model.OpCode;
 import model.Program;
@@ -97,7 +98,13 @@ public class SPRILGenerator {
                     case LoadD:
                     case LoadIm:
                     case LoadInd:
-                        result.add("Load (" + instr.addr(0).toString() + ") " + instr.reg(1).toString());
+                        Addr addr = instr.addr(0);
+                        if (addr.getPrefix() == Addr.AddrType.ImmValueLab) {
+                            int line = program.getLine(addr.getLabel());
+                            result.add("Load (" + "ImmValue " + line + ") " + instr.reg(1).toString());
+                        } else {
+                            result.add("Load (" + addr.toString() + ") " + instr.reg(1).toString());
+                        }
                         break;
                     case StoreD:
                     case StoreInd:
@@ -123,6 +130,7 @@ public class SPRILGenerator {
                         break;
                     case DecrSP:
                         result.add("DecrSP");
+                        break;
                     case I2I:
                         result.add("I2I" + instr.reg(0).toString() + instr.reg(1).toString());
                         break;
@@ -164,7 +172,7 @@ public class SPRILGenerator {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/bank.magma");
+        File file = new File("src/main/java/testprograms/scopetester.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));

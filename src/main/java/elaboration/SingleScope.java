@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Christiaan + Rogier on 16-06-16 in Enschede.
  */
-public class SingleScope implements Scope {
+public class SingleScope {
     /**
      * Current size of this scope (in bytes).
      * Used to calculate offsets of newly declared variables.
@@ -31,12 +31,10 @@ public class SingleScope implements Scope {
         size = 1;
     }
 
-    @Override
     public void openScope() {
 
     }
 
-    @Override
     public void closeScope() {
 
     }
@@ -55,7 +53,7 @@ public class SingleScope implements Scope {
      * @return <code>true</code> if the identifier was added;
      * <code>false</code> if it was already declared.
      */
-    public boolean put(String id, Type type) {
+    public boolean put(String id, Type type, boolean parameter) {
         boolean result = !this.types.containsKey(id);
         if (result) {
             this.types.put(id, type);
@@ -80,5 +78,6 @@ public class SingleScope implements Scope {
     public Integer offset(String id) {
         return this.offsets.get(id);
     }
+
 
 }

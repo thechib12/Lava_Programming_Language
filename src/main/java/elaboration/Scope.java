@@ -18,7 +18,7 @@ public interface Scope {
      * @return <code>true</code> if the identifier was added;
      * <code>false</code> if it was already declared.
      */
-    boolean put(String id, Type type);
+    boolean put(String id, Type type, int stackIndex, boolean isParameter);
 
 
     /** Returns the type of a given (presumably declared) identifier.
@@ -30,4 +30,6 @@ public interface Scope {
      * Offsets are assigned in order of declaration.
      */
     Integer offset(String id);
+
+    boolean isParameter(String id);
 }

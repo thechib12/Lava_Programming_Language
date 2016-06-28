@@ -16,6 +16,9 @@ public class CheckerResult {
     /** Mapping from variables to coordinates. */
     private final ParseTreeProperty<Integer> offsets = new ParseTreeProperty<>();
 
+
+    private final ParseTreeProperty<Boolean> parameterVar = new ParseTreeProperty<>();
+
     private final ParseTreeProperty<Boolean> sharedVar = new ParseTreeProperty<>();
 
 
@@ -44,6 +47,7 @@ public class CheckerResult {
         return this.offsets.get(node);
     }
 
+
     /** Adds an association from a parse tree expression, type,
      * or assignment target node to the corresponding (inferred) type. */
     public void setType(ParseTree node, Type type) {
@@ -61,5 +65,13 @@ public class CheckerResult {
 
     public Boolean getSharedVar(ParseTree node) {
         return sharedVar.get(node);
+    }
+
+    public void setParameterVar(ParseTree var, boolean shared) {
+        this.parameterVar.put(var, shared);
+    }
+
+    public Boolean getParameterVar(ParseTree var) {
+        return parameterVar.get(var);
     }
 }
