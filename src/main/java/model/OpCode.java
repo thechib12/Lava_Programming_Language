@@ -45,6 +45,7 @@ public enum OpCode {
 	LoadIm(1, ADDR, REG),
 	StoreD(1, REG, ADDR),
 	StoreInd(1, REG, ADDR),
+	I2I(1, REG, REG),
 
 	Branch(1, REG, LABEL),
 	BranchI(1, REG, TARGET),
@@ -52,6 +53,8 @@ public enum OpCode {
 	JumpI(0,TARGET),
 	Push(1, REG),
 	Pop(0, REG),
+	IncrSP(0),
+	DecrSP(0),
 	Nop(0),
 	EndProg(0),
 

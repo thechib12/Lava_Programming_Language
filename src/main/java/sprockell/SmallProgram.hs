@@ -10,7 +10,8 @@ prog :: [Instruction]
 prog = [
          Load (ImmValue 12) 2,
          I2I 2 3,
-         Store 3 (DirAddr 100000),
+         DecrSP,
+         Push 3,
          EndProg
        ]
 

@@ -118,6 +118,14 @@ public class SPRILGenerator {
                     case Pop:
                         result.add("Pop " + instr.reg(0).toString());
                         break;
+                    case IncrSP:
+                        result.add("IncrSP");
+                        break;
+                    case DecrSP:
+                        result.add("DecrSP");
+                    case I2I:
+                        result.add("I2I" + instr.reg(0).toString() + instr.reg(1).toString());
+                        break;
                     case Nop:
                         result.add("Nop");
                         break;

@@ -81,6 +81,6 @@ sysTest :: [[Instruction]] -> IO ()                             -- instrss: list
 sysTest instrss = putStr                                        -- putStr: standard Haskell IO-function
                 $ unlines
                 $ map (++"\n")
-                $ map myOwnShow                                    -- make your own show-function?
+                $ map myShow                                    -- make your own show-function?
                 $ systemSim instrss initSystemState clock
 
