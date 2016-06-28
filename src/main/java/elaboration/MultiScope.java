@@ -15,44 +15,43 @@ public class MultiScope {
 
     private Stack<List<String>> parameters;
 
-    private Stack<Integer> localVarCount;
+    private Stack<List<String>> localVar;
 
-    private final int initialSize = 0;
+    private int scopeCount = 0;
 
 
     public MultiScope() {
         types = new Stack<>();
         scopes = new Stack<>();
         parameters = new Stack<>();
-        localVarCount = new Stack<>();
+        localVar = new Stack<>();
         this.types.add(new HashMap<>());
         this.scopes.add(new HashMap<>());
         this.parameters.add(new ArrayList<>());
-        System.out.println("Init local count : " + localVarCount.peek());
+        localVar.add(new ArrayList<>());
+        scopeCount++;
     }
 
-    public void initFunctionsPart() {
-        localVarCount.add(0);
-    }
 
 
     public void openScope() {
-        System.out.println("Open local count : " + localVarCount.peek());
+        scopeCount++;
         this.types.add(new HashMap<>(this.types.peek()));
         this.scopes.add(new HashMap<>(this.scopes.peek()));
         this.parameters.add(new ArrayList<>(parameters.peek()));
-        this.localVarCount.add(localVarCount.peek());
+        this.localVar.add(new ArrayList<>(localVar.peek()));
     }
 
     public void closeScope() {
+
         if (this.types.size() == 1) {
             throw new RuntimeException();
         }
-        System.out.println("Close local count : " + localVarCount.peek());
+        scopeCount--;
         this.types.pop();
         this.scopes.pop();
         this.parameters.pop();
-        localVarCount.pop();
+        localVar.pop();
     }
 
     public boolean contains(String id) {
@@ -64,31 +63,43 @@ public class MultiScope {
         boolean notDefinedInScope = !this.scopes.peek().containsKey(id);
 
         if (typeNotDefined && notDefinedInScope) {
-            if (localVarCount.size() == 0) {
-
-            }
-            int size = 0;
-            Map<String, Integer> scope = scopes.peek();
-            for (String var : scope.keySet()) {
-                if (!isParameter(var)) {
-                    size += types.peek().get(var).size();
-                }
-
-            }
-            size += type.size();
             types.peek().put(id, type);
+
+
+            Map<String, Integer> scope = scopes.peek();
             if (!isParameter) {
-                scope.put(id, size);
-                localVarCount.add(localVarCount.peek() + 1);
+                if (scopeCount == 1) {
+                    int size = 0;
+                    for (String var : scope.keySet()) {
+                        size += types.peek().get(var).size();
+                    }
+                    size += type.size();
+                    scope.put(id, size);
+                } else {
+                    int size = 0;
+                    List<String> local = localVar.peek();
+                    for (String var : local) {
+                        size += types.peek().get(var).size();
+                    }
+                    localVar.peek().add(id);
+                    size += type.size();
+                    scope.put(id, size);
+
+                }
             } else {
-                scope.put(id, stackIndex);
+                int paramSize = 0;
+                List<String> param = parameters.peek();
+                for (String var : param) {
+                    paramSize += types.peek().get(var).size();
+                }
+                paramSize += type.size();
+                scope.put(id, paramSize);
                 parameters.peek().add(id);
             }
 
 
 
         }
-
         return typeNotDefined && notDefinedInScope;
     }
 
@@ -101,5 +112,9 @@ public class MultiScope {
 
     public boolean isParameter(String id) {
         return parameters.peek().contains(id);
+    }
+
+    public boolean isLocal(String id) {
+        return localVar.peek().contains(id);
     }
 }

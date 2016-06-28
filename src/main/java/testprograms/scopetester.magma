@@ -20,5 +20,6 @@ chamber scopetester {
     erupt(){
         rock $a = 2;
         rock $b = func(20,10) + $a;
+        $d = $b;
     }
 }

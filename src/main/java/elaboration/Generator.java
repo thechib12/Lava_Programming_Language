@@ -129,6 +129,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     @Override
     public Op visitMain(LavaParser.MainContext ctx) {
+        localVarCount = 0;
         visitChildren(ctx);
         return emit(EndProg);
     }
@@ -139,6 +140,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     @Override
     public Op visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
+        localVarCount = 0;
         String currentFunction = ctx.ID().getText();
         Label label = funcmap.get(currentFunction);
 
@@ -181,7 +183,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     @Override
     public Op visitBlock(LavaParser.BlockContext ctx) {
-        localVarCount = 0;
+
         if (hasLabel(ctx)) {
             labels.put(ctx.blockStatements(), labels.get(ctx));
         }
@@ -232,21 +234,26 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
-
         if (ctx.expr() != null) {
             labels.put(ctx.expr(), label);
             visit(ctx.expr());
+            localVarCount++;
             if (checkResult.getSharedVar(ctx)) {
                 return emit(WriteD, reg(ctx.expr()),
                         new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            } else if (isLocal(ctx)) {
+                return emit(Push, reg(ctx.expr()));
             } else {
                 return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
             }
 
         } else {
+            localVarCount++;
             if (checkResult.getSharedVar(ctx)) {
                 return emit(WriteD, REG_ZERO,
                         new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            } else if (isLocal(ctx)) {
+                return emit(Push, REG_ZERO);
             } else {
                 return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, offset(ctx)));
             }
@@ -351,6 +358,22 @@ public class Generator extends LavaBaseVisitor<Op> {
                     emit(DecrSP);
                 }
                 return null;
+            } else if (isLocal(ctx)) {
+//                Number of pop needed to access this variable
+                int numPops = localVarCount - offset(ctx);
+//                Set the stack pointer to the right variable
+                for (int i = 0; i < numPops + 1; i++) {
+                    emit(Pop, REG_ZERO);
+                }
+//                Push the new value on the stack
+                emit(Push, reg(ctx.expr()));
+//                Reset the stack pointer
+                for (int i = 0; i < numPops; i++) {
+                    emit(DecrSP);
+                }
+
+
+                return null;
             } else {
                 return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
             }
@@ -392,6 +415,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         } else if (ctx.function().ID().getText().equals("unlock")) {
             emit(WriteD, REG_ZERO, LOCK);
         } else {
+//           TODO Correct pop and push
             Label label = null;
             if (hasLabel(ctx)) {
                 label = labels.get(ctx);
@@ -427,6 +451,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         }
         labels.put(ctx.expr(), label);
         visit(ctx.expr());
+//        Pop the localvariables from the stack
+        for (int i = 0; i < localVarCount; i++) {
+            emit(Pop, REG_ZERO);
+        }
+
 //        Pop the return address
         emit(Pop, reg(ctx));
 //        Pop the return value which should be zero
@@ -626,7 +655,37 @@ public class Generator extends LavaBaseVisitor<Op> {
                     emit(DecrSP);
                 }
                 return null;
+            } else if (isLocal(ctx)) {
+                if (localVarCount == 1) {
+//                    Set label to the first pop which is the variable itself
+                    emit(label, Pop, reg(ctx));
+//                    Reset stack pointer
+                    emit(DecrSP);
+                } else {
+//                    The amount of pops needed to reach this variable
+                    int numPops = localVarCount - offset(ctx);
+//                    Set label to the first pop to reg0.
+                    if (numPops > 0) {
+                        emit(label, Pop, REG_ZERO);
+                        for (int i = 1; i < numPops - 1; i++) {
+                            emit(Pop, REG_ZERO);
+                        }
+                        //                    Pop the desired variable
+                        emit(Pop, reg(ctx));
+                    } else {
+                        emit(Pop, reg(ctx));
+                    }
+
+//                    Reset stack pointer
+                    for (int i = 0; i < numPops + 1; i++) {
+                        emit(DecrSP);
+                    }
+
+                }
+
+                return null;
             } else {
+
                 return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, offset(ctx)), reg(ctx));
             }
 
@@ -656,7 +715,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         emit(label1, Pop, REG_ZERO);
 //        Pop the return value
         emit(Pop, reg(ctx));
-//        Pop the parameters
+//        Pop the parameters and set the stack pointer to original point
         for (int i = 0; i < ctx.function().parameters().expr().size(); i++) {
             emit(Pop, REG_ZERO);
         }
@@ -731,6 +790,10 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     private boolean isParameter(ParseTree node) {
         return this.checkResult.getParameterVar(node);
+    }
+
+    private boolean isLocal(ParseTree node) {
+        return this.checkResult.getLocalVar(node);
     }
 
     public List<String> getErrors() {
