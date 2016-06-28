@@ -1,0 +1,7 @@
+chamber infiniteLoop {
+    erupt(){
+        while (hot){
+            ;
+        }
+    }
+}
