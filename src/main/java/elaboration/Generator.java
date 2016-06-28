@@ -164,7 +164,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         Op operation = null;
         if (ctx.expr().size() > 0) {
             labels.put(ctx.expr(0), label);
-            for (int i = 0; i < ctx.expr().size(); i++) {
+            for (int i = ctx.expr().size() - 1; i >= 0; i--) {
                 visit(ctx.expr(i));
                 // push parameters on the stack
                 operation = emit(Push, reg(ctx.expr(i)));
@@ -265,7 +265,6 @@ public class Generator extends LavaBaseVisitor<Op> {
             label = labels.get(ctx);
         }
 
-        // TODO Look at label
         labels.put(ctx.expr(0), label);
         int statCount = ctx.block().size();
         int elseifCount = ctx.IF().size() - 1;
@@ -643,11 +642,6 @@ public class Generator extends LavaBaseVisitor<Op> {
         }
         Label label1 = createLabel(ctx, "return_" + ctx.function().ID().getText());
         // calculate value of parameters and put in on the stack
-
-        for (int i = ctx.function().parameters().expr().size(); i > 0; i++) {
-
-        }
-
 
         visitChildren(ctx);
 //        Allocate place for return value

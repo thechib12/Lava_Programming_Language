@@ -20,7 +20,7 @@ public class Checker extends LavaBaseListener {
     private CheckerResult checkerResult;
 
     /* The current scope of the the type checker, a single scope at this time.*/
-    private Scope scope;
+    private MultiScope scope;
     private Map<String, Type> functionReturnTypes;
     private Map<String, List<Type>> functionParameters;
     private Map<String, Boolean> sharedVars;
@@ -59,7 +59,6 @@ public class Checker extends LavaBaseListener {
 
 //  Program ------------------------------------------------------------------------------------------------------------
 
-
     //  Functions ----------------------------------------------------------------------------------------------------------
     @Override
     public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
@@ -82,7 +81,7 @@ public class Checker extends LavaBaseListener {
             if (type.getKind() == TypeKind.VOID) {
                 addError(ctx, "Void is not a type for a variable");
             } else {
-                int parameterNum = ctx.type().size() - i;
+                int parameterNum = i + 1;
                 if (!this.scope.put(ctx.VARID(i).getText(), type, parameterNum, true)) {
                     addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
                 }
