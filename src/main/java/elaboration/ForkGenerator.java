@@ -68,20 +68,21 @@ public class ForkGenerator extends Generator {
         emit(Receive, reg);
 
         emit(Branch, reg, label);
-        emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
+//        emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
         for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (func.ID().getText().equals(currentFunction)) {
                 visit(func.block());
             }
         }
+        emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, memAddr + 1));
         emit(EndProg);
         for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (!func.ID().getText().equals(currentFunction)) {
                 visit(func);
             }
         }
-        emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, memAddr));
-        return emit(EndProg);
+
+        return null;
     }
 
     public static void main(String[] args) {
