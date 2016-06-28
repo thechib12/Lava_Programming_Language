@@ -611,7 +611,7 @@ public class Generator extends LavaBaseVisitor<Op> {
             label = labels.get(ctx);
         }
         if (checkResult.getSharedVar(ctx)) {
-            emit(ReadD, new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            emit(label, ReadD, new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
             return emit(Receive, reg(ctx));
         } else {
             if (isParameter(ctx)) {
@@ -643,6 +643,12 @@ public class Generator extends LavaBaseVisitor<Op> {
         }
         Label label1 = createLabel(ctx, "return_" + ctx.function().ID().getText());
         // calculate value of parameters and put in on the stack
+
+        for (int i = ctx.function().parameters().expr().size(); i > 0; i++) {
+
+        }
+
+
         visitChildren(ctx);
 //        Allocate place for return value
         emit(Push, REG_ZERO);
