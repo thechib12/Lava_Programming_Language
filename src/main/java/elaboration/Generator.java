@@ -802,7 +802,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/voidtest.magma");
+        File file = new File("src/main/java/testprograms/basic.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));

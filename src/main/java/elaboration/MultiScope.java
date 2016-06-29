@@ -58,7 +58,7 @@ public class MultiScope {
         return this.types.peek().containsKey(id);
     }
 
-    public boolean put(String id, Type type, int stackIndex, boolean isParameter) {
+    public boolean put(String id, Type type, boolean isParameter) {
         boolean typeNotDefined = !types.peek().containsKey(id);
         boolean notDefinedInScope = !this.scopes.peek().containsKey(id);
 

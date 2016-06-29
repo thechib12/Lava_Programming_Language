@@ -81,8 +81,7 @@ public class Checker extends LavaBaseListener {
             if (type.getKind() == TypeKind.VOID) {
                 addError(ctx, "Void is not a type for a variable");
             } else {
-                int parameterNum = i + 1;
-                if (!this.scope.put(ctx.VARID(i).getText(), type, parameterNum, true)) {
+                if (!this.scope.put(ctx.VARID(i).getText(), type, true)) {
                     addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
                 }
                 setOffset(ctx.VARID(i), this.scope.offset(ctx.VARID(i).getText()));
@@ -147,7 +146,7 @@ public class Checker extends LavaBaseListener {
         if (type.getKind() == TypeKind.VOID) {
             addError(ctx, "Void is not a type for a variable");
         } else {
-            if (!this.scope.put(id, type, 0, false)) {
+            if (!this.scope.put(id, type, false)) {
                 addError(ctx, "Variable already declared: " + id);
             }
             setOffset(ctx, this.scope.offset(id));
