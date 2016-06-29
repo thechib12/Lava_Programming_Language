@@ -171,6 +171,9 @@ public class Generator extends LavaBaseVisitor<Op> {
                 // push parameters on the stack
                 operation = emit(Push, reg(ctx.expr(i)));
             }
+
+        } else {
+            emit(label, Nop);
         }
 
         return operation;
@@ -463,7 +466,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 //        Push the return value
         emit(Push, reg(ctx.expr()));
 //        Push the return address
-        emit(Push, reg(ctx));
+        emit(Push, REG_ZERO);
 //        Jump back
         return emit(JumpI, new Target(reg(ctx)));
     }
@@ -673,7 +676,7 @@ public class Generator extends LavaBaseVisitor<Op> {
                         //                    Pop the desired variable
                         emit(Pop, reg(ctx));
                     } else {
-                        emit(Pop, reg(ctx));
+                        emit(label, Pop, reg(ctx));
                     }
 
 //                    Reset stack pointer
@@ -699,6 +702,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
+        labels.put(ctx.function().parameters(), label);
         Label label1 = createLabel(ctx, "return_" + ctx.function().ID().getText());
         // calculate value of parameters and put in on the stack
 
@@ -710,7 +714,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 //        Push the return value on the stack
         emit(Push, reg(ctx));
 //        Jump to the function
-        emit(label, Jump, funcmap.get(ctx.function().ID().getText()));
+        emit(Jump, funcmap.get(ctx.function().ID().getText()));
 //        Pop the return address
         emit(label1, Pop, REG_ZERO);
 //        Pop the return value
