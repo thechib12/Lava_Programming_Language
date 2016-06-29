@@ -95,7 +95,7 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitFunction(LavaParser.FunctionContext ctx) {
+    public void exitFunctionCall(LavaParser.FunctionCallContext ctx) {
         String id = ctx.ID().getText();
         int varCount = ctx.parameters().expr().size();
         List<Type> varTypes = new ArrayList<>();
@@ -296,7 +296,7 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitFunctionExpr(LavaParser.FunctionExprContext ctx) {
-        setType(ctx, functionReturnTypes.get(ctx.function().ID().getText()));
+        setType(ctx, functionReturnTypes.get(ctx.functionCall().ID().getText()));
     }
 
 //   Types -------------------------------------------------------------------------------------------------------------

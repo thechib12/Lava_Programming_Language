@@ -71,12 +71,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlock(LavaParser.BlockContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#blockStatements}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBlockStatements(LavaParser.BlockStatementsContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link LavaParser#blockStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -88,12 +82,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LavaParser#emptyStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEmptyStatement(LavaParser.EmptyStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code primitiveDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
@@ -121,11 +109,11 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LavaParser#function}.
+	 * Visit a parse tree produced by {@link LavaParser#functionCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction(LavaParser.FunctionContext ctx);
+	T visitFunctionCall(LavaParser.FunctionCallContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#parametersDeclaration}.
 	 * @param ctx the parse tree

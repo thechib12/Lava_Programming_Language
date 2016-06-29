@@ -124,18 +124,6 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBlockStatements(LavaParser.BlockStatementsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBlockStatements(LavaParser.BlockStatementsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterBlockStatement(LavaParser.BlockStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -155,18 +143,6 @@ public class LavaBaseListener implements LavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEmptyStatement(LavaParser.EmptyStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEmptyStatement(LavaParser.EmptyStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -220,13 +196,13 @@ public class LavaBaseListener implements LavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunction(LavaParser.FunctionContext ctx) { }
+	@Override public void enterFunctionCall(LavaParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunction(LavaParser.FunctionContext ctx) { }
+	@Override public void exitFunctionCall(LavaParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
