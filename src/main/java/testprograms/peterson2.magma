@@ -1,56 +1,42 @@
 chamber peterson2 {
-   temperature[] $flag   = with size 2;
-   rock $turn;
-   rock $value;
+   shared temperature $flag0;
+   shared temperature $flag1;
+   shared rock $turn;
+   shared rock $value;
 
    rupture void takeTurnFirst(){
-       $flag[0] = hot;
+       $flag0 = hot;
        $turn = 1;
-       while ($flag[1] and $turn == 1){
+       while ($flag1 and ($turn == 1)){
            /^\ busy wait
            ;
        }
        $value = $value + 1;
+       $flag0 = cold;
     }
 
-   rupture void releaseTurnFirst(){
-       $flag[0] = cold;
-   }
+
 
    rupture void takeTurnSecond(){
-       $flag[1] = hot;
-       $turn = 1;
-       while ($flag[0] and $turn == 1){
+       $flag1 = hot;
+       $turn = 0;
+       while ($flag0 and ($turn == 0)){
            /^\ busy wait
            ;
        }
        $value = $value + 1;
+       $flag1 = cold;
    }
 
-   rupture void releaseTurnSecond(){
-       $flag[1] = cold;
-   }
 
-   rupture void run1(){
-       $count = 0 ;
-       while ($count < 100){
-           takeTurnFirst();
-           releaseTurnFirst();
-       }
-   }
-   rupture void run2(){
-       $count = 0 ;
-       while ($count < 100){
-           takeTurnSecond();
-           releaseTurnSecond();
-       }
-   }
 
    erupt(){
-        $flag = [cold, cold];
-       fork(run1());
-       fork(run2());
-       join();
+       $flag0 = cold;
+       $flag1 = cold;
+       fork(takeTurnFirst());
+       fork(takeTurnSecond());
+       join(1);
+       join(2);
 /^\       explode("Value: " + $value);
    }
 }

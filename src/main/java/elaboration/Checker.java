@@ -136,6 +136,9 @@ public class Checker extends LavaBaseListener {
         this.setParameter(ctx, this.scope.isParameter(id));
         this.setLocal(ctx, this.scope.isLocal(id));
         this.setOffset(ctx, this.scope.offset(id));
+        if (getSharedVar(id) == null) {
+            System.out.println(ctx.VARID().getText() + ": " + ctx.VARID().getSymbol().getLine());
+        }
         this.setShared(ctx, getSharedVar(id));
     }
 
@@ -145,21 +148,21 @@ public class Checker extends LavaBaseListener {
         String id = ctx.VARID().getText();
         if (type.getKind() == TypeKind.VOID) {
             addError(ctx, "Void is not a type for a variable");
-        } else {
-            if (!this.scope.put(id, type, false)) {
-                addError(ctx, "Variable already declared: " + id);
-            }
-            setOffset(ctx, this.scope.offset(id));
-            setLocal(ctx, this.scope.isLocal(id));
-            setType(ctx, type);
-            setType(ctx.VARID(), type);
-            if (ctx.shared() != null) {
-                sharedVars.put(id, true);
-            } else {
-                sharedVars.put(id, false);
-            }
-            setShared(ctx, getSharedVar(id));
         }
+        if (!this.scope.put(id, type, false)) {
+            addError(ctx, "Variable already declared: " + id);
+        }
+        setOffset(ctx, this.scope.offset(id));
+        setLocal(ctx, this.scope.isLocal(id));
+        setType(ctx, type);
+        setType(ctx.VARID(), type);
+        if (ctx.shared() != null) {
+            sharedVars.put(id, true);
+        } else {
+            sharedVars.put(id, false);
+        }
+        setShared(ctx, getSharedVar(id));
+
     }
 
 
