@@ -12,7 +12,7 @@ statement :
       target ASS expr SEMI                                                              #assignStat
     | IF LPAR expr RPAR THEN block (ELSE IF LPAR expr RPAR THEN block)* (ELSE block)?   #ifStat
     | WHILE LPAR expr RPAR  block                                                       #whileStat
-    | functionCall  SEMI                                                                    #functionStat
+    | functionCall  SEMI                                                                #functionStat
     | RETURN expr SEMI                                                                  #returnStat
     | SEMI                                                                              #emptyStat
     ;
@@ -34,7 +34,6 @@ localVariableDeclarationStatement:
 
 localVariableDeclaration :
       shared? primitiveType VARID (ASS expr)?                       #primitiveDeclaration
-    | primitiveType arrayType VARID ASS WITH SIZE NUM               #arrayDeclaration
     ;
 
 
@@ -56,13 +55,8 @@ parametersDeclaration:
 
 target:
       VARID                         #variableTarget
-    | VARID LBLOCK expr RBLOCK      #arrayIndexTarget
     ;
 
-
-arrayInit:
-    LBLOCK parameters RBLOCK
-    ;
 
 parameters:
     ( expr (COMMA expr)*)?
@@ -89,8 +83,7 @@ plusOp : PLUS | MINUS;
 negaOp : NOT | MINUS;
 
 expr:
-      expr DOT expr             #fieldExpr
-    | negaOp expr               #notExpr
+     negaOp expr               #notExpr
     | expr multOp expr          #multExpr
     | expr plusOp expr          #plusExpr
     | expr boolOp expr          #boolExpr
@@ -101,26 +94,20 @@ expr:
     | TRUE                      #trueExpr
     | FALSE                     #falseExpr
     | functionCall              #functionExpr
-    | arrayInit                 #arrayInitExpr
-    | VARID LBLOCK expr RBLOCK  #arrayExpr
     | VARID                     #idExpr
     ;
 
 type :
-     shared? primitiveType arrayType?
+     shared? primitiveType
     ;
 
-arrayType: LBLOCK RBLOCK;
 
 shared : SHARED;
 
 primitiveType:
       INTEGER  #intType
     | BOOLEAN  #boolType
-//    | DOUBLE   #doubleType
     | CHAR     #charType
-//    | LONG     #longType
-//    | STRING   #stringType
     | VOID     #voidType
     ;
 

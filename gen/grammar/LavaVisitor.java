@@ -90,13 +90,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code arrayDeclaration}
-	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayDeclaration(LavaParser.ArrayDeclarationContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link LavaParser#main}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -127,19 +120,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableTarget(LavaParser.VariableTargetContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code arrayIndexTarget}
-	 * labeled alternative in {@link LavaParser#target}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayIndexTarget(LavaParser.ArrayIndexTargetContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LavaParser#arrayInit}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayInit(LavaParser.ArrayInitContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#parameters}.
 	 * @param ctx the parse tree
@@ -177,6 +157,13 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNegaOp(LavaParser.NegaOpContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code parExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParExpr(LavaParser.ParExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code charExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
@@ -184,12 +171,12 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCharExpr(LavaParser.CharExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code arrayExpr}
+	 * Visit a parse tree produced by the {@code notExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArrayExpr(LavaParser.ArrayExprContext ctx);
+	T visitNotExpr(LavaParser.NotExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code trueExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
@@ -198,19 +185,26 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTrueExpr(LavaParser.TrueExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code arrayInitExpr}
+	 * Visit a parse tree produced by the {@code compExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArrayInitExpr(LavaParser.ArrayInitExprContext ctx);
+	T visitCompExpr(LavaParser.CompExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code fieldExpr}
+	 * Visit a parse tree produced by the {@code falseExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFieldExpr(LavaParser.FieldExprContext ctx);
+	T visitFalseExpr(LavaParser.FalseExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code boolExpr}
+	 * labeled alternative in {@link LavaParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolExpr(LavaParser.BoolExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code multExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
@@ -240,41 +234,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionExpr(LavaParser.FunctionExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code parExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParExpr(LavaParser.ParExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code notExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNotExpr(LavaParser.NotExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code compExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCompExpr(LavaParser.CompExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code falseExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFalseExpr(LavaParser.FalseExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code boolExpr}
-	 * labeled alternative in {@link LavaParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBoolExpr(LavaParser.BoolExprContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code idExpr}
 	 * labeled alternative in {@link LavaParser#expr}.
 	 * @param ctx the parse tree
@@ -287,12 +246,6 @@ public interface LavaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitType(LavaParser.TypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LavaParser#arrayType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayType(LavaParser.ArrayTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LavaParser#shared}.
 	 * @param ctx the parse tree

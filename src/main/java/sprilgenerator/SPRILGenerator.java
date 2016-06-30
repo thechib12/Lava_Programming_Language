@@ -29,9 +29,9 @@ public class SPRILGenerator {
             OpCode.Gt, OpCode.GtE, OpCode.Lt, OpCode.LtE, OpCode.And, OpCode.Or, OpCode.Xor, OpCode.LShift, OpCode.RShift};
 
 
-    public void writeFile(String text) {
+    public void writeFile(String text, String path) {
         try {
-            FileWriter writer = new FileWriter("./src/main/java/sprockell/Program.hs");
+            FileWriter writer = new FileWriter(path);
             writer.write(text);
             writer.flush();
         } catch (IOException e) {
@@ -41,7 +41,7 @@ public class SPRILGenerator {
 
     public String formatSpril(List<List<String>> instruction) {
         StringBuilder builder = new StringBuilder();
-        builder.append("module Program where\n" +
+        builder.append("module Main where\n" +
                 "\n" +
                 "import BasicFunctions\n" +
                 "import HardwareTypes\n" +
@@ -67,7 +67,7 @@ public class SPRILGenerator {
             builder.append("       ] \n");
         }
 
-        builder.append("demoTest = sysTest " + progNames.toString());
+        builder.append("main = sysTest " + progNames.toString());
         return builder.toString();
 
     }
@@ -172,7 +172,7 @@ public class SPRILGenerator {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/peterson2.magma");
+        File file = new File("src/main/java/testprograms/simpletest3.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));
@@ -195,7 +195,7 @@ public class SPRILGenerator {
                 sprils.add(sprilgen.generateSpril(prog));
             }
 
-            sprilgen.writeFile(sprilgen.formatSpril(sprils));
+            sprilgen.writeFile(sprilgen.formatSpril(sprils), "./src/main/java/sprockell/Program.hs");
         } catch (ParseException e) {
             System.err.println(e.getMessages());
         }

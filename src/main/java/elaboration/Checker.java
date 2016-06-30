@@ -63,6 +63,9 @@ public class Checker extends LavaBaseListener {
     @Override
     public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         currentFunction = ctx.ID().getText();
+        if (currentFunction.equals("fork")) {
+            addError(ctx, "fork is a pre defined function, you cannot declare this");
+        }
         scope.openScope();
     }
 
