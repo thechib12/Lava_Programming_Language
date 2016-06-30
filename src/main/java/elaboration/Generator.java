@@ -301,7 +301,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         Label label3 = createLabel(ctx, "endif");
         if (numberOfBlocks == 1) {
             visit(ctx.expr(0));
-            emit(Branch, reg(ctx), label3);
+            emit(Branch, reg(ctx.expr(0)), label3);
             visit(ctx.block(0));
         } else {
             visit(ctx.expr(0));
@@ -802,7 +802,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         Generator generator = new Generator();
         CharStream input;
 
-        File file = new File("src/main/java/testprograms/basic.magma");
+        File file = new File("src/main/java/testprograms/simpletest3.magma");
         input = null;
         try {
             input = new ANTLRInputStream(new FileReader(file));

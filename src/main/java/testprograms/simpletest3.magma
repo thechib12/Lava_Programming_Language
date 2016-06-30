@@ -9,8 +9,9 @@ chamber test3 {
 
     erupt(){
        while ( $counter <= 100 ) {
-            rock $lol = 3;
-            if ( $switch ) then { $output = $output + $input; }
+            if ( $switch ) then {
+                $output = $output + $input;
+             }
             $counter = $counter +1;
             $switch = not $switch;
        }
