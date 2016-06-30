@@ -809,14 +809,17 @@ public class Generator extends LavaBaseVisitor<Op> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Lexer lexer = new LavaLexer(input);
-        TokenStream tokens = new CommonTokenStream(lexer);
-        LavaParser parser = new LavaParser(tokens);
 
-
-        ParseTree tree = parser.program();
-        List<Program> program;
         try {
+            Lexer lexer = new LavaLexer(input);
+            TokenStream tokens = new CommonTokenStream(lexer);
+            LavaParser parser = new LavaParser(tokens);
+            parser.removeErrorListeners();
+            ErrorListener errorListener = new ErrorListener();
+            parser.addErrorListener(errorListener);
+            ParseTree tree = parser.program();
+            errorListener.throwException();
+            List<Program> program;
             CheckerResult result = checker.check(tree);
             program = generator.generate(tree, result);
             System.out.println(program.toString());

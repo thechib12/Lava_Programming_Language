@@ -13,7 +13,7 @@ chamber test3 {
                 $output = $output + $input;
              }
             $counter = $counter +1;
-            $switch = not $switch;
+            $switch = not $switch
        }
 
     }

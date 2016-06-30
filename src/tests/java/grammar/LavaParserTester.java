@@ -1,14 +1,13 @@
 package grammar;
 
+import elaboration.ErrorListener;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Assert;
 import org.junit.Test;
-import testutils.ErrorListener;
 import testutils.ParseException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -209,8 +208,7 @@ public class LavaParserTester {
         }
 
 
-        listener.printErrors();
-        listener.throwException();
+        System.err.println(listener.getErrors());
 
         return result;
     }
