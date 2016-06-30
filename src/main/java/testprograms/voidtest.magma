@@ -1,0 +1,27 @@
+chamber voidtest {
+    rock $a;
+
+    rupture void func1(rock $b, rock $c){
+        while ($b == $c){
+            $c = 2;
+        }
+
+        $a = $b +$c;
+
+    }
+
+    rupture void func2(rock $b){
+        $a = $a - $b;
+    }
+
+    erupt() {
+        if (not hot)then{
+            func1(2,1);
+        } else {
+            func2(1);
+        }
+
+    }
+
+
+}

@@ -25,19 +25,19 @@ public class LavaParser extends Parser {
 		LPAR=41, LT=42, MINUS=43, PLUS=44, RBRACE=45, RPAR=46, SEMI=47, SLASH=48, 
 		STAR=49, WS=50, COMMENT=51;
 	public static final int
-		RULE_program = 0, RULE_body = 1, RULE_statement = 2, RULE_block = 3, RULE_blockStatements = 4, 
-		RULE_blockStatement = 5, RULE_localVariableDeclarationStatement = 6, RULE_emptyStatement = 7, 
-		RULE_localVariableDeclaration = 8, RULE_main = 9, RULE_functionDeclaration = 10, 
-		RULE_function = 11, RULE_parametersDeclaration = 12, RULE_target = 13, 
-		RULE_arrayInit = 14, RULE_parameters = 15, RULE_compOp = 16, RULE_boolOp = 17, 
-		RULE_multOp = 18, RULE_plusOp = 19, RULE_negaOp = 20, RULE_expr = 21, 
-		RULE_type = 22, RULE_arrayType = 23, RULE_shared = 24, RULE_primitiveType = 25;
+		RULE_program = 0, RULE_body = 1, RULE_statement = 2, RULE_block = 3, RULE_blockStatement = 4, 
+		RULE_localVariableDeclarationStatement = 5, RULE_localVariableDeclaration = 6, 
+		RULE_main = 7, RULE_functionDeclaration = 8, RULE_functionCall = 9, RULE_parametersDeclaration = 10, 
+		RULE_target = 11, RULE_arrayInit = 12, RULE_parameters = 13, RULE_compOp = 14, 
+		RULE_boolOp = 15, RULE_multOp = 16, RULE_plusOp = 17, RULE_negaOp = 18, 
+		RULE_expr = 19, RULE_type = 20, RULE_arrayType = 21, RULE_shared = 22, 
+		RULE_primitiveType = 23;
 	public static final String[] ruleNames = {
-		"program", "body", "statement", "block", "blockStatements", "blockStatement", 
-		"localVariableDeclarationStatement", "emptyStatement", "localVariableDeclaration", 
-		"main", "functionDeclaration", "function", "parametersDeclaration", "target", 
-		"arrayInit", "parameters", "compOp", "boolOp", "multOp", "plusOp", "negaOp", 
-		"expr", "type", "arrayType", "shared", "primitiveType"
+		"program", "body", "statement", "block", "blockStatement", "localVariableDeclarationStatement", 
+		"localVariableDeclaration", "main", "functionDeclaration", "functionCall", 
+		"parametersDeclaration", "target", "arrayInit", "parameters", "compOp", 
+		"boolOp", "multOp", "plusOp", "negaOp", "expr", "type", "arrayType", "shared", 
+		"primitiveType"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -140,17 +140,17 @@ public class LavaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(48);
 			match(CHAMBER);
-			setState(53);
+			setState(49);
 			match(ID);
-			setState(54);
+			setState(50);
 			match(LBRACE);
-			setState(55);
+			setState(51);
 			body();
-			setState(56);
+			setState(52);
 			match(RBRACE);
-			setState(57);
+			setState(53);
 			match(EOF);
 			}
 		}
@@ -207,39 +207,39 @@ public class LavaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(62);
+			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << BOOLEAN) | (1L << CHAR) | (1L << VOID) | (1L << SHARED))) != 0)) {
 				{
 				{
-				setState(59);
+				setState(55);
 				localVariableDeclarationStatement();
 				}
 				}
-				setState(64);
+				setState(60);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(68);
+			setState(64);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==RUPTURE) {
 				{
 				{
-				setState(65);
+				setState(61);
 				functionDeclaration();
 				}
 				}
-				setState(70);
+				setState(66);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(72);
+			setState(68);
 			_la = _input.LA(1);
 			if (_la==ERUPT) {
 				{
-				setState(71);
+				setState(67);
 				main();
 				}
 			}
@@ -317,8 +317,8 @@ public class LavaParser extends Parser {
 		}
 	}
 	public static class FunctionStatContext extends StatementContext {
-		public FunctionContext function() {
-			return getRuleContext(FunctionContext.class,0);
+		public FunctionCallContext functionCall() {
+			return getRuleContext(FunctionCallContext.class,0);
 		}
 		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
 		public FunctionStatContext(StatementContext ctx) { copyFrom(ctx); }
@@ -382,9 +382,7 @@ public class LavaParser extends Parser {
 		}
 	}
 	public static class EmptyStatContext extends StatementContext {
-		public EmptyStatementContext emptyStatement() {
-			return getRuleContext(EmptyStatementContext.class,0);
-		}
+		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
 		public EmptyStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -432,19 +430,19 @@ public class LavaParser extends Parser {
 		int _la;
 		try {
 			int _alt;
-			setState(116);
+			setState(112);
 			switch (_input.LA(1)) {
 			case VARID:
 				_localctx = new AssignStatContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(74);
+				setState(70);
 				target();
-				setState(75);
+				setState(71);
 				match(ASS);
-				setState(76);
+				setState(72);
 				expr(0);
-				setState(77);
+				setState(73);
 				match(SEMI);
 				}
 				break;
@@ -452,53 +450,53 @@ public class LavaParser extends Parser {
 				_localctx = new IfStatContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(79);
+				setState(75);
 				match(IF);
-				setState(80);
+				setState(76);
 				match(LPAR);
-				setState(81);
+				setState(77);
 				expr(0);
-				setState(82);
+				setState(78);
 				match(RPAR);
-				setState(83);
+				setState(79);
 				match(THEN);
-				setState(84);
+				setState(80);
 				block();
-				setState(95);
+				setState(91);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(85);
+						setState(81);
 						match(ELSE);
-						setState(86);
+						setState(82);
 						match(IF);
-						setState(87);
+						setState(83);
 						match(LPAR);
-						setState(88);
+						setState(84);
 						expr(0);
-						setState(89);
+						setState(85);
 						match(RPAR);
-						setState(90);
+						setState(86);
 						match(THEN);
-						setState(91);
+						setState(87);
 						block();
 						}
 						} 
 					}
-					setState(97);
+					setState(93);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 				}
-				setState(100);
+				setState(96);
 				_la = _input.LA(1);
 				if (_la==ELSE) {
 					{
-					setState(98);
+					setState(94);
 					match(ELSE);
-					setState(99);
+					setState(95);
 					block();
 					}
 				}
@@ -509,15 +507,15 @@ public class LavaParser extends Parser {
 				_localctx = new WhileStatContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(102);
+				setState(98);
 				match(WHILE);
-				setState(103);
+				setState(99);
 				match(LPAR);
-				setState(104);
+				setState(100);
 				expr(0);
-				setState(105);
+				setState(101);
 				match(RPAR);
-				setState(106);
+				setState(102);
 				block();
 				}
 				break;
@@ -525,9 +523,9 @@ public class LavaParser extends Parser {
 				_localctx = new FunctionStatContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(108);
-				function();
-				setState(109);
+				setState(104);
+				functionCall();
+				setState(105);
 				match(SEMI);
 				}
 				break;
@@ -535,11 +533,11 @@ public class LavaParser extends Parser {
 				_localctx = new ReturnStatContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(111);
+				setState(107);
 				match(RETURN);
-				setState(112);
+				setState(108);
 				expr(0);
-				setState(113);
+				setState(109);
 				match(SEMI);
 				}
 				break;
@@ -547,8 +545,8 @@ public class LavaParser extends Parser {
 				_localctx = new EmptyStatContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(115);
-				emptyStatement();
+				setState(111);
+				match(SEMI);
 				}
 				break;
 			default:
@@ -568,10 +566,13 @@ public class LavaParser extends Parser {
 
 	public static class BlockContext extends ParserRuleContext {
 		public TerminalNode LBRACE() { return getToken(LavaParser.LBRACE, 0); }
-		public BlockStatementsContext blockStatements() {
-			return getRuleContext(BlockStatementsContext.class,0);
-		}
 		public TerminalNode RBRACE() { return getToken(LavaParser.RBRACE, 0); }
+		public List<BlockStatementContext> blockStatement() {
+			return getRuleContexts(BlockStatementContext.class);
+		}
+		public BlockStatementContext blockStatement(int i) {
+			return getRuleContext(BlockStatementContext.class,i);
+		}
 		public BlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -594,77 +595,32 @@ public class LavaParser extends Parser {
 	public final BlockContext block() throws RecognitionException {
 		BlockContext _localctx = new BlockContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_block);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(118);
-			match(LBRACE);
-			setState(119);
-			blockStatements();
-			setState(120);
-			match(RBRACE);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class BlockStatementsContext extends ParserRuleContext {
-		public List<BlockStatementContext> blockStatement() {
-			return getRuleContexts(BlockStatementContext.class);
-		}
-		public BlockStatementContext blockStatement(int i) {
-			return getRuleContext(BlockStatementContext.class,i);
-		}
-		public BlockStatementsContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_blockStatements; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterBlockStatements(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitBlockStatements(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitBlockStatements(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final BlockStatementsContext blockStatements() throws RecognitionException {
-		BlockStatementsContext _localctx = new BlockStatementsContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_blockStatements);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(122);
+			setState(114);
+			match(LBRACE);
+			{
+			setState(115);
 			blockStatement();
-			setState(126);
+			setState(119);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << BOOLEAN) | (1L << CHAR) | (1L << VOID) | (1L << IF) | (1L << WHILE) | (1L << RETURN) | (1L << SHARED) | (1L << VARID) | (1L << ID) | (1L << SEMI))) != 0)) {
 				{
 				{
-				setState(123);
+				setState(116);
 				blockStatement();
 				}
 				}
-				setState(128);
+				setState(121);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
+			}
+			setState(122);
+			match(RBRACE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -706,9 +662,9 @@ public class LavaParser extends Parser {
 
 	public final BlockStatementContext blockStatement() throws RecognitionException {
 		BlockStatementContext _localctx = new BlockStatementContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_blockStatement);
+		enterRule(_localctx, 8, RULE_blockStatement);
 		try {
-			setState(131);
+			setState(126);
 			switch (_input.LA(1)) {
 			case INTEGER:
 			case BOOLEAN:
@@ -717,7 +673,7 @@ public class LavaParser extends Parser {
 			case SHARED:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(129);
+				setState(124);
 				localVariableDeclarationStatement();
 				}
 				break;
@@ -729,7 +685,7 @@ public class LavaParser extends Parser {
 			case SEMI:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(130);
+				setState(125);
 				statement();
 				}
 				break;
@@ -774,55 +730,13 @@ public class LavaParser extends Parser {
 
 	public final LocalVariableDeclarationStatementContext localVariableDeclarationStatement() throws RecognitionException {
 		LocalVariableDeclarationStatementContext _localctx = new LocalVariableDeclarationStatementContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_localVariableDeclarationStatement);
+		enterRule(_localctx, 10, RULE_localVariableDeclarationStatement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(133);
+			setState(128);
 			localVariableDeclaration();
-			setState(134);
-			match(SEMI);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class EmptyStatementContext extends ParserRuleContext {
-		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
-		public EmptyStatementContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_emptyStatement; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterEmptyStatement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitEmptyStatement(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitEmptyStatement(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final EmptyStatementContext emptyStatement() throws RecognitionException {
-		EmptyStatementContext _localctx = new EmptyStatementContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_emptyStatement);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(136);
+			setState(129);
 			match(SEMI);
 			}
 		}
@@ -905,36 +819,36 @@ public class LavaParser extends Parser {
 
 	public final LocalVariableDeclarationContext localVariableDeclaration() throws RecognitionException {
 		LocalVariableDeclarationContext _localctx = new LocalVariableDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_localVariableDeclaration);
+		enterRule(_localctx, 12, RULE_localVariableDeclaration);
 		int _la;
 		try {
-			setState(155);
+			setState(148);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
 			case 1:
 				_localctx = new PrimitiveDeclarationContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(139);
+				setState(132);
 				_la = _input.LA(1);
 				if (_la==SHARED) {
 					{
-					setState(138);
+					setState(131);
 					shared();
 					}
 				}
 
-				setState(141);
+				setState(134);
 				primitiveType();
-				setState(142);
+				setState(135);
 				match(VARID);
-				setState(145);
+				setState(138);
 				_la = _input.LA(1);
 				if (_la==ASS) {
 					{
-					setState(143);
+					setState(136);
 					match(ASS);
-					setState(144);
+					setState(137);
 					expr(0);
 					}
 				}
@@ -945,19 +859,19 @@ public class LavaParser extends Parser {
 				_localctx = new ArrayDeclarationContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(147);
+				setState(140);
 				primitiveType();
-				setState(148);
+				setState(141);
 				arrayType();
-				setState(149);
+				setState(142);
 				match(VARID);
-				setState(150);
+				setState(143);
 				match(ASS);
-				setState(151);
+				setState(144);
 				match(WITH);
-				setState(152);
+				setState(145);
 				match(SIZE);
-				setState(153);
+				setState(146);
 				match(NUM);
 				}
 				break;
@@ -1002,17 +916,17 @@ public class LavaParser extends Parser {
 
 	public final MainContext main() throws RecognitionException {
 		MainContext _localctx = new MainContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_main);
+		enterRule(_localctx, 14, RULE_main);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(157);
+			setState(150);
 			match(ERUPT);
-			setState(158);
+			setState(151);
 			match(LPAR);
-			setState(159);
+			setState(152);
 			match(RPAR);
-			setState(160);
+			setState(153);
 			block();
 			}
 		}
@@ -1062,24 +976,24 @@ public class LavaParser extends Parser {
 
 	public final FunctionDeclarationContext functionDeclaration() throws RecognitionException {
 		FunctionDeclarationContext _localctx = new FunctionDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_functionDeclaration);
+		enterRule(_localctx, 16, RULE_functionDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(162);
+			setState(155);
 			match(RUPTURE);
-			setState(163);
+			setState(156);
 			type();
-			setState(164);
+			setState(157);
 			match(ID);
-			setState(165);
+			setState(158);
 			match(LPAR);
-			setState(166);
+			setState(159);
 			parametersDeclaration();
-			setState(167);
+			setState(160);
 			match(RPAR);
-			setState(168);
+			setState(161);
 			block();
 			}
 			}
@@ -1095,45 +1009,45 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
-	public static class FunctionContext extends ParserRuleContext {
+	public static class FunctionCallContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(LavaParser.ID, 0); }
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
 		public ParametersContext parameters() {
 			return getRuleContext(ParametersContext.class,0);
 		}
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
-		public FunctionContext(ParserRuleContext parent, int invokingState) {
+		public FunctionCallContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_function; }
+		@Override public int getRuleIndex() { return RULE_functionCall; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterFunction(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).enterFunctionCall(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitFunction(this);
+			if ( listener instanceof LavaListener ) ((LavaListener)listener).exitFunctionCall(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitFunction(this);
+			if ( visitor instanceof LavaVisitor ) return ((LavaVisitor<? extends T>)visitor).visitFunctionCall(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final FunctionContext function() throws RecognitionException {
-		FunctionContext _localctx = new FunctionContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_function);
+	public final FunctionCallContext functionCall() throws RecognitionException {
+		FunctionCallContext _localctx = new FunctionCallContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_functionCall);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(170);
+			setState(163);
 			match(ID);
-			setState(171);
+			setState(164);
 			match(LPAR);
-			setState(172);
+			setState(165);
 			parameters();
-			setState(173);
+			setState(166);
 			match(RPAR);
 			}
 		}
@@ -1184,34 +1098,34 @@ public class LavaParser extends Parser {
 
 	public final ParametersDeclarationContext parametersDeclaration() throws RecognitionException {
 		ParametersDeclarationContext _localctx = new ParametersDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_parametersDeclaration);
+		enterRule(_localctx, 20, RULE_parametersDeclaration);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(186);
+			setState(179);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << BOOLEAN) | (1L << CHAR) | (1L << VOID) | (1L << SHARED))) != 0)) {
 				{
-				setState(175);
+				setState(168);
 				type();
-				setState(176);
+				setState(169);
 				match(VARID);
-				setState(183);
+				setState(176);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(177);
+					setState(170);
 					match(COMMA);
-					setState(178);
+					setState(171);
 					type();
-					setState(179);
+					setState(172);
 					match(VARID);
 					}
 					}
-					setState(185);
+					setState(178);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
@@ -1284,16 +1198,16 @@ public class LavaParser extends Parser {
 
 	public final TargetContext target() throws RecognitionException {
 		TargetContext _localctx = new TargetContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_target);
+		enterRule(_localctx, 22, RULE_target);
 		try {
-			setState(194);
+			setState(187);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
 				_localctx = new VariableTargetContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(188);
+				setState(181);
 				match(VARID);
 				}
 				break;
@@ -1301,13 +1215,13 @@ public class LavaParser extends Parser {
 				_localctx = new ArrayIndexTargetContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(189);
+				setState(182);
 				match(VARID);
-				setState(190);
+				setState(183);
 				match(LBLOCK);
-				setState(191);
+				setState(184);
 				expr(0);
-				setState(192);
+				setState(185);
 				match(RBLOCK);
 				}
 				break;
@@ -1351,15 +1265,15 @@ public class LavaParser extends Parser {
 
 	public final ArrayInitContext arrayInit() throws RecognitionException {
 		ArrayInitContext _localctx = new ArrayInitContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_arrayInit);
+		enterRule(_localctx, 24, RULE_arrayInit);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(196);
+			setState(189);
 			match(LBLOCK);
-			setState(197);
+			setState(190);
 			parameters();
-			setState(198);
+			setState(191);
 			match(RBLOCK);
 			}
 		}
@@ -1406,30 +1320,30 @@ public class LavaParser extends Parser {
 
 	public final ParametersContext parameters() throws RecognitionException {
 		ParametersContext _localctx = new ParametersContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_parameters);
+		enterRule(_localctx, 26, RULE_parameters);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(208);
+			setState(201);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TRUE) | (1L << FALSE) | (1L << NOT) | (1L << VARID) | (1L << ID) | (1L << NUM) | (1L << CHARACTER) | (1L << LBLOCK) | (1L << LPAR) | (1L << MINUS))) != 0)) {
 				{
-				setState(200);
+				setState(193);
 				expr(0);
-				setState(205);
+				setState(198);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(201);
+					setState(194);
 					match(COMMA);
-					setState(202);
+					setState(195);
 					expr(0);
 					}
 					}
-					setState(207);
+					setState(200);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
@@ -1476,12 +1390,12 @@ public class LavaParser extends Parser {
 
 	public final CompOpContext compOp() throws RecognitionException {
 		CompOpContext _localctx = new CompOpContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_compOp);
+		enterRule(_localctx, 28, RULE_compOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(210);
+			setState(203);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQ) | (1L << GE) | (1L << GT) | (1L << LE) | (1L << LT))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1526,12 +1440,12 @@ public class LavaParser extends Parser {
 
 	public final BoolOpContext boolOp() throws RecognitionException {
 		BoolOpContext _localctx = new BoolOpContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_boolOp);
+		enterRule(_localctx, 30, RULE_boolOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(212);
+			setState(205);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << AND) | (1L << OR) | (1L << XOR))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1575,12 +1489,12 @@ public class LavaParser extends Parser {
 
 	public final MultOpContext multOp() throws RecognitionException {
 		MultOpContext _localctx = new MultOpContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_multOp);
+		enterRule(_localctx, 32, RULE_multOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(214);
+			setState(207);
 			_la = _input.LA(1);
 			if ( !(_la==SLASH || _la==STAR) ) {
 			_errHandler.recoverInline(this);
@@ -1624,12 +1538,12 @@ public class LavaParser extends Parser {
 
 	public final PlusOpContext plusOp() throws RecognitionException {
 		PlusOpContext _localctx = new PlusOpContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_plusOp);
+		enterRule(_localctx, 34, RULE_plusOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(216);
+			setState(209);
 			_la = _input.LA(1);
 			if ( !(_la==MINUS || _la==PLUS) ) {
 			_errHandler.recoverInline(this);
@@ -1673,12 +1587,12 @@ public class LavaParser extends Parser {
 
 	public final NegaOpContext negaOp() throws RecognitionException {
 		NegaOpContext _localctx = new NegaOpContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_negaOp);
+		enterRule(_localctx, 36, RULE_negaOp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(218);
+			setState(211);
 			_la = _input.LA(1);
 			if ( !(_la==NOT || _la==MINUS) ) {
 			_errHandler.recoverInline(this);
@@ -1875,8 +1789,8 @@ public class LavaParser extends Parser {
 		}
 	}
 	public static class FunctionExprContext extends ExprContext {
-		public FunctionContext function() {
-			return getRuleContext(FunctionContext.class,0);
+		public FunctionCallContext functionCall() {
+			return getRuleContext(FunctionCallContext.class,0);
 		}
 		public FunctionExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2030,13 +1944,13 @@ public class LavaParser extends Parser {
 		int _parentState = getState();
 		ExprContext _localctx = new ExprContext(_ctx, _parentState);
 		ExprContext _prevctx = _localctx;
-		int _startState = 42;
-		enterRecursionRule(_localctx, 42, RULE_expr, _p);
+		int _startState = 38;
+		enterRecursionRule(_localctx, 38, RULE_expr, _p);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(240);
+			setState(233);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
 			case 1:
@@ -2045,9 +1959,9 @@ public class LavaParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(221);
+				setState(214);
 				negaOp();
-				setState(222);
+				setState(215);
 				expr(14);
 				}
 				break;
@@ -2056,11 +1970,11 @@ public class LavaParser extends Parser {
 				_localctx = new ParExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(224);
+				setState(217);
 				match(LPAR);
-				setState(225);
+				setState(218);
 				expr(0);
-				setState(226);
+				setState(219);
 				match(RPAR);
 				}
 				break;
@@ -2069,7 +1983,7 @@ public class LavaParser extends Parser {
 				_localctx = new NumExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(228);
+				setState(221);
 				match(NUM);
 				}
 				break;
@@ -2078,7 +1992,7 @@ public class LavaParser extends Parser {
 				_localctx = new CharExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(229);
+				setState(222);
 				match(CHARACTER);
 				}
 				break;
@@ -2087,7 +2001,7 @@ public class LavaParser extends Parser {
 				_localctx = new TrueExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(230);
+				setState(223);
 				match(TRUE);
 				}
 				break;
@@ -2096,7 +2010,7 @@ public class LavaParser extends Parser {
 				_localctx = new FalseExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(231);
+				setState(224);
 				match(FALSE);
 				}
 				break;
@@ -2105,8 +2019,8 @@ public class LavaParser extends Parser {
 				_localctx = new FunctionExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(232);
-				function();
+				setState(225);
+				functionCall();
 				}
 				break;
 			case 8:
@@ -2114,7 +2028,7 @@ public class LavaParser extends Parser {
 				_localctx = new ArrayInitExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(233);
+				setState(226);
 				arrayInit();
 				}
 				break;
@@ -2123,13 +2037,13 @@ public class LavaParser extends Parser {
 				_localctx = new ArrayExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(234);
+				setState(227);
 				match(VARID);
-				setState(235);
+				setState(228);
 				match(LBLOCK);
-				setState(236);
+				setState(229);
 				expr(0);
-				setState(237);
+				setState(230);
 				match(RBLOCK);
 				}
 				break;
@@ -2138,13 +2052,13 @@ public class LavaParser extends Parser {
 				_localctx = new IdExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(239);
+				setState(232);
 				match(VARID);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(263);
+			setState(256);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -2152,18 +2066,18 @@ public class LavaParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(261);
+					setState(254);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 					case 1:
 						{
 						_localctx = new FieldExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(242);
+						setState(235);
 						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
-						setState(243);
+						setState(236);
 						match(DOT);
-						setState(244);
+						setState(237);
 						expr(16);
 						}
 						break;
@@ -2171,11 +2085,11 @@ public class LavaParser extends Parser {
 						{
 						_localctx = new MultExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(245);
+						setState(238);
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
-						setState(246);
+						setState(239);
 						multOp();
-						setState(247);
+						setState(240);
 						expr(14);
 						}
 						break;
@@ -2183,11 +2097,11 @@ public class LavaParser extends Parser {
 						{
 						_localctx = new PlusExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(249);
+						setState(242);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-						setState(250);
+						setState(243);
 						plusOp();
-						setState(251);
+						setState(244);
 						expr(13);
 						}
 						break;
@@ -2195,11 +2109,11 @@ public class LavaParser extends Parser {
 						{
 						_localctx = new BoolExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(253);
+						setState(246);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
-						setState(254);
+						setState(247);
 						boolOp();
-						setState(255);
+						setState(248);
 						expr(12);
 						}
 						break;
@@ -2207,18 +2121,18 @@ public class LavaParser extends Parser {
 						{
 						_localctx = new CompExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(257);
+						setState(250);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
-						setState(258);
+						setState(251);
 						compOp();
-						setState(259);
+						setState(252);
 						expr(11);
 						}
 						break;
 					}
 					} 
 				}
-				setState(265);
+				setState(258);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 			}
@@ -2266,27 +2180,27 @@ public class LavaParser extends Parser {
 
 	public final TypeContext type() throws RecognitionException {
 		TypeContext _localctx = new TypeContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_type);
+		enterRule(_localctx, 40, RULE_type);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(267);
+			setState(260);
 			_la = _input.LA(1);
 			if (_la==SHARED) {
 				{
-				setState(266);
+				setState(259);
 				shared();
 				}
 			}
 
-			setState(269);
+			setState(262);
 			primitiveType();
-			setState(271);
+			setState(264);
 			_la = _input.LA(1);
 			if (_la==LBLOCK) {
 				{
-				setState(270);
+				setState(263);
 				arrayType();
 				}
 			}
@@ -2328,13 +2242,13 @@ public class LavaParser extends Parser {
 
 	public final ArrayTypeContext arrayType() throws RecognitionException {
 		ArrayTypeContext _localctx = new ArrayTypeContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_arrayType);
+		enterRule(_localctx, 42, RULE_arrayType);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(273);
+			setState(266);
 			match(LBLOCK);
-			setState(274);
+			setState(267);
 			match(RBLOCK);
 			}
 		}
@@ -2372,11 +2286,11 @@ public class LavaParser extends Parser {
 
 	public final SharedContext shared() throws RecognitionException {
 		SharedContext _localctx = new SharedContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_shared);
+		enterRule(_localctx, 44, RULE_shared);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(276);
+			setState(269);
 			match(SHARED);
 			}
 		}
@@ -2473,15 +2387,15 @@ public class LavaParser extends Parser {
 
 	public final PrimitiveTypeContext primitiveType() throws RecognitionException {
 		PrimitiveTypeContext _localctx = new PrimitiveTypeContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_primitiveType);
+		enterRule(_localctx, 46, RULE_primitiveType);
 		try {
-			setState(282);
+			setState(275);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				_localctx = new IntTypeContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(278);
+				setState(271);
 				match(INTEGER);
 				}
 				break;
@@ -2489,7 +2403,7 @@ public class LavaParser extends Parser {
 				_localctx = new BoolTypeContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(279);
+				setState(272);
 				match(BOOLEAN);
 				}
 				break;
@@ -2497,7 +2411,7 @@ public class LavaParser extends Parser {
 				_localctx = new CharTypeContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(280);
+				setState(273);
 				match(CHAR);
 				}
 				break;
@@ -2505,7 +2419,7 @@ public class LavaParser extends Parser {
 				_localctx = new VoidTypeContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(281);
+				setState(274);
 				match(VOID);
 				}
 				break;
@@ -2526,7 +2440,7 @@ public class LavaParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 21:
+		case 19:
 			return expr_sempred((ExprContext)_localctx, predIndex);
 		}
 		return true;
@@ -2548,101 +2462,98 @@ public class LavaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\65\u011f\4\2\t\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\65\u0118\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
-		"\4\32\t\32\4\33\t\33\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\3\7\3?\n\3\f\3\16\3"+
-		"B\13\3\3\3\7\3E\n\3\f\3\16\3H\13\3\3\3\5\3K\n\3\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4`\n\4\f\4\16"+
-		"\4c\13\4\3\4\3\4\5\4g\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\5\4w\n\4\3\5\3\5\3\5\3\5\3\6\3\6\7\6\177\n\6\f\6\16\6\u0082"+
-		"\13\6\3\7\3\7\5\7\u0086\n\7\3\b\3\b\3\b\3\t\3\t\3\n\5\n\u008e\n\n\3\n"+
-		"\3\n\3\n\3\n\5\n\u0094\n\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\n\u009e\n"+
-		"\n\3\13\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\r\3\r\3"+
-		"\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u00b8\n\16\f\16\16\16\u00bb"+
-		"\13\16\5\16\u00bd\n\16\3\17\3\17\3\17\3\17\3\17\3\17\5\17\u00c5\n\17\3"+
-		"\20\3\20\3\20\3\20\3\21\3\21\3\21\7\21\u00ce\n\21\f\21\16\21\u00d1\13"+
-		"\21\5\21\u00d3\n\21\3\22\3\22\3\23\3\23\3\24\3\24\3\25\3\25\3\26\3\26"+
-		"\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27"+
-		"\3\27\3\27\3\27\3\27\3\27\3\27\5\27\u00f3\n\27\3\27\3\27\3\27\3\27\3\27"+
-		"\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27"+
-		"\7\27\u0108\n\27\f\27\16\27\u010b\13\27\3\30\5\30\u010e\n\30\3\30\3\30"+
-		"\5\30\u0112\n\30\3\31\3\31\3\31\3\32\3\32\3\33\3\33\3\33\3\33\5\33\u011d"+
-		"\n\33\3\33\2\3,\34\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60"+
-		"\62\64\2\7\4\2&),,\3\2\21\23\3\2\62\63\3\2-.\4\2\30\30--\u012b\2\66\3"+
-		"\2\2\2\4@\3\2\2\2\6v\3\2\2\2\bx\3\2\2\2\n|\3\2\2\2\f\u0085\3\2\2\2\16"+
-		"\u0087\3\2\2\2\20\u008a\3\2\2\2\22\u009d\3\2\2\2\24\u009f\3\2\2\2\26\u00a4"+
-		"\3\2\2\2\30\u00ac\3\2\2\2\32\u00bc\3\2\2\2\34\u00c4\3\2\2\2\36\u00c6\3"+
-		"\2\2\2 \u00d2\3\2\2\2\"\u00d4\3\2\2\2$\u00d6\3\2\2\2&\u00d8\3\2\2\2(\u00da"+
-		"\3\2\2\2*\u00dc\3\2\2\2,\u00f2\3\2\2\2.\u010d\3\2\2\2\60\u0113\3\2\2\2"+
-		"\62\u0116\3\2\2\2\64\u011c\3\2\2\2\66\67\7\r\2\2\678\7\35\2\289\7*\2\2"+
-		"9:\5\4\3\2:;\7/\2\2;<\7\2\2\3<\3\3\2\2\2=?\5\16\b\2>=\3\2\2\2?B\3\2\2"+
-		"\2@>\3\2\2\2@A\3\2\2\2AF\3\2\2\2B@\3\2\2\2CE\5\26\f\2DC\3\2\2\2EH\3\2"+
-		"\2\2FD\3\2\2\2FG\3\2\2\2GJ\3\2\2\2HF\3\2\2\2IK\5\24\13\2JI\3\2\2\2JK\3"+
-		"\2\2\2K\5\3\2\2\2LM\5\34\17\2MN\7#\2\2NO\5,\27\2OP\7\61\2\2Pw\3\2\2\2"+
-		"QR\7\n\2\2RS\7+\2\2ST\5,\27\2TU\7\60\2\2UV\7\13\2\2Va\5\b\5\2WX\7\f\2"+
-		"\2XY\7\n\2\2YZ\7+\2\2Z[\5,\27\2[\\\7\60\2\2\\]\7\13\2\2]^\5\b\5\2^`\3"+
-		"\2\2\2_W\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2bf\3\2\2\2ca\3\2\2\2de\7"+
-		"\f\2\2eg\5\b\5\2fd\3\2\2\2fg\3\2\2\2gw\3\2\2\2hi\7\16\2\2ij\7+\2\2jk\5"+
-		",\27\2kl\7\60\2\2lm\5\b\5\2mw\3\2\2\2no\5\30\r\2op\7\61\2\2pw\3\2\2\2"+
-		"qr\7\26\2\2rs\5,\27\2st\7\61\2\2tw\3\2\2\2uw\5\20\t\2vL\3\2\2\2vQ\3\2"+
-		"\2\2vh\3\2\2\2vn\3\2\2\2vq\3\2\2\2vu\3\2\2\2w\7\3\2\2\2xy\7*\2\2yz\5\n"+
-		"\6\2z{\7/\2\2{\t\3\2\2\2|\u0080\5\f\7\2}\177\5\f\7\2~}\3\2\2\2\177\u0082"+
-		"\3\2\2\2\u0080~\3\2\2\2\u0080\u0081\3\2\2\2\u0081\13\3\2\2\2\u0082\u0080"+
-		"\3\2\2\2\u0083\u0086\5\16\b\2\u0084\u0086\5\6\4\2\u0085\u0083\3\2\2\2"+
-		"\u0085\u0084\3\2\2\2\u0086\r\3\2\2\2\u0087\u0088\5\22\n\2\u0088\u0089"+
-		"\7\61\2\2\u0089\17\3\2\2\2\u008a\u008b\7\61\2\2\u008b\21\3\2\2\2\u008c"+
-		"\u008e\5\62\32\2\u008d\u008c\3\2\2\2\u008d\u008e\3\2\2\2\u008e\u008f\3"+
-		"\2\2\2\u008f\u0090\5\64\33\2\u0090\u0093\7\34\2\2\u0091\u0092\7#\2\2\u0092"+
-		"\u0094\5,\27\2\u0093\u0091\3\2\2\2\u0093\u0094\3\2\2\2\u0094\u009e\3\2"+
-		"\2\2\u0095\u0096\5\64\33\2\u0096\u0097\5\60\31\2\u0097\u0098\7\34\2\2"+
-		"\u0098\u0099\7#\2\2\u0099\u009a\7\31\2\2\u009a\u009b\7\32\2\2\u009b\u009c"+
-		"\7\36\2\2\u009c\u009e\3\2\2\2\u009d\u008d\3\2\2\2\u009d\u0095\3\2\2\2"+
-		"\u009e\23\3\2\2\2\u009f\u00a0\7\25\2\2\u00a0\u00a1\7+\2\2\u00a1\u00a2"+
-		"\7\60\2\2\u00a2\u00a3\5\b\5\2\u00a3\25\3\2\2\2\u00a4\u00a5\7\24\2\2\u00a5"+
-		"\u00a6\5.\30\2\u00a6\u00a7\7\35\2\2\u00a7\u00a8\7+\2\2\u00a8\u00a9\5\32"+
-		"\16\2\u00a9\u00aa\7\60\2\2\u00aa\u00ab\5\b\5\2\u00ab\27\3\2\2\2\u00ac"+
-		"\u00ad\7\35\2\2\u00ad\u00ae\7+\2\2\u00ae\u00af\5 \21\2\u00af\u00b0\7\60"+
-		"\2\2\u00b0\31\3\2\2\2\u00b1\u00b2\5.\30\2\u00b2\u00b9\7\34\2\2\u00b3\u00b4"+
-		"\7$\2\2\u00b4\u00b5\5.\30\2\u00b5\u00b6\7\34\2\2\u00b6\u00b8\3\2\2\2\u00b7"+
-		"\u00b3\3\2\2\2\u00b8\u00bb\3\2\2\2\u00b9\u00b7\3\2\2\2\u00b9\u00ba\3\2"+
-		"\2\2\u00ba\u00bd\3\2\2\2\u00bb\u00b9\3\2\2\2\u00bc\u00b1\3\2\2\2\u00bc"+
-		"\u00bd\3\2\2\2\u00bd\33\3\2\2\2\u00be\u00c5\7\34\2\2\u00bf\u00c0\7\34"+
-		"\2\2\u00c0\u00c1\7 \2\2\u00c1\u00c2\5,\27\2\u00c2\u00c3\7!\2\2\u00c3\u00c5"+
-		"\3\2\2\2\u00c4\u00be\3\2\2\2\u00c4\u00bf\3\2\2\2\u00c5\35\3\2\2\2\u00c6"+
-		"\u00c7\7 \2\2\u00c7\u00c8\5 \21\2\u00c8\u00c9\7!\2\2\u00c9\37\3\2\2\2"+
-		"\u00ca\u00cf\5,\27\2\u00cb\u00cc\7$\2\2\u00cc\u00ce\5,\27\2\u00cd\u00cb"+
-		"\3\2\2\2\u00ce\u00d1\3\2\2\2\u00cf\u00cd\3\2\2\2\u00cf\u00d0\3\2\2\2\u00d0"+
-		"\u00d3\3\2\2\2\u00d1\u00cf\3\2\2\2\u00d2\u00ca\3\2\2\2\u00d2\u00d3\3\2"+
-		"\2\2\u00d3!\3\2\2\2\u00d4\u00d5\t\2\2\2\u00d5#\3\2\2\2\u00d6\u00d7\t\3"+
-		"\2\2\u00d7%\3\2\2\2\u00d8\u00d9\t\4\2\2\u00d9\'\3\2\2\2\u00da\u00db\t"+
-		"\5\2\2\u00db)\3\2\2\2\u00dc\u00dd\t\6\2\2\u00dd+\3\2\2\2\u00de\u00df\b"+
-		"\27\1\2\u00df\u00e0\5*\26\2\u00e0\u00e1\5,\27\20\u00e1\u00f3\3\2\2\2\u00e2"+
-		"\u00e3\7+\2\2\u00e3\u00e4\5,\27\2\u00e4\u00e5\7\60\2\2\u00e5\u00f3\3\2"+
-		"\2\2\u00e6\u00f3\7\36\2\2\u00e7\u00f3\7\37\2\2\u00e8\u00f3\7\17\2\2\u00e9"+
-		"\u00f3\7\20\2\2\u00ea\u00f3\5\30\r\2\u00eb\u00f3\5\36\20\2\u00ec\u00ed"+
-		"\7\34\2\2\u00ed\u00ee\7 \2\2\u00ee\u00ef\5,\27\2\u00ef\u00f0\7!\2\2\u00f0"+
-		"\u00f3\3\2\2\2\u00f1\u00f3\7\34\2\2\u00f2\u00de\3\2\2\2\u00f2\u00e2\3"+
-		"\2\2\2\u00f2\u00e6\3\2\2\2\u00f2\u00e7\3\2\2\2\u00f2\u00e8\3\2\2\2\u00f2"+
-		"\u00e9\3\2\2\2\u00f2\u00ea\3\2\2\2\u00f2\u00eb\3\2\2\2\u00f2\u00ec\3\2"+
-		"\2\2\u00f2\u00f1\3\2\2\2\u00f3\u0109\3\2\2\2\u00f4\u00f5\f\21\2\2\u00f5"+
-		"\u00f6\7%\2\2\u00f6\u0108\5,\27\22\u00f7\u00f8\f\17\2\2\u00f8\u00f9\5"+
-		"&\24\2\u00f9\u00fa\5,\27\20\u00fa\u0108\3\2\2\2\u00fb\u00fc\f\16\2\2\u00fc"+
-		"\u00fd\5(\25\2\u00fd\u00fe\5,\27\17\u00fe\u0108\3\2\2\2\u00ff\u0100\f"+
-		"\r\2\2\u0100\u0101\5$\23\2\u0101\u0102\5,\27\16\u0102\u0108\3\2\2\2\u0103"+
-		"\u0104\f\f\2\2\u0104\u0105\5\"\22\2\u0105\u0106\5,\27\r\u0106\u0108\3"+
-		"\2\2\2\u0107\u00f4\3\2\2\2\u0107\u00f7\3\2\2\2\u0107\u00fb\3\2\2\2\u0107"+
-		"\u00ff\3\2\2\2\u0107\u0103\3\2\2\2\u0108\u010b\3\2\2\2\u0109\u0107\3\2"+
-		"\2\2\u0109\u010a\3\2\2\2\u010a-\3\2\2\2\u010b\u0109\3\2\2\2\u010c\u010e"+
-		"\5\62\32\2\u010d\u010c\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u010f\3\2\2\2"+
-		"\u010f\u0111\5\64\33\2\u0110\u0112\5\60\31\2\u0111\u0110\3\2\2\2\u0111"+
-		"\u0112\3\2\2\2\u0112/\3\2\2\2\u0113\u0114\7 \2\2\u0114\u0115\7!\2\2\u0115"+
-		"\61\3\2\2\2\u0116\u0117\7\27\2\2\u0117\63\3\2\2\2\u0118\u011d\7\3\2\2"+
-		"\u0119\u011d\7\4\2\2\u011a\u011d\7\6\2\2\u011b\u011d\7\t\2\2\u011c\u0118"+
-		"\3\2\2\2\u011c\u0119\3\2\2\2\u011c\u011a\3\2\2\2\u011c\u011b\3\2\2\2\u011d"+
-		"\65\3\2\2\2\30@FJafv\u0080\u0085\u008d\u0093\u009d\u00b9\u00bc\u00c4\u00cf"+
-		"\u00d2\u00f2\u0107\u0109\u010d\u0111\u011c";
+		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\3\7\3;\n\3\f\3\16\3>\13\3\3\3\7\3A\n\3"+
+		"\f\3\16\3D\13\3\3\3\5\3G\n\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4\\\n\4\f\4\16\4_\13\4\3\4\3\4\5"+
+		"\4c\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4s\n"+
+		"\4\3\5\3\5\3\5\7\5x\n\5\f\5\16\5{\13\5\3\5\3\5\3\6\3\6\5\6\u0081\n\6\3"+
+		"\7\3\7\3\7\3\b\5\b\u0087\n\b\3\b\3\b\3\b\3\b\5\b\u008d\n\b\3\b\3\b\3\b"+
+		"\3\b\3\b\3\b\3\b\3\b\5\b\u0097\n\b\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n"+
+		"\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\f\7\f"+
+		"\u00b1\n\f\f\f\16\f\u00b4\13\f\5\f\u00b6\n\f\3\r\3\r\3\r\3\r\3\r\3\r\5"+
+		"\r\u00be\n\r\3\16\3\16\3\16\3\16\3\17\3\17\3\17\7\17\u00c7\n\17\f\17\16"+
+		"\17\u00ca\13\17\5\17\u00cc\n\17\3\20\3\20\3\21\3\21\3\22\3\22\3\23\3\23"+
+		"\3\24\3\24\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25"+
+		"\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\5\25\u00ec\n\25\3\25\3\25\3\25"+
+		"\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25"+
+		"\3\25\3\25\7\25\u0101\n\25\f\25\16\25\u0104\13\25\3\26\5\26\u0107\n\26"+
+		"\3\26\3\26\5\26\u010b\n\26\3\27\3\27\3\27\3\30\3\30\3\31\3\31\3\31\3\31"+
+		"\5\31\u0116\n\31\3\31\2\3(\32\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 "+
+		"\"$&(*,.\60\2\7\4\2&),,\3\2\21\23\3\2\62\63\3\2-.\4\2\30\30--\u0126\2"+
+		"\62\3\2\2\2\4<\3\2\2\2\6r\3\2\2\2\bt\3\2\2\2\n\u0080\3\2\2\2\f\u0082\3"+
+		"\2\2\2\16\u0096\3\2\2\2\20\u0098\3\2\2\2\22\u009d\3\2\2\2\24\u00a5\3\2"+
+		"\2\2\26\u00b5\3\2\2\2\30\u00bd\3\2\2\2\32\u00bf\3\2\2\2\34\u00cb\3\2\2"+
+		"\2\36\u00cd\3\2\2\2 \u00cf\3\2\2\2\"\u00d1\3\2\2\2$\u00d3\3\2\2\2&\u00d5"+
+		"\3\2\2\2(\u00eb\3\2\2\2*\u0106\3\2\2\2,\u010c\3\2\2\2.\u010f\3\2\2\2\60"+
+		"\u0115\3\2\2\2\62\63\7\r\2\2\63\64\7\35\2\2\64\65\7*\2\2\65\66\5\4\3\2"+
+		"\66\67\7/\2\2\678\7\2\2\38\3\3\2\2\29;\5\f\7\2:9\3\2\2\2;>\3\2\2\2<:\3"+
+		"\2\2\2<=\3\2\2\2=B\3\2\2\2><\3\2\2\2?A\5\22\n\2@?\3\2\2\2AD\3\2\2\2B@"+
+		"\3\2\2\2BC\3\2\2\2CF\3\2\2\2DB\3\2\2\2EG\5\20\t\2FE\3\2\2\2FG\3\2\2\2"+
+		"G\5\3\2\2\2HI\5\30\r\2IJ\7#\2\2JK\5(\25\2KL\7\61\2\2Ls\3\2\2\2MN\7\n\2"+
+		"\2NO\7+\2\2OP\5(\25\2PQ\7\60\2\2QR\7\13\2\2R]\5\b\5\2ST\7\f\2\2TU\7\n"+
+		"\2\2UV\7+\2\2VW\5(\25\2WX\7\60\2\2XY\7\13\2\2YZ\5\b\5\2Z\\\3\2\2\2[S\3"+
+		"\2\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^b\3\2\2\2_]\3\2\2\2`a\7\f\2\2ac"+
+		"\5\b\5\2b`\3\2\2\2bc\3\2\2\2cs\3\2\2\2de\7\16\2\2ef\7+\2\2fg\5(\25\2g"+
+		"h\7\60\2\2hi\5\b\5\2is\3\2\2\2jk\5\24\13\2kl\7\61\2\2ls\3\2\2\2mn\7\26"+
+		"\2\2no\5(\25\2op\7\61\2\2ps\3\2\2\2qs\7\61\2\2rH\3\2\2\2rM\3\2\2\2rd\3"+
+		"\2\2\2rj\3\2\2\2rm\3\2\2\2rq\3\2\2\2s\7\3\2\2\2tu\7*\2\2uy\5\n\6\2vx\5"+
+		"\n\6\2wv\3\2\2\2x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z|\3\2\2\2{y\3\2\2\2|}\7"+
+		"/\2\2}\t\3\2\2\2~\u0081\5\f\7\2\177\u0081\5\6\4\2\u0080~\3\2\2\2\u0080"+
+		"\177\3\2\2\2\u0081\13\3\2\2\2\u0082\u0083\5\16\b\2\u0083\u0084\7\61\2"+
+		"\2\u0084\r\3\2\2\2\u0085\u0087\5.\30\2\u0086\u0085\3\2\2\2\u0086\u0087"+
+		"\3\2\2\2\u0087\u0088\3\2\2\2\u0088\u0089\5\60\31\2\u0089\u008c\7\34\2"+
+		"\2\u008a\u008b\7#\2\2\u008b\u008d\5(\25\2\u008c\u008a\3\2\2\2\u008c\u008d"+
+		"\3\2\2\2\u008d\u0097\3\2\2\2\u008e\u008f\5\60\31\2\u008f\u0090\5,\27\2"+
+		"\u0090\u0091\7\34\2\2\u0091\u0092\7#\2\2\u0092\u0093\7\31\2\2\u0093\u0094"+
+		"\7\32\2\2\u0094\u0095\7\36\2\2\u0095\u0097\3\2\2\2\u0096\u0086\3\2\2\2"+
+		"\u0096\u008e\3\2\2\2\u0097\17\3\2\2\2\u0098\u0099\7\25\2\2\u0099\u009a"+
+		"\7+\2\2\u009a\u009b\7\60\2\2\u009b\u009c\5\b\5\2\u009c\21\3\2\2\2\u009d"+
+		"\u009e\7\24\2\2\u009e\u009f\5*\26\2\u009f\u00a0\7\35\2\2\u00a0\u00a1\7"+
+		"+\2\2\u00a1\u00a2\5\26\f\2\u00a2\u00a3\7\60\2\2\u00a3\u00a4\5\b\5\2\u00a4"+
+		"\23\3\2\2\2\u00a5\u00a6\7\35\2\2\u00a6\u00a7\7+\2\2\u00a7\u00a8\5\34\17"+
+		"\2\u00a8\u00a9\7\60\2\2\u00a9\25\3\2\2\2\u00aa\u00ab\5*\26\2\u00ab\u00b2"+
+		"\7\34\2\2\u00ac\u00ad\7$\2\2\u00ad\u00ae\5*\26\2\u00ae\u00af\7\34\2\2"+
+		"\u00af\u00b1\3\2\2\2\u00b0\u00ac\3\2\2\2\u00b1\u00b4\3\2\2\2\u00b2\u00b0"+
+		"\3\2\2\2\u00b2\u00b3\3\2\2\2\u00b3\u00b6\3\2\2\2\u00b4\u00b2\3\2\2\2\u00b5"+
+		"\u00aa\3\2\2\2\u00b5\u00b6\3\2\2\2\u00b6\27\3\2\2\2\u00b7\u00be\7\34\2"+
+		"\2\u00b8\u00b9\7\34\2\2\u00b9\u00ba\7 \2\2\u00ba\u00bb\5(\25\2\u00bb\u00bc"+
+		"\7!\2\2\u00bc\u00be\3\2\2\2\u00bd\u00b7\3\2\2\2\u00bd\u00b8\3\2\2\2\u00be"+
+		"\31\3\2\2\2\u00bf\u00c0\7 \2\2\u00c0\u00c1\5\34\17\2\u00c1\u00c2\7!\2"+
+		"\2\u00c2\33\3\2\2\2\u00c3\u00c8\5(\25\2\u00c4\u00c5\7$\2\2\u00c5\u00c7"+
+		"\5(\25\2\u00c6\u00c4\3\2\2\2\u00c7\u00ca\3\2\2\2\u00c8\u00c6\3\2\2\2\u00c8"+
+		"\u00c9\3\2\2\2\u00c9\u00cc\3\2\2\2\u00ca\u00c8\3\2\2\2\u00cb\u00c3\3\2"+
+		"\2\2\u00cb\u00cc\3\2\2\2\u00cc\35\3\2\2\2\u00cd\u00ce\t\2\2\2\u00ce\37"+
+		"\3\2\2\2\u00cf\u00d0\t\3\2\2\u00d0!\3\2\2\2\u00d1\u00d2\t\4\2\2\u00d2"+
+		"#\3\2\2\2\u00d3\u00d4\t\5\2\2\u00d4%\3\2\2\2\u00d5\u00d6\t\6\2\2\u00d6"+
+		"\'\3\2\2\2\u00d7\u00d8\b\25\1\2\u00d8\u00d9\5&\24\2\u00d9\u00da\5(\25"+
+		"\20\u00da\u00ec\3\2\2\2\u00db\u00dc\7+\2\2\u00dc\u00dd\5(\25\2\u00dd\u00de"+
+		"\7\60\2\2\u00de\u00ec\3\2\2\2\u00df\u00ec\7\36\2\2\u00e0\u00ec\7\37\2"+
+		"\2\u00e1\u00ec\7\17\2\2\u00e2\u00ec\7\20\2\2\u00e3\u00ec\5\24\13\2\u00e4"+
+		"\u00ec\5\32\16\2\u00e5\u00e6\7\34\2\2\u00e6\u00e7\7 \2\2\u00e7\u00e8\5"+
+		"(\25\2\u00e8\u00e9\7!\2\2\u00e9\u00ec\3\2\2\2\u00ea\u00ec\7\34\2\2\u00eb"+
+		"\u00d7\3\2\2\2\u00eb\u00db\3\2\2\2\u00eb\u00df\3\2\2\2\u00eb\u00e0\3\2"+
+		"\2\2\u00eb\u00e1\3\2\2\2\u00eb\u00e2\3\2\2\2\u00eb\u00e3\3\2\2\2\u00eb"+
+		"\u00e4\3\2\2\2\u00eb\u00e5\3\2\2\2\u00eb\u00ea\3\2\2\2\u00ec\u0102\3\2"+
+		"\2\2\u00ed\u00ee\f\21\2\2\u00ee\u00ef\7%\2\2\u00ef\u0101\5(\25\22\u00f0"+
+		"\u00f1\f\17\2\2\u00f1\u00f2\5\"\22\2\u00f2\u00f3\5(\25\20\u00f3\u0101"+
+		"\3\2\2\2\u00f4\u00f5\f\16\2\2\u00f5\u00f6\5$\23\2\u00f6\u00f7\5(\25\17"+
+		"\u00f7\u0101\3\2\2\2\u00f8\u00f9\f\r\2\2\u00f9\u00fa\5 \21\2\u00fa\u00fb"+
+		"\5(\25\16\u00fb\u0101\3\2\2\2\u00fc\u00fd\f\f\2\2\u00fd\u00fe\5\36\20"+
+		"\2\u00fe\u00ff\5(\25\r\u00ff\u0101\3\2\2\2\u0100\u00ed\3\2\2\2\u0100\u00f0"+
+		"\3\2\2\2\u0100\u00f4\3\2\2\2\u0100\u00f8\3\2\2\2\u0100\u00fc\3\2\2\2\u0101"+
+		"\u0104\3\2\2\2\u0102\u0100\3\2\2\2\u0102\u0103\3\2\2\2\u0103)\3\2\2\2"+
+		"\u0104\u0102\3\2\2\2\u0105\u0107\5.\30\2\u0106\u0105\3\2\2\2\u0106\u0107"+
+		"\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u010a\5\60\31\2\u0109\u010b\5,\27\2"+
+		"\u010a\u0109\3\2\2\2\u010a\u010b\3\2\2\2\u010b+\3\2\2\2\u010c\u010d\7"+
+		" \2\2\u010d\u010e\7!\2\2\u010e-\3\2\2\2\u010f\u0110\7\27\2\2\u0110/\3"+
+		"\2\2\2\u0111\u0116\7\3\2\2\u0112\u0116\7\4\2\2\u0113\u0116\7\6\2\2\u0114"+
+		"\u0116\7\t\2\2\u0115\u0111\3\2\2\2\u0115\u0112\3\2\2\2\u0115\u0113\3\2"+
+		"\2\2\u0115\u0114\3\2\2\2\u0116\61\3\2\2\2\30<BF]bry\u0080\u0086\u008c"+
+		"\u0096\u00b2\u00b5\u00bd\u00c8\u00cb\u00eb\u0100\u0102\u0106\u010a\u0115";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

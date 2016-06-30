@@ -2,27 +2,23 @@ grammar Lava;
 
 import LavaVocab;
 
-program: CHAMBER ID LBRACE body  RBRACE EOF;
+program: CHAMBER ID LBRACE body RBRACE EOF;
 
 
 body: localVariableDeclarationStatement* functionDeclaration* main?;
 
 
 statement :
-      target ASS expr SEMI                                  #assignStat
-    | IF LPAR expr RPAR THEN block (ELSE IF LPAR expr RPAR THEN block)* (ELSE block)?    #ifStat
-    | WHILE LPAR expr RPAR  block                       #whileStat
-    | function  SEMI                                            #functionStat
-    | RETURN expr SEMI                                      #returnStat
-    | emptyStatement                                        #emptyStat
+      target ASS expr SEMI                                                              #assignStat
+    | IF LPAR expr RPAR THEN block (ELSE IF LPAR expr RPAR THEN block)* (ELSE block)?   #ifStat
+    | WHILE LPAR expr RPAR  block                                                       #whileStat
+    | functionCall  SEMI                                                                    #functionStat
+    | RETURN expr SEMI                                                                  #returnStat
+    | SEMI                                                                              #emptyStat
     ;
 
 block :
-    LBRACE blockStatements RBRACE
-    ;
-
-blockStatements :
-    blockStatement blockStatement*
+    LBRACE (blockStatement blockStatement*) RBRACE
     ;
 
 blockStatement :
@@ -35,9 +31,6 @@ localVariableDeclarationStatement:
     localVariableDeclaration SEMI
     ;
 
-emptyStatement:
-    SEMI
-    ;
 
 localVariableDeclaration :
       shared? primitiveType VARID (ASS expr)?                       #primitiveDeclaration
@@ -53,7 +46,7 @@ functionDeclaration:
       (RUPTURE type ID LPAR parametersDeclaration RPAR block )
     ;
 
-function:
+functionCall:
     ID LPAR parameters RPAR
     ;
 
@@ -96,21 +89,21 @@ plusOp : PLUS | MINUS;
 negaOp : NOT | MINUS;
 
 expr:
-      expr DOT expr        #fieldExpr
-    | negaOp expr            #notExpr
-    | expr multOp expr    #multExpr
-    | expr plusOp expr    #plusExpr
-    | expr boolOp expr #boolExpr
-    | expr compOp expr #compExpr
-    | LPAR expr RPAR    #parExpr
-    | NUM               #numExpr
-    | CHARACTER              #charExpr
-    | TRUE              #trueExpr
-    | FALSE             #falseExpr
-    | function             #functionExpr
-    | arrayInit             #arrayInitExpr
-    | VARID LBLOCK expr RBLOCK #arrayExpr
-    | VARID                #idExpr
+      expr DOT expr             #fieldExpr
+    | negaOp expr               #notExpr
+    | expr multOp expr          #multExpr
+    | expr plusOp expr          #plusExpr
+    | expr boolOp expr          #boolExpr
+    | expr compOp expr          #compExpr
+    | LPAR expr RPAR            #parExpr
+    | NUM                       #numExpr
+    | CHARACTER                 #charExpr
+    | TRUE                      #trueExpr
+    | FALSE                     #falseExpr
+    | functionCall              #functionExpr
+    | arrayInit                 #arrayInitExpr
+    | VARID LBLOCK expr RBLOCK  #arrayExpr
+    | VARID                     #idExpr
     ;
 
 type :

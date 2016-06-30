@@ -110,16 +110,6 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitBlock(LavaParser.BlockContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#blockStatements}.
-	 * @param ctx the parse tree
-	 */
-	void enterBlockStatements(LavaParser.BlockStatementsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LavaParser#blockStatements}.
-	 * @param ctx the parse tree
-	 */
-	void exitBlockStatements(LavaParser.BlockStatementsContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link LavaParser#blockStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -139,16 +129,6 @@ public interface LavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LavaParser#emptyStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterEmptyStatement(LavaParser.EmptyStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LavaParser#emptyStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitEmptyStatement(LavaParser.EmptyStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code primitiveDeclaration}
 	 * labeled alternative in {@link LavaParser#localVariableDeclaration}.
@@ -194,15 +174,15 @@ public interface LavaListener extends ParseTreeListener {
 	 */
 	void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LavaParser#function}.
+	 * Enter a parse tree produced by {@link LavaParser#functionCall}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunction(LavaParser.FunctionContext ctx);
+	void enterFunctionCall(LavaParser.FunctionCallContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LavaParser#function}.
+	 * Exit a parse tree produced by {@link LavaParser#functionCall}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunction(LavaParser.FunctionContext ctx);
+	void exitFunctionCall(LavaParser.FunctionCallContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LavaParser#parametersDeclaration}.
 	 * @param ctx the parse tree

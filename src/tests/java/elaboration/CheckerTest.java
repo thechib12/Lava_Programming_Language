@@ -1,5 +1,6 @@
 package elaboration;
 
+import grammar.LavaParser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
 
@@ -42,15 +43,16 @@ public class CheckerTest {
 
     @Test
     public void testBasicOffsets() throws IOException, ParseException {
-        ParseTree tree = parse("basic");
+        LavaParser.ProgramContext tree = (LavaParser.ProgramContext) parse("basic");
         CheckerResult result = check(tree);
-        ParseTree body = tree.getChild(3).getChild(3).getChild(3).getChild(1);
-        ParseTree assA = body.getChild(0).getChild(0);
-        ParseTree assB = body.getChild(1).getChild(0);
-        ParseTree assC = body.getChild(2).getChild(0);
-        assertEquals(1, result.getOffset(assA.getChild(0)));
-        assertEquals(2, result.getOffset(assB.getChild(0)));
-        assertEquals(3, result.getOffset(assC.getChild(0)));
+//        ParseTree body = tree.getChild(3).getChild(3).getChild(3);
+        LavaParser.BlockContext body = tree.body().main().block();
+        LavaParser.AssignStatContext assA = (LavaParser.AssignStatContext) body.blockStatement(0).statement();
+        LavaParser.AssignStatContext assB = (LavaParser.AssignStatContext) body.blockStatement(1).statement();
+        LavaParser.AssignStatContext assC = (LavaParser.AssignStatContext) body.blockStatement(2).statement();
+        assertEquals(1, result.getOffset(assA.target()));
+        assertEquals(2, result.getOffset(assB.target()));
+        assertEquals(3, result.getOffset(assC.target()));
 
     }
 

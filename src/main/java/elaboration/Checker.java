@@ -20,7 +20,7 @@ public class Checker extends LavaBaseListener {
     private CheckerResult checkerResult;
 
     /* The current scope of the the type checker, a single scope at this time.*/
-    private Scope scope;
+    private MultiScope scope;
     private Map<String, Type> functionReturnTypes;
     private Map<String, List<Type>> functionParameters;
     private Map<String, Boolean> sharedVars;
@@ -59,7 +59,6 @@ public class Checker extends LavaBaseListener {
 
 //  Program ------------------------------------------------------------------------------------------------------------
 
-
     //  Functions ----------------------------------------------------------------------------------------------------------
     @Override
     public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
@@ -82,11 +81,11 @@ public class Checker extends LavaBaseListener {
             if (type.getKind() == TypeKind.VOID) {
                 addError(ctx, "Void is not a type for a variable");
             } else {
-                int parameterNum = ctx.type().size() - i;
-                if (!this.scope.put(ctx.VARID(i).getText(), type, parameterNum, true)) {
+                if (!this.scope.put(ctx.VARID(i).getText(), type, true)) {
                     addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
                 }
                 setOffset(ctx.VARID(i), this.scope.offset(ctx.VARID(i).getText()));
+                setLocal(ctx.VARID(i), false);
                 sharedVars.put(ctx.VARID(i).getText(), false);
                 setType(ctx.VARID(i), type);
             }
@@ -95,9 +94,8 @@ public class Checker extends LavaBaseListener {
     }
 
     @Override
-    public void exitFunction(LavaParser.FunctionContext ctx) {
+    public void exitFunctionCall(LavaParser.FunctionCallContext ctx) {
         String id = ctx.ID().getText();
-        setEntry(ctx, ctx.parameters());
         int varCount = ctx.parameters().expr().size();
         List<Type> varTypes = new ArrayList<>();
         for (int i = 0; i < varCount; i++) {
@@ -110,9 +108,6 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitParameters(LavaParser.ParametersContext ctx) {
-        if (ctx.expr().size() > 0) {
-            setEntry(ctx, ctx.expr(0));
-        }
 
     }
 
@@ -125,41 +120,25 @@ public class Checker extends LavaBaseListener {
     @Override
     public void exitBlock(LavaParser.BlockContext ctx) {
         scope.closeScope();
-        setEntry(ctx, getEntry(ctx.blockStatements()));
     }
 
-    @Override
-    public void exitBlockStatements(LavaParser.BlockStatementsContext ctx) {
-        setEntry(ctx, getEntry(ctx.blockStatement(0)));
-
-    }
-
-    @Override
-    public void exitBlockStatement(LavaParser.BlockStatementContext ctx) {
-        if (ctx.localVariableDeclarationStatement() != null) {
-            setEntry(ctx, getEntry(ctx.localVariableDeclarationStatement()));
-        } else {
-            setEntry(ctx, getEntry(ctx.statement()));
-        }
-    }
 
     //  Variable Declarations and assignment -------------------------------------------------------------------------------
     @Override
     public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
         setType(ctx, getType(ctx.localVariableDeclaration()));
-        setEntry(ctx, getEntry(ctx.localVariableDeclaration()));
     }
 
     @Override
     public void exitVariableTarget(LavaParser.VariableTargetContext ctx) {
         String id = ctx.VARID().getText();
         this.setType(ctx, this.scope.type(id));
-        if (this.scope.isParameter(id)) {
-            this.setParameter(ctx, true);
-        } else {
-            this.setParameter(ctx, false);
-        }
+        this.setParameter(ctx, this.scope.isParameter(id));
+        this.setLocal(ctx, this.scope.isLocal(id));
         this.setOffset(ctx, this.scope.offset(id));
+        if (getSharedVar(id) == null) {
+            System.out.println(ctx.VARID().getText() + ": " + ctx.VARID().getSymbol().getLine());
+        }
         this.setShared(ctx, getSharedVar(id));
     }
 
@@ -169,26 +148,20 @@ public class Checker extends LavaBaseListener {
         String id = ctx.VARID().getText();
         if (type.getKind() == TypeKind.VOID) {
             addError(ctx, "Void is not a type for a variable");
-        } else {
-            if (!this.scope.put(id, type, 0, false)) {
-                addError(ctx, "Variable already declared: " + id);
-            }
-            setOffset(ctx, this.scope.offset(id));
-            setType(ctx, type);
-            setType(ctx.VARID(), type);
-            if (ctx.shared() != null) {
-                sharedVars.put(id, true);
-            } else {
-                sharedVars.put(id, false);
-            }
-            setShared(ctx, getSharedVar(id));
         }
-        if (ctx.expr() != null) {
-            setEntry(ctx, getEntry(ctx.expr()));
-        } else {
-            setEntry(ctx, ctx);
+        if (!this.scope.put(id, type, false)) {
+            addError(ctx, "Variable already declared: " + id);
         }
-
+        setOffset(ctx, this.scope.offset(id));
+        setLocal(ctx, this.scope.isLocal(id));
+        setType(ctx, type);
+        setType(ctx.VARID(), type);
+        if (ctx.shared() != null) {
+            sharedVars.put(id, true);
+        } else {
+            sharedVars.put(id, false);
+        }
+        setShared(ctx, getSharedVar(id));
 
     }
 
@@ -209,9 +182,8 @@ public class Checker extends LavaBaseListener {
 
             this.setOffset(ctx, this.checkerResult.getOffset(ctx.target()));
             this.setParameter(ctx, getParameter(ctx.target()));
-
+            this.setLocal(ctx, getLocal(ctx.target()));
             this.setShared(ctx, checkerResult.getSharedVar(ctx.target()));
-            this.setEntry(ctx, getEntry(ctx.expr()));
         }
 
     }
@@ -222,17 +194,11 @@ public class Checker extends LavaBaseListener {
         for (int i = 0; i < exprCount; i++) {
             checkType(ctx.expr(i), Type.BOOL);
         }
-        int statementCount = ctx.block().size();
-        for (int j = 0; j < statementCount; j++) {
-            setEntry(ctx, ctx.block(j));
-        }
-        setEntry(ctx, ctx.expr(0));
     }
 
     @Override
     public void exitReturnStat(LavaParser.ReturnStatContext ctx) {
         setType(ctx, getType(ctx.expr()));
-        setEntry(ctx, ctx);
         Type returnType = getType(ctx.expr());
         Type currentReturnType = functionReturnTypes.get(currentFunction);
         if (returnType == Type.INT && currentReturnType == Type.CHAR) {
@@ -245,7 +211,6 @@ public class Checker extends LavaBaseListener {
     @Override
     public void exitWhileStat(LavaParser.WhileStatContext ctx) {
         checkType(ctx.expr(), Type.BOOL);
-        setEntry(ctx, ctx.expr());
 
     }
 
@@ -260,14 +225,10 @@ public class Checker extends LavaBaseListener {
             addError(ctx, "Variable '%s' not declared", id);
         } else {
             setType(ctx, type);
-            if (this.scope.isParameter(id)) {
-                setParameter(ctx, true);
-            } else {
-                setParameter(ctx, false);
-            }
+            setParameter(ctx, this.scope.isParameter(id));
+            setLocal(ctx, this.scope.isLocal(id));
             setOffset(ctx, this.scope.offset(id));
             setShared(ctx, getSharedVar(id));
-            setEntry(ctx, ctx);
         }
     }
 
@@ -276,13 +237,11 @@ public class Checker extends LavaBaseListener {
         checkType(ctx.expr(0), Type.BOOL);
         checkType(ctx.expr(1), Type.BOOL);
         setType(ctx, Type.BOOL);
-        setEntry(ctx, ctx.expr(0));
     }
 
     @Override
     public void exitFalseExpr(LavaParser.FalseExprContext ctx) {
         setType(ctx, Type.BOOL);
-        setEntry(ctx, ctx);
     }
 
     @Override
@@ -290,7 +249,6 @@ public class Checker extends LavaBaseListener {
         checkType(ctx.expr(0), Type.INT, Type.CHAR);
         checkType(ctx.expr(1), Type.INT, Type.CHAR);
         setType(ctx, Type.BOOL);
-        setEntry(ctx, getEntry(ctx.expr(0)));
     }
 
     @Override
@@ -301,13 +259,11 @@ public class Checker extends LavaBaseListener {
         }
         checkType(ctx.expr(), type);
         setType(ctx, type);
-        setEntry(ctx, getEntry(ctx.expr()));
     }
 
     @Override
     public void exitParExpr(LavaParser.ParExprContext ctx) {
         setType(ctx, getType(ctx.expr()));
-        setEntry(ctx, getEntry(ctx.expr()));
     }
 
     @Override
@@ -315,25 +271,21 @@ public class Checker extends LavaBaseListener {
         checkType(ctx.expr(0), Type.INT);
         checkType(ctx.expr(1), Type.INT);
         setType(ctx, Type.INT);
-        setEntry(ctx, getEntry(ctx.expr(0)));
     }
 
     @Override
     public void exitCharExpr(LavaParser.CharExprContext ctx) {
         setType(ctx, Type.CHAR);
-        setEntry(ctx, ctx);
     }
 
     @Override
     public void exitTrueExpr(LavaParser.TrueExprContext ctx) {
         setType(ctx, Type.BOOL);
-        setEntry(ctx, ctx);
     }
 
     @Override
     public void exitNumExpr(LavaParser.NumExprContext ctx) {
         setType(ctx, Type.INT);
-        setEntry(ctx, ctx);
     }
 
     @Override
@@ -341,14 +293,12 @@ public class Checker extends LavaBaseListener {
         checkType(ctx.expr(0), Type.INT);
         checkType(ctx.expr(0), Type.INT);
         setType(ctx, Type.INT);
-        setEntry(ctx, ctx.expr(0));
 
     }
 
     @Override
     public void exitFunctionExpr(LavaParser.FunctionExprContext ctx) {
-        setType(ctx, functionReturnTypes.get(ctx.function().ID().getText()));
-        setEntry(ctx, ctx);
+        setType(ctx, functionReturnTypes.get(ctx.functionCall().ID().getText()));
     }
 
 //   Types -------------------------------------------------------------------------------------------------------------
@@ -489,24 +439,11 @@ public class Checker extends LavaBaseListener {
         return this.checkerResult.getParameterVar(node);
     }
 
-    /**
-     * Sets the entry for this node.
-     *
-     * @param node  current node in the parse tree.
-     * @param entry the node the control flow graph should point to.
-     */
-    private void setEntry(ParseTree node, ParserRuleContext entry) {
-//        if (entry == null) {
-//            throw new IllegalArgumentException("Null flow graph entry");
-//        }
-        this.checkerResult.setEntry(node, entry);
+    private void setLocal(ParseTree node, boolean local) {
+        this.checkerResult.setLocalVar(node, local);
     }
 
-    /**
-     * @param node input node.
-     * @return a node which should be the entry of the control flow graph for this node.
-     */
-    private ParserRuleContext getEntry(ParseTree node) {
-        return this.checkerResult.getEntry(node);
+    private boolean getLocal(ParseTree node) {
+        return this.checkerResult.getLocalVar(node);
     }
 }

@@ -1,5 +1,6 @@
 chamber scopetester {
     /^\ Created by Rogier on 24-06-16 in Enschede.
+    rock $d;
 
     rupture rock func(rock $b,rock $c) {
         return (func1($b+2) - func2($c+3));
@@ -7,6 +8,8 @@ chamber scopetester {
 
     rupture rock func1(rock $b) {
         rock $a = 3;
+        rock $c = 7;
+        rock $e = 4;
         return $b;
     }
 
@@ -17,5 +20,6 @@ chamber scopetester {
     erupt(){
         rock $a = 2;
         rock $b = func(20,10) + $a;
+        $d = $b;
     }
 }

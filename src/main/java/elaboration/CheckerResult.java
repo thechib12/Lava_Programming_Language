@@ -1,6 +1,5 @@
 package elaboration;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
@@ -8,14 +7,12 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
  * Created by Rogier + Christiaan on 15-06-16 in Enschede.
  */
 public class CheckerResult {
-    /** Mapping from statements and expressions to the atomic
-     * subtree that is their entry in the control flow graph. */
-    private final ParseTreeProperty<ParserRuleContext> entries = new ParseTreeProperty<>();
     /** Mapping from expressions to types. */
     private final ParseTreeProperty<Type> types = new ParseTreeProperty<>();
     /** Mapping from variables to coordinates. */
     private final ParseTreeProperty<Integer> offsets = new ParseTreeProperty<>();
 
+    private final ParseTreeProperty<Boolean> localVar = new ParseTreeProperty<>();
 
     private final ParseTreeProperty<Boolean> parameterVar = new ParseTreeProperty<>();
 
@@ -23,16 +20,6 @@ public class CheckerResult {
 
 
 
-    /** Adds an association from parse tree node to the flow graph entry. */
-    public void setEntry(ParseTree node, ParserRuleContext entry) {
-        this.entries.put(node, entry);
-    }
-
-    /** Returns the flow graph entry associated
-     * with a given parse tree node. */
-    public ParserRuleContext getEntry(ParseTree node) {
-        return this.entries.get(node);
-    }
 
     /** Adds an association from a parse tree node containing a
      * variable reference to the offset
@@ -67,11 +54,19 @@ public class CheckerResult {
         return sharedVar.get(node);
     }
 
-    public void setParameterVar(ParseTree var, boolean shared) {
-        this.parameterVar.put(var, shared);
+    public void setParameterVar(ParseTree var, boolean parameter) {
+        this.parameterVar.put(var, parameter);
     }
 
     public Boolean getParameterVar(ParseTree var) {
         return parameterVar.get(var);
+    }
+
+    public void setLocalVar(ParseTree var, boolean local) {
+        this.localVar.put(var, local);
+    }
+
+    public Boolean getLocalVar(ParseTree var) {
+        return localVar.get(var);
     }
 }
