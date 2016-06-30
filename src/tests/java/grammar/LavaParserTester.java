@@ -53,6 +53,7 @@ public class LavaParserTester {
         testParseFailure(test5, false, "program");
         testParseFailure(test6, false, "program");
 
+
     }
 
     @Test
@@ -66,6 +67,13 @@ public class LavaParserTester {
         parse("basic", true, "program");
         parse("fib", true, "program");
         parse("ifelse", true, "program");
+        parse("simpletest1", true, "program");
+        parse("simpletest2", true, "program");
+        parse("simpletest3", true, "program");
+        parse("simpletest4", true, "program");
+        parse("simpletest5", true, "program");
+        parse("simpletest6", true, "program");
+
     }
 
     @Test
