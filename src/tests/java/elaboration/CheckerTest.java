@@ -75,7 +75,9 @@ public class CheckerTest {
         check(parse("simpletest1"));
         check(parse("simpletest2"));
         check(parse("simpletest3"));
-
+        check(parse("simpletest4"));
+        check(parse("simpletest5"));
+        check(parse("simpletest6"));
     }
 
     @Test
@@ -163,11 +165,11 @@ public class CheckerTest {
                 "}";
 
 
-//        checkFail((program1));
-//        checkFail((program2));
-//        checkFail((program3));
-//        checkFail((program4));
-//        checkFail((program5));
+        checkFail((program1));
+        checkFail((program2));
+        checkFail((program3));
+        checkFail((program4));
+        checkFail((program5));
         checkFail((program6));
     }
     @Test

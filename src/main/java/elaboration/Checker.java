@@ -387,7 +387,7 @@ public class Checker extends LavaBaseListener {
     }
 
     private void addError(ParseTree node, String message) {
-        this.errors.add(node.getText() + " Variable not declared in this scope! ");
+        this.errors.add(node.getText() + message);
     }
 
     private Boolean getSharedVar(String id) {
