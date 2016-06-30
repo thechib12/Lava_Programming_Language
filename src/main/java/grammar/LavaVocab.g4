@@ -3,10 +3,7 @@ lexer grammar LavaVocab;
 
 INTEGER:       'rock';
 BOOLEAN:       'temperature';
-DOUBLE:         'pebble';
 CHAR:       'mineral';
-LONG:           'brock';
-STRING:         'mine';
 VOID:           'void';
 IF:             'if';
 THEN:           'then';
@@ -18,19 +15,12 @@ FALSE:          'cold';
 AND:            'and';
 OR:             'or';
 XOR:           'xor';
-//PRINT:          'explode';
-//INPUT:         'implode';
-//FORK:           'fork';
-//JOIN:           'join';
 RUPTURE:        'rupture' ;
 ERUPT:          'erupt';
 RETURN :       'return' ;
 SHARED :        'shared' ;
 NOT:     'not';
-WITH:       'with';
-SIZE :      'size';
 
-STATIC_STRING : '"' (~["\\] | '\\'.)* '"';
 
 
 
