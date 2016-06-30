@@ -11,7 +11,7 @@ chamber test3 {
        while ( $counter <= 100 ) {
             if ( $switch ) then { $output = $output + $input; }
             $counter = $counter +1;
-            $switch = not $switch
+            $switch = not $switch;
        }
 
     }

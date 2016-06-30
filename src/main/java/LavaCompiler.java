@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import sprilgenerator.SPRILGenerator;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +30,10 @@ public class LavaCompiler implements ActionListener {
     private final JButton chooseInputButton = new JButton("Choose file");
     private final JButton chooseOutputButton = new JButton("Choose output folder");
     private final JButton runButton = new JButton("Run");
-    private final JTextArea messages = new JTextArea();
-    private final JPanel panel = new JPanel();
+    private JTextArea messages;
+    private final JPanel panel = new JPanel(new GridBagLayout());
     private final JFileChooser inputFileChooser = new JFileChooser();
-    private final JFileChooser outputFileChooser = new JFileChooser();
+    private JFileChooser outputFileChooser;
     private File inputFile;
     private File outputFile;
 
@@ -42,28 +44,44 @@ public class LavaCompiler implements ActionListener {
         frame.setContentPane(panel);
         frame.setLocationByPlatform(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        outputFileChooser = new JFileChooser();
+        outputFileChooser.setCurrentDirectory(new java.io.File("."));
         outputFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//        outputFileChooser.setAcceptAllFileFilterUsed(false);
+        outputFileChooser.setAcceptAllFileFilterUsed(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        inputFileChooser.setCurrentDirectory(new java.io.File("."));
+        FileFilter fileFilter = new FileNameExtensionFilter("Lava file", ".magma");
+        inputFileChooser.addChoosableFileFilter(fileFilter);
+        inputFileChooser.setAcceptAllFileFilterUsed(false);
         chooseInputButton.addActionListener(this);
         panel.add(chooseInputButton, gbc);
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
         chooseOutputButton.addActionListener(this);
         panel.add(chooseOutputButton, gbc);
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
         runButton.addActionListener(this);
         panel.add(runButton, gbc);
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panel.add(messages);
+        JLabel label = new JLabel("Output");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        panel.add(label, gbc);
+        gbc = new GridBagConstraints();
+        messages = new JTextArea();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        messages.setLineWrap(true);
+        messages.setEditable(false);
+        panel.add(messages, gbc);
 
 
         frame.setVisible(true);
@@ -104,10 +122,10 @@ public class LavaCompiler implements ActionListener {
                 sprils.add(sprilgen.generateSpril(program));
             }
 
-            sprilgen.writeFile(sprilgen.formatSpril(sprils), outputFile.getPath());
+            sprilgen.writeFile(sprilgen.formatSpril(sprils), outputFile.getPath() + "/Program.hs");
             messages.append("Compiled with 0 errors\n");
         } catch (ParseException e) {
-            messages.append(e.getMessages().toString());
+            messages.append(e.getMessages().toString() + "\n");
         }
     }
 
@@ -121,15 +139,18 @@ public class LavaCompiler implements ActionListener {
             }
 
         } else if (((JButton) e.getSource()).getText().equals("Choose output folder")) {
-            int returnVal = inputFileChooser.showOpenDialog(frame);
+            int returnVal = outputFileChooser.showOpenDialog(frame);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                outputFile = inputFileChooser.getSelectedFile();
+                outputFile = outputFileChooser.getSelectedFile();
             }
 
         } else {
-            if (inputFile == null || outputFile == null) {
-                messages.append("not all paths specified\n");
+            messages.setText("");
+            if (inputFile == null) {
+                messages.append("Please choose an input file\n");
+            } else if (outputFile == null) {
+                messages.append("Please choose an output directory\n");
             } else {
                 this.run();
             }
