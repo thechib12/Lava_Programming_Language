@@ -6,7 +6,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static model.Operand.Type.REG;
 
-/** ILOC program.
+/**
+ * ILOC program.
+ *
  * @author Rogier Monshouwer
  */
 public class Program {
@@ -23,14 +25,19 @@ public class Program {
 	 * to corresponding numeric values. */
 	private final Map<Label, Integer> labelMap;
 
-	/** Creates a program with an initially empty instruction list. */
+	/**
+	 * Creates a program with an initially empty instruction list.
+	 */
 	public Program() {
 		this.opList = new ArrayList<>();
         this.labelMap = new LinkedHashMap<>();
 	}
 
-	/** Adds an instruction to the instruction list of this program.
-	 * @throws IllegalArgumentException if the instruction has a known label 
+	/**
+	 * Adds an instruction to the instruction list of this program.
+	 *
+	 * @param instr the instr
+	 * @throws IllegalArgumentException if the instruction has a known label
 	 */
 	public void addInstr(Instr instr) {
 		instr.setProgram(this);
@@ -44,44 +51,52 @@ public class Program {
 	}
 
 
-    /** Registers the label of a given instruction. */
-    void registerLabel(Instr instr) {
-        Label label = instr.getLabel();
+	/**
+	 * Registers the label of a given instruction.  @param instr the instr
+	 */
+	void registerLabel(Instr instr) {
+		Label label = instr.getLabel();
         Integer loc = this.labelMap.get(label);
         if (loc != null) {
             throw new IllegalArgumentException(String.format(
                     "Label %s already occurred at location %d", label, loc));
         }
         this.labelMap.put(label, instr.getLine());
-    }
+	}
 
-    /**
-     * Returns the location at which a given label is defined, if any.
-     * @return the location of an instruction with the label, or {@code -1}
-     * if the label is undefined
-     */
-    public int getLine(Label label) {
-        Integer result = this.labelMap.get(label);
+	/**
+	 * Returns the location at which a given label is defined, if any.
+	 *
+	 * @param label the label
+	 * @return the location of an instruction with the label, or {@code -1} if the label is undefined
+	 */
+	public int getLine(Label label) {
+		Integer result = this.labelMap.get(label);
         return result == null ? -1 : result;
-    }
+	}
 
-	/** Returns the operation at a given line number. */
+	/**
+	 * Returns the operation at a given line number.  @param line the line
+	 *
+	 * @return the op at
+	 */
 	public Op getOpAt(int line) {
 		return this.opList.get(line);
 	}
 
-	/** Returns the size of the program, in number of operations. */
+	/**
+	 * Returns the size of the program, in number of operations.  @return the int
+	 */
 	public int size() {
 		return this.opList.size();
 	}
 
 
-
-
-
 	/**
 	 * Checks for internal consistency, in particular whether
 	 * all used labels are defined.
+	 *
+	 * @throws FormatException the format exception
 	 */
 	public void check() throws FormatException {
 		List<String> messages = new ArrayList<>();
@@ -105,12 +120,17 @@ public class Program {
                 }
             }
         }
-        return result;
-    }
+		return result;
+	}
 
 
-    public List<String> getRegisters() {
-        CopyOnWriteArrayList<String> registers = new CopyOnWriteArrayList<>();
+	/**
+	 * Gets registers.
+	 *
+	 * @return the registers
+	 */
+	public List<String> getRegisters() {
+		CopyOnWriteArrayList<String> registers = new CopyOnWriteArrayList<>();
         for (Op op : this.getOpList()) {
             for (Operand operand : op.getArgs()) {
                 if (operand.getType() == REG) {
@@ -125,6 +145,8 @@ public class Program {
 	/**
 	 * Returns a mapping from registers to line numbers
 	 * in which they appear.
+	 *
+	 * @return the reg lines
 	 */
 	public Map<String, Set<Integer>> getRegLines() {
 		Map<String, Set<Integer>> result = new LinkedHashMap<>();
@@ -155,8 +177,13 @@ public class Program {
 		return result.toString();
 	}
 
-    public List<Op> getOpList() {
-        return Collections.unmodifiableList(opList);
+	/**
+	 * Gets op list.
+	 *
+	 * @return the op list
+	 */
+	public List<Op> getOpList() {
+		return Collections.unmodifiableList(opList);
     }
 
     @Override
@@ -179,7 +206,10 @@ public class Program {
 		return true;
 	}
 
-	/** Returns a string consisting of this program in a nice layout.
+	/**
+	 * Returns a string consisting of this program in a nice layout.
+	 *
+	 * @return the string
 	 */
 	public String prettyPrint() {
 		StringBuilder result = new StringBuilder();

@@ -12,6 +12,11 @@ public class Target extends Operand {
     private final Label label;
 
 
+    /**
+     * Instantiates a new Target.
+     *
+     * @param label the label
+     */
     public Target(Label label) {
         super(Type.TARGET);
         prefix = Abs;
@@ -20,6 +25,12 @@ public class Target extends Operand {
         register = null;
     }
 
+    /**
+     * Instantiates a new Target.
+     *
+     * @param type  the type
+     * @param value the value
+     */
     public Target(TargetType type, int value) {
         super(Type.TARGET);
         prefix = type;
@@ -29,6 +40,11 @@ public class Target extends Operand {
     }
 
 
+    /**
+     * Instantiates a new Target.
+     *
+     * @param value the value
+     */
     public Target(int value) {
         super(Type.TARGET);
         prefix = Rel;
@@ -37,6 +53,11 @@ public class Target extends Operand {
         this.register = null;
     }
 
+    /**
+     * Instantiates a new Target.
+     *
+     * @param register the register
+     */
     public Target(Reg register){
         super(Type.TARGET);
         prefix = Ind;
@@ -45,14 +66,29 @@ public class Target extends Operand {
         label = null;
     }
 
+    /**
+     * Gets register.
+     *
+     * @return the register
+     */
     public Reg getRegister() {
         return register;
     }
 
+    /**
+     * Gets label.
+     *
+     * @return the label
+     */
     public Label getLabel() {
         return label;
     }
 
+    /**
+     * Gets value.
+     *
+     * @return the value
+     */
     public int getValue() {
         return value;
     }
@@ -71,9 +107,21 @@ public class Target extends Operand {
         return super.toString();
     }
 
+    /**
+     * The enum Target type.
+     */
     static enum TargetType {
+        /**
+         * Ind target type.
+         */
         Ind,
+        /**
+         * Rel target type.
+         */
         Rel,
+        /**
+         * Abs target type.
+         */
         Abs
     }
 }

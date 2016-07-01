@@ -12,10 +12,16 @@ import java.util.Map;
 /**
  * Created by Rogier on 22-06-16 in Enschede.
  */
-public class FunctionLabeler extends LavaBaseListener {
+class FunctionLabeler extends LavaBaseListener {
     private Map<String, Label> labels;
 
 
+    /**
+     * Label func map.
+     *
+     * @param tree the tree
+     * @return the map
+     */
     public Map<String, Label> labelFunc(ParseTree tree) {
         labels = new HashMap<>();
         new ParseTreeWalker().walk(this, tree);

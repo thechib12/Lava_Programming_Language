@@ -1,10 +1,14 @@
 package model;
 
-/** Label operand.
+/**
+ * Label operand.
+ *
  * @author Arend Rensink
  */
 public class Label extends Operand {
-	/** Constructs a label object with a given label text. */
+	/**
+	 * Constructs a label object with a given label text.  @param value the value
+	 */
 	public Label(String value) {
 		super(Type.LABEL);
 		assert wellformed(value) : String.format(
@@ -12,7 +16,9 @@ public class Label extends Operand {
 		this.value = value;
 	}
 
-	/** Returns the value of this label. */
+	/**
+	 * Returns the value of this label.  @return the value
+	 */
 	public String getValue() {
 		return this.value;
 	}

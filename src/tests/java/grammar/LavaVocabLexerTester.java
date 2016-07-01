@@ -8,6 +8,9 @@ import org.junit.Test;
 public class LavaVocabLexerTester {
     private static LexerTester tester = new LexerTester(LavaVocab.class);
 
+    /**
+     * Types test.
+     */
     @Test
     public void TypesTest() {
         tester.correct("rock rock rock temperature pebble");
@@ -22,6 +25,9 @@ public class LavaVocabLexerTester {
     }
 
 
+    /**
+     * Statement test.
+     */
     @Test
     public void statementTest() {
         tester.yields("rock $count = 0;", LavaVocab.INTEGER, LavaVocab.VARID, LavaVocab.ASS, LavaVocab.NUM, LavaVocab.SEMI);
@@ -33,6 +39,9 @@ public class LavaVocabLexerTester {
 
     }
 
+    /**
+     * Expr test.
+     */
     @Test
     public void exprTest() {
         tester.yields("$y = $y + $count;", LavaVocab.VARID, LavaVocab.ASS, LavaVocab.VARID, LavaVocab.PLUS, LavaVocab.VARID, LavaVocab.SEMI);
@@ -45,6 +54,9 @@ public class LavaVocabLexerTester {
         tester.yields("(hot or cold) and hot", LavaVocab.LPAR, LavaVocab.TRUE, LavaVocab.OR, LavaVocab.FALSE, LavaVocab.RPAR, LavaVocab.AND, LavaVocab.TRUE);
     }
 
+    /**
+     * Other keywords test.
+     */
     @Test
     public void otherKeywordsTest() {
         tester.yields("chamber chambername { erupt(){ dosomething(); } }", LavaVocab.CHAMBER, LavaVocab.ID, LavaVocab.LBRACE, LavaVocab.ERUPT,
@@ -57,6 +69,9 @@ public class LavaVocabLexerTester {
     }
 
 
+    /**
+     * Rejects test.
+     */
     @Test
     public void rejectsTest() {
         tester.allWrong("!@#€|&%~:'");

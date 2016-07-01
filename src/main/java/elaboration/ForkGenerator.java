@@ -18,15 +18,6 @@ import static model.OpCode.*;
  * It misses some important keywords and uses unlimited registers. The Lava IR is saved into a {@link Program} object.
  */
 public class ForkGenerator extends Generator {
-    /**
-     * The representation of the boolean value <code>false</code>.
-     */
-    public final static Addr FALSE_VALUE = new Addr(Addr.AddrType.ImmValue, 0);
-    /**
-     * The representation of the boolean value <code>true</code>.
-     */
-    public final static Addr TRUE_VALUE = new Addr(Addr.AddrType.ImmValue, 1);
-
 
     private String currentFunction;
 
@@ -39,9 +30,12 @@ public class ForkGenerator extends Generator {
      * Generates Lava IR from the {@link CheckerResult} and {@link ParseTree}. Generating is done by visiting nodes
      * in the parse tree.
      *
-     * @param tree        given parse tree from the {@link LavaParser}.
-     * @param checkResult the result of the type checking phase.
+     * @param tree             given parse tree from the {@link LavaParser}.
+     * @param checkResult      the result of the type checking phase.
+     * @param forkFunctionName the fork function name
+     * @param memAddr          the mem addr
      * @return a Program object containing all instructions in Lava IR language.
+     * @throws ParseException the parse exception
      */
     public Program generate(ParseTree tree, CheckerResult checkResult, String forkFunctionName, int memAddr) throws ParseException {
 
@@ -61,20 +55,20 @@ public class ForkGenerator extends Generator {
         Label label = new Label("begin");
         Reg reg = new Reg("r_go");
         Reg reg1 = new Reg("r_busy");
-        emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg1);
-        emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
+        emit(LoadIm, new Address(Address.AddressType.ImmValue, 1), reg1);
+        emit(WriteD, reg1, new Address(Address.AddressType.DirAddr, memAddr));
 
-        emit(label, TestAndSetD, new Addr(Addr.AddrType.DirAddr, memAddr));
+        emit(label, TestAndSetD, new Address(Address.AddressType.DirAddr, memAddr));
         emit(Receive, reg);
 
         emit(Branch, reg, label);
-//        emit(WriteD, reg1, new Addr(Addr.AddrType.DirAddr, memAddr));
+//        emit(WriteD, reg1, new Address(Address.AddressType.DirAddr, memAddr));
         for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (func.ID().getText().equals(currentFunction)) {
                 visit(func.block());
             }
         }
-        emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, memAddr + 1));
+        emit(WriteD, REG_ZERO, new Address(Address.AddressType.DirAddr, memAddr + 1));
         emit(EndProg);
         for (LavaParser.FunctionDeclarationContext func : ctx.functionDeclaration()) {
             if (!func.ID().getText().equals(currentFunction)) {
@@ -85,6 +79,11 @@ public class ForkGenerator extends Generator {
         return null;
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Checker checker = new Checker();
         ForkGenerator generator = new ForkGenerator();
@@ -103,7 +102,7 @@ public class ForkGenerator extends Generator {
 
 
         ParseTree tree = parser.program();
-        Program program = null;
+        Program program;
         try {
             CheckerResult result = checker.check(tree);
 

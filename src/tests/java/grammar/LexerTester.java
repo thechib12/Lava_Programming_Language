@@ -12,9 +12,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+/**
+ * The type Lexer tester.
+ */
 public class LexerTester {
     private final Class<? extends Lexer> lexerType;
 
+    /**
+     * Instantiates a new Lexer tester.
+     *
+     * @param lexerType the lexer type
+     */
     public LexerTester(Class<? extends Lexer> lexerType) {
         this.lexerType = lexerType;
     }
@@ -23,6 +31,9 @@ public class LexerTester {
      * Tests whether a given text is yields a given sequence of token numbers.
      * Invokes {@link Assert#fail} if the text cannot be accepted, or the tokens
      * produced do not form the sequence passed in as a parameter.
+     *
+     * @param text   the text
+     * @param tokens the tokens
      */
     public void yields(String text, Integer... tokens) {
         try {
@@ -44,10 +55,8 @@ public class LexerTester {
     /**
      * Tests whether a given text is accepted by the lexer.
      *
-     * @return if the text is accepted, returns the list of tokens; otherwise
-     * returns <code>false</code> (however, this will never happen as
-     * {@link Assert#fail} is invoked, throwing a
-     * {@link RuntimeException})
+     * @param text the text
+     * @return if the text is accepted, returns the list of tokens; otherwise returns <code>false</code> (however, this will never happen as {@link Assert#fail} is invoked, throwing a {@link RuntimeException})
      */
     public List<? extends Token> correct(String text) {
         try {
@@ -59,7 +68,12 @@ public class LexerTester {
         }
     }
 
-    //    test whether all characters are wrong
+    /**
+     * All wrong.
+     *
+     * @param text the text
+     */
+//    test whether all characters are wrong
     public void allWrong(String text) {
 
         for (char i : text.toCharArray()) {
@@ -70,6 +84,8 @@ public class LexerTester {
 
     /**
      * Tests whether a given text is rejected by the lexer.
+     *
+     * @param text the text
      */
     public void wrong(String text) {
         try {
@@ -84,6 +100,7 @@ public class LexerTester {
     /**
      * Tries scanning a given text.
      *
+     * @param text the text
      * @return the resulting list of tokens, if no lexer errors occurred
      * @throws LexerException if the text was not accepted
      */
@@ -127,6 +144,11 @@ public class LexerTester {
      * Exception signalling a failed attempt to scan a text.
      */
     public static class LexerException extends Exception {
+        /**
+         * Instantiates a new Lexer exception.
+         *
+         * @param message the message
+         */
         public LexerException(String message) {
             super(message);
         }

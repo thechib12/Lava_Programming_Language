@@ -33,13 +33,17 @@ abstract public class Type {
 
     /**
      * Constructor for subclasses.
+     *
+     * @param kind the kind
      */
-    protected Type(TypeKind kind) {
+    Type(TypeKind kind) {
         this.kind = kind;
     }
 
     /**
      * Returns the kind of this type.
+     *
+     * @return the kind
      */
     public TypeKind getKind() {
         return this.kind;
@@ -47,6 +51,8 @@ abstract public class Type {
 
     /**
      * returns the size (in bytes) of a value of this type.
+     *
+     * @return the int
      */
     abstract public int size();
 
@@ -54,6 +60,9 @@ abstract public class Type {
      * Representation of the Lava Temperature (Boolean) type.
      */
     static public class Bool extends Type {
+        /**
+         * The constant BOOL_SIZE.
+         */
         public static final int BOOL_SIZE = 1;
 
 
@@ -76,6 +85,9 @@ abstract public class Type {
      * Representation of the Lava Rock (Integer) type.
      */
     static public class Int extends Type {
+        /**
+         * The constant INT_SIZE.
+         */
         public static final int INT_SIZE = 1;
 
         private Int() {
@@ -93,97 +105,15 @@ abstract public class Type {
         }
     }
 
-    /**
-     * Representation of Pascal Array types.
-     */
-//    static public class Array extends Type {
-//        private final int lower;
-//        private final int upper;
-//        private final Type elemType;
-//
-//        public Array(int lower, int upper, Type elemType) {
-//            super(TypeKind.ARRAY);
-//            assert upper >= lower;
-//            this.lower = lower;
-//            this.upper = upper;
-//            this.elemType = elemType;
-//        }
-//
-//        public Array(Type elemType){
-//            super(TypeKind.ARRAY);
-//            this.elemType = elemType;
-//
-//        }
-//
-//        /**
-//         * Returns the lower bound of this array type.
-//         */
-//        public int getLower() {
-//            return this.lower;
-//        }
-//
-//        /**
-//         * Returns the upper bound of this array type.
-//         */
-//        public int getUpper() {
-//            return this.upper;
-//        }
-//
-//        /**
-//         * Returns the element bound of this array type.
-//         */
-//        public Type getElemType() {
-//            return this.elemType;
-//        }
-//
-//        @Override
-//        public int size() {
-//            return (getUpper() - getLower() + 1) * this.elemType.size();
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "Array [" + this.lower + ".." + this.upper + "] of "
-//                    + this.elemType;
-//        }
-//
-//        @Override
-//        public int hashCode() {
-//            final int prime = 31;
-//            int result = 1;
-//            result = prime * result + this.elemType.hashCode();
-//            result = prime * result + this.lower;
-//            result = prime * result + this.upper;
-//            return result;
-//        }
-//
-//        @Override
-//        public boolean equals(Object obj) {
-//            if (this == obj) {
-//                return true;
-//            }
-//            if (!(obj instanceof Array)) {
-//                return false;
-//            }
-//            Array other = (Array) obj;
-//            if (!this.elemType.equals(other.elemType)) {
-//                return false;
-//            }
-//            if (this.lower != other.lower) {
-//                return false;
-//            }
-//            if (this.upper != other.upper) {
-//                return false;
-//            }
-//            return true;
-//        }
-//
-//    }
+
 
     /**
      * Representation of an Lava Mineral (Character) type.
      */
     static public class Char extends Type {
+        /**
+         * The constant CHAR_SIZE.
+         */
         public static final int CHAR_SIZE = 1;
 
         private Char() {
@@ -201,7 +131,13 @@ abstract public class Type {
         }
     }
 
+    /**
+     * The type Void.
+     */
     static public class Void extends Type {
+        /**
+         * The constant VOID_SIZE.
+         */
         public static final int VOID_SIZE = 0;
 
         private Void() {

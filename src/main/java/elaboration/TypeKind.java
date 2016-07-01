@@ -8,19 +8,23 @@ public enum TypeKind {
 
     /** Pascal data type kind. */
 
-        /** Integer base type. */
+        /**
+         * Integer base type.
+         */
         INT,
-        /** Boolean base type. */
+        /**
+         * Boolean base type.
+         */
         BOOL,
-        /** Array compound type. */
-        ARRAY,
 
+        /**
+         * Char type kind.
+         */
         CHAR,
 
+        /**
+         * Void type kind.
+         */
         VOID
-
-//
-//        DOUBLE
-
 
 }

@@ -9,25 +9,193 @@ import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
+/**
+ * The type Lava lexer.
+ */
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class LavaLexer extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
+	/**
+	 * The constant _decisionToDFA.
+	 */
 	protected static final DFA[] _decisionToDFA;
+	/**
+	 * The constant _sharedContextCache.
+	 */
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
+	/**
+	 * The constant INTEGER.
+	 */
 	public static final int
-		INTEGER=1, BOOLEAN=2, DOUBLE=3, CHAR=4, LONG=5, STRING=6, VOID=7, IF=8, 
-		THEN=9, ELSE=10, CHAMBER=11, WHILE=12, TRUE=13, FALSE=14, AND=15, OR=16, 
-		XOR=17, RUPTURE=18, ERUPT=19, RETURN=20, SHARED=21, NOT=22, WITH=23, SIZE=24, 
-		STATIC_STRING=25, VARID=26, ID=27, NUM=28, CHARACTER=29, LBLOCK=30, RBLOCK=31, 
-		DOLLAR=32, ASS=33, COMMA=34, DOT=35, EQ=36, GE=37, GT=38, LE=39, LBRACE=40, 
-		LPAR=41, LT=42, MINUS=43, PLUS=44, RBRACE=45, RPAR=46, SEMI=47, SLASH=48, 
-		STAR=49, WS=50, COMMENT=51;
+		INTEGER=1, /**
+	 * The Boolean.
+	 */
+	BOOLEAN=2, /**
+	 * The Double.
+	 */
+	DOUBLE=3, /**
+	 * The Char.
+	 */
+	CHAR=4, /**
+	 * The Long.
+	 */
+	LONG=5, /**
+	 * The String.
+	 */
+	STRING=6, /**
+	 * The Void.
+	 */
+	VOID=7, /**
+	 * The If.
+	 */
+	IF=8,
+	/**
+	 * The Then.
+	 */
+	THEN=9, /**
+	 * The Else.
+	 */
+	ELSE=10, /**
+	 * The Chamber.
+	 */
+	CHAMBER=11, /**
+	 * The While.
+	 */
+	WHILE=12, /**
+	 * The True.
+	 */
+	TRUE=13, /**
+	 * The False.
+	 */
+	FALSE=14, /**
+	 * The And.
+	 */
+	AND=15, /**
+	 * The Or.
+	 */
+	OR=16,
+	/**
+	 * The Xor.
+	 */
+	XOR=17, /**
+	 * The Rupture.
+	 */
+	RUPTURE=18, /**
+	 * The Erupt.
+	 */
+	ERUPT=19, /**
+	 * The Return.
+	 */
+	RETURN=20, /**
+	 * The Shared.
+	 */
+	SHARED=21, /**
+	 * The Not.
+	 */
+	NOT=22, /**
+	 * The With.
+	 */
+	WITH=23, /**
+	 * The Size.
+	 */
+	SIZE=24,
+	/**
+	 * The Static string.
+	 */
+	STATIC_STRING=25, /**
+	 * The Varid.
+	 */
+	VARID=26, /**
+	 * The Id.
+	 */
+	ID=27, /**
+	 * The Num.
+	 */
+	NUM=28, /**
+	 * The Character.
+	 */
+	CHARACTER=29, /**
+	 * The Lblock.
+	 */
+	LBLOCK=30, /**
+	 * The Rblock.
+	 */
+	RBLOCK=31,
+	/**
+	 * The Dollar.
+	 */
+	DOLLAR=32, /**
+	 * The Ass.
+	 */
+	ASS=33, /**
+	 * The Comma.
+	 */
+	COMMA=34, /**
+	 * The Dot.
+	 */
+	DOT=35, /**
+	 * The Eq.
+	 */
+	EQ=36, /**
+	 * The Ge.
+	 */
+	GE=37, /**
+	 * The Gt.
+	 */
+	GT=38, /**
+	 * The Le.
+	 */
+	LE=39, /**
+	 * The Lbrace.
+	 */
+	LBRACE=40,
+	/**
+	 * The Lpar.
+	 */
+	LPAR=41, /**
+	 * The Lt.
+	 */
+	LT=42, /**
+	 * The Minus.
+	 */
+	MINUS=43, /**
+	 * The Plus.
+	 */
+	PLUS=44, /**
+	 * The Rbrace.
+	 */
+	RBRACE=45, /**
+	 * The Rpar.
+	 */
+	RPAR=46, /**
+	 * The Semi.
+	 */
+	SEMI=47, /**
+	 * The Slash.
+	 */
+	SLASH=48,
+	/**
+	 * The Star.
+	 */
+	STAR=49, /**
+	 * The Ws.
+	 */
+	WS=50, /**
+	 * The Comment.
+	 */
+	COMMENT=51;
+	/**
+	 * The Mode names.
+	 */
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
+	/**
+	 * The constant ruleNames.
+	 */
 	public static final String[] ruleNames = {
 		"INTEGER", "BOOLEAN", "DOUBLE", "CHAR", "LONG", "STRING", "VOID", "IF", 
 		"THEN", "ELSE", "CHAMBER", "WHILE", "TRUE", "FALSE", "AND", "OR", "XOR", 
@@ -55,9 +223,14 @@ public class LavaLexer extends Lexer {
 		"LT", "MINUS", "PLUS", "RBRACE", "RPAR", "SEMI", "SLASH", "STAR", "WS", 
 		"COMMENT"
 	};
+	/**
+	 * The constant VOCABULARY.
+	 */
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
+	 * The constant tokenNames.
+	 *
 	 * @deprecated Use {@link #VOCABULARY} instead.
 	 */
 	@Deprecated
@@ -89,6 +262,11 @@ public class LavaLexer extends Lexer {
 	}
 
 
+	/**
+	 * Instantiates a new Lava lexer.
+	 *
+	 * @param input the input
+	 */
 	public LavaLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
@@ -109,6 +287,9 @@ public class LavaLexer extends Lexer {
 	@Override
 	public ATN getATN() { return _ATN; }
 
+	/**
+	 * The constant _serializedATN.
+	 */
 	public static final String _serializedATN =
 		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\65\u0159\b\1\4\2"+
 		"\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4"+
@@ -220,6 +401,9 @@ public class LavaLexer extends Lexer {
 		"\u0154\b\64\2\2\u0154h\3\2\2\2\u0155\u0156\t\5\2\2\u0156j\3\2\2\2\u0157"+
 		"\u0158\t\6\2\2\u0158l\3\2\2\2\13\2\u00fa\u00fc\u0107\u0109\u010f\u0113"+
 		"\u0145\u0150\3\b\2\2";
+	/**
+	 * The constant _ATN.
+	 */
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

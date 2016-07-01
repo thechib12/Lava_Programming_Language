@@ -19,6 +19,12 @@ public class CheckerTest {
     private final LavaCompiler compiler = LavaCompiler.instance();
 
 
+    /**
+     * Test basic types.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testBasicTypes() throws IOException, ParseException {
         ParseTree tree = parse("basic");
@@ -41,6 +47,12 @@ public class CheckerTest {
 ////        assertEquals(assX.getChild(2), result.getEntry(body.getChild(3)));
 //    }
 
+    /**
+     * Test basic offsets.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testBasicOffsets() throws IOException, ParseException {
         LavaParser.ProgramContext tree = (LavaParser.ProgramContext) parse("basic");
@@ -57,6 +69,12 @@ public class CheckerTest {
     }
 
 
+    /**
+     * Test programs.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testPrograms() throws IOException, ParseException {
         check(parse("bank"));
@@ -80,6 +98,12 @@ public class CheckerTest {
         check(parse("simpletest6"));
     }
 
+    /**
+     * Test return type.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testReturnType() throws IOException, ParseException {
         String program1 = "chamber test1 { mineral $a;" +
@@ -120,6 +144,11 @@ public class CheckerTest {
     }
 
 
+    /**
+     * Test return type failure.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testReturnTypeFailure() throws IOException {
         System.out.println("Test Return Type Failure");
@@ -172,6 +201,13 @@ public class CheckerTest {
         checkFail((program5));
         checkFail((program6));
     }
+
+    /**
+     * Test assignments.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testAssignments() throws IOException, ParseException {
         String program1 = "chamber test1 { mineral $a; " +
@@ -215,6 +251,12 @@ public class CheckerTest {
         check(parseString(program5));
     }
 
+    /**
+     * Test failure assignments.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testFailureAssignments() throws IOException, ParseException {
         System.out.println("Test Failure Assignments");
@@ -263,6 +305,11 @@ public class CheckerTest {
         checkFail((program5));
     }
 
+    /**
+     * Test expression types failure.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testExpressionTypesFailure() throws IOException {
         System.out.println("Test Expression Types Failure");
@@ -293,6 +340,11 @@ public class CheckerTest {
     }
 
 
+    /**
+     * Scope failure.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void scopeFailure() throws IOException {
         System.out.println("Test Scope Failure");
@@ -330,6 +382,12 @@ public class CheckerTest {
         checkFail(program4);
     }
 
+    /**
+     * Scope test.
+     *
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     @Test
     public void scopeTest() throws IOException, ParseException {
         String program1 = "chamber test1 { rock $a =2; " +

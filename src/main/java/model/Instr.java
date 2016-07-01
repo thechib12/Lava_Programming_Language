@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 /**
  * ILOC instruction
+ *
  * @author Barend Pensink
  */
 public abstract class Instr implements Iterable<Op> {
@@ -13,42 +14,58 @@ public abstract class Instr implements Iterable<Op> {
 	private Label label;
 	/** The program in which this instruction occurs. */
 	private Program prog;
-	/** Returns the number of operations in this instruction. */
+
+	/**
+	 * Returns the number of operations in this instruction.  @return the int
+	 */
 	public abstract int size();
 
 	/** Returns an iterator over the operations in this instruction. */
 	@Override
 	public abstract Iterator<Op> iterator();
 
-	/** Indicates if the line number of this instruction has been set. */
+	/**
+	 * Indicates if the line number of this instruction has been set.  @return the boolean
+	 */
 	boolean hasLine() {
 		return getLine() >= 0;
 	}
 
-	/** Returns the line number of this instruction.
+	/**
+	 * Returns the line number of this instruction.
+	 *
 	 * @return the line number; {@code -1} if the line number has not been set.
 	 */
 	public int getLine() {
 		return this.line;
 	}
 
-	/** Sets the line number of this instruction. */
+	/**
+	 * Sets the line number of this instruction.  @param line the line
+	 */
 	void setLine(int line) {
 		assert this.line < 0 && line >= 0;
 		this.line = line;
 	}
 
-	/** Indicates if this instruction has a (non-<code>null</code>) label. */
+	/**
+	 * Indicates if this instruction has a (non-<code>null</code>) label.  @return the boolean
+	 */
 	public boolean hasLabel() {
 		return getLabel() != null;
 	}
 
-	/** Returns the optional label of this instruction. */
+	/**
+	 * Returns the optional label of this instruction.  @return the label
+	 */
 	public Label getLabel() {
 		return this.label;
 	}
 
-	/** Sets the optional label of this instruction.
+	/**
+	 * Sets the optional label of this instruction.
+	 *
+	 * @param label the label
 	 */
 	public void setLabel(Label label) {
 		if (label == null) {
@@ -67,14 +84,19 @@ public abstract class Instr implements Iterable<Op> {
 		}
 	}
 
-	/** Sets the program in which this instruction occurs.
+	/**
+	 * Sets the program in which this instruction occurs.
+	 *
+	 * @param prog the prog
 	 */
 	void setProgram(Program prog) {
 		assert this.prog == null & prog != null;
 		this.prog = prog;
 	}
 
-	/** Returns the string representation of the optional label. */
+	/**
+	 * Returns the string representation of the optional label.  @return the string
+	 */
 	String toLabelString() {
 		if (hasLabel()) {
 			return getLabel() + LABEL_SEP;
@@ -83,13 +105,16 @@ public abstract class Instr implements Iterable<Op> {
 		}
 	}
 
-	/** Returns a string of the form
+	/**
+	 * Returns a string of the form
 	 * {@code label? opCode sources (arrow targets)? comment?}
 	 * where the widths of the label, sources and targets parts
 	 * are predetermined.
-	 * @param labelSize width of the {@code label} part
+	 *
+	 * @param labelSize  width of the {@code label} part
 	 * @param sourceSize width of the {@code sources} part
 	 * @param targetSize width of the {@code targets} part
+	 * @return the string
 	 */
 	abstract public String prettyPrint(int labelSize, int sourceSize,
 			int targetSize);

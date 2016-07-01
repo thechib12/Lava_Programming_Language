@@ -5,9 +5,9 @@ import model.Operand.Type;
 import java.util.*;
 
 
-
 /**
  * Lava operation
+ *
  * @author Rogier Monshouwer
  */
 public class Op extends Instr {
@@ -23,25 +23,42 @@ public class Op extends Instr {
 	/** The optional comment for this operation. */
 	private String comment;
 
-	/** Constructs an unlabelled operation with a given opcode and arguments. */
-	public Op(OpCode opCode, Operand... args) {
+    /**
+     * Constructs an unlabelled operation with a given opcode and arguments.  @param opCode the op code
+     *
+     * @param args the args
+     */
+    public Op(OpCode opCode, Operand... args) {
 		this(null, opCode, args);
-	}
+    }
 
-	/** Constructs an unlabelled operation with a given opcode and arguments. */
+    /**
+     * Constructs an unlabelled operation with a given opcode and arguments.  @param opCode the op code
+     *
+     * @param args the args
+     */
 	public Op(OpCode opCode, List<Operand> args) {
 		this(null, opCode, args);
-	}
+    }
 
-	/** Constructs a labelled operation with a given opcode and arguments. */
+    /**
+     * Constructs a labelled operation with a given opcode and arguments.  @param label the label
+     *
+     * @param opCode the op code
+     * @param args   the args
+     */
 	public Op(Label label, OpCode opCode, Operand... args) {
 		this(label, opCode, Arrays.asList(args));
-	}
+    }
 
-	/** Constructs a labelled operation with a given opcode and arguments.
-	 * @throws IllegalArgumentException if one of the arguments
-	 * is not of the expected type
-	 */
+    /**
+     * Constructs a labelled operation with a given opcode and arguments.
+     *
+     * @param label  the label
+     * @param opCode the op code
+     * @param args   the args
+     * @throws IllegalArgumentException if one of the arguments is not of the expected type
+     */
 	public Op(Label label, OpCode opCode, List<Operand> args)
 			throws IllegalArgumentException {
 		if (label != null) {
@@ -65,37 +82,57 @@ public class Op extends Instr {
 			}
 		}
 		this.args = new ArrayList<>(args);
-	}
-
-
-
-	/** Returns the opcode of this operation. */
-	public OpCode getOpCode() {
-		return this.opCode;
-	}
-
-	/** Returns the list of all (source + target) arguments. */
-	public List<Operand> getArgs() {
-		return this.args;
-	}
-
-	/** Convenience method to retrieve a given argument as {@link Reg}. */
-	public Reg reg(int i) {
-		return (Reg) this.args.get(i);
-	}
-
-    /** Convenience method to retrieve a given argument as {@link Addr}. */
-	public Addr addr(int i){
-        return (Addr) this.args.get(i);
     }
 
-    /** Convenience method to retrieve a given argument as {@link Target}. */
+
+    /**
+     * Returns the opcode of this operation.
+     * @return the op code
+     */
+	public OpCode getOpCode() {
+		return this.opCode;
+    }
+
+    /**
+     * Returns the list of all (source + target) arguments.  @return the args
+     */
+	public List<Operand> getArgs() {
+		return this.args;
+    }
+
+    /**
+     * Convenience method to retrieve a given argument as {@link Reg}.  @param i the
+     *
+     * @return the reg
+     */
+	public Reg reg(int i) {
+		return (Reg) this.args.get(i);
+    }
+
+    /**
+     * Convenience method to retrieve a given argument as {@link Address}.  @param i the
+     *
+     * @return the address
+     */
+    public Address addr(int i) {
+        return (Address) this.args.get(i);
+    }
+
+    /**
+     * Convenience method to retrieve a given argument as {@link Target}.  @param i the
+     *
+     * @return the target
+     */
     public Target target(int i){
         return (Target) this.args.get(i);
     }
 
 
-	/** Convenience method to retrieve a given operand as {@link Label}. */
+    /**
+     * Convenience method to retrieve a given operand as {@link Label}.  @param i the
+     *
+	 * @return the label
+	 */
 	public Label label(int i) {
 		return (Label) this.args.get(i);
 	}
@@ -159,7 +196,9 @@ public class Op extends Instr {
 
 	/** Returns the string representation of the optional comment. */
 
-	/** Returns the string representation of the source operands. */
+    /**
+     * Returns the string representation of the source operands.  @return the string
+     */
 	String toSourceString() {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
@@ -171,11 +210,13 @@ public class Op extends Instr {
 				result.append(OP_SEP);
 			}
 			result.append(o);
-		}
-		return result.toString();
-	}
+        }
+        return result.toString();
+    }
 
-	/** Returns the string representation of the target operands. */
+    /**
+     * Returns the string representation of the target operands.  @return the string
+     */
 	String toTargetString() {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;

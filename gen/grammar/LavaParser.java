@@ -9,28 +9,259 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+/**
+ * The type Lava parser.
+ */
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class LavaParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
+	/**
+	 * The constant _decisionToDFA.
+	 */
 	protected static final DFA[] _decisionToDFA;
+	/**
+	 * The constant _sharedContextCache.
+	 */
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
+	/**
+	 * The constant INTEGER.
+	 */
 	public static final int
-		INTEGER=1, BOOLEAN=2, DOUBLE=3, CHAR=4, LONG=5, STRING=6, VOID=7, IF=8, 
-		THEN=9, ELSE=10, CHAMBER=11, WHILE=12, TRUE=13, FALSE=14, AND=15, OR=16, 
-		XOR=17, RUPTURE=18, ERUPT=19, RETURN=20, SHARED=21, NOT=22, WITH=23, SIZE=24, 
-		STATIC_STRING=25, VARID=26, ID=27, NUM=28, CHARACTER=29, LBLOCK=30, RBLOCK=31, 
-		DOLLAR=32, ASS=33, COMMA=34, DOT=35, EQ=36, GE=37, GT=38, LE=39, LBRACE=40, 
-		LPAR=41, LT=42, MINUS=43, PLUS=44, RBRACE=45, RPAR=46, SEMI=47, SLASH=48, 
-		STAR=49, WS=50, COMMENT=51;
+		INTEGER=1, /**
+	 * The Boolean.
+	 */
+	BOOLEAN=2, /**
+	 * The Double.
+	 */
+	DOUBLE=3, /**
+	 * The Char.
+	 */
+	CHAR=4, /**
+	 * The Long.
+	 */
+	LONG=5, /**
+	 * The String.
+	 */
+	STRING=6, /**
+	 * The Void.
+	 */
+	VOID=7, /**
+	 * The If.
+	 */
+	IF=8,
+	/**
+	 * The Then.
+	 */
+	THEN=9, /**
+	 * The Else.
+	 */
+	ELSE=10, /**
+	 * The Chamber.
+	 */
+	CHAMBER=11, /**
+	 * The While.
+	 */
+	WHILE=12, /**
+	 * The True.
+	 */
+	TRUE=13, /**
+	 * The False.
+	 */
+	FALSE=14, /**
+	 * The And.
+	 */
+	AND=15, /**
+	 * The Or.
+	 */
+	OR=16,
+	/**
+	 * The Xor.
+	 */
+	XOR=17, /**
+	 * The Rupture.
+	 */
+	RUPTURE=18, /**
+	 * The Erupt.
+	 */
+	ERUPT=19, /**
+	 * The Return.
+	 */
+	RETURN=20, /**
+	 * The Shared.
+	 */
+	SHARED=21, /**
+	 * The Not.
+	 */
+	NOT=22, /**
+	 * The With.
+	 */
+	WITH=23, /**
+	 * The Size.
+	 */
+	SIZE=24,
+	/**
+	 * The Static string.
+	 */
+	STATIC_STRING=25, /**
+	 * The Varid.
+	 */
+	VARID=26, /**
+	 * The Id.
+	 */
+	ID=27, /**
+	 * The Num.
+	 */
+	NUM=28, /**
+	 * The Character.
+	 */
+	CHARACTER=29, /**
+	 * The Lblock.
+	 */
+	LBLOCK=30, /**
+	 * The Rblock.
+	 */
+	RBLOCK=31,
+	/**
+	 * The Dollar.
+	 */
+	DOLLAR=32, /**
+	 * The Ass.
+	 */
+	ASS=33, /**
+	 * The Comma.
+	 */
+	COMMA=34, /**
+	 * The Dot.
+	 */
+	DOT=35, /**
+	 * The Eq.
+	 */
+	EQ=36, /**
+	 * The Ge.
+	 */
+	GE=37, /**
+	 * The Gt.
+	 */
+	GT=38, /**
+	 * The Le.
+	 */
+	LE=39, /**
+	 * The Lbrace.
+	 */
+	LBRACE=40,
+	/**
+	 * The Lpar.
+	 */
+	LPAR=41, /**
+	 * The Lt.
+	 */
+	LT=42, /**
+	 * The Minus.
+	 */
+	MINUS=43, /**
+	 * The Plus.
+	 */
+	PLUS=44, /**
+	 * The Rbrace.
+	 */
+	RBRACE=45, /**
+	 * The Rpar.
+	 */
+	RPAR=46, /**
+	 * The Semi.
+	 */
+	SEMI=47, /**
+	 * The Slash.
+	 */
+	SLASH=48,
+	/**
+	 * The Star.
+	 */
+	STAR=49, /**
+	 * The Ws.
+	 */
+	WS=50, /**
+	 * The Comment.
+	 */
+	COMMENT=51;
+	/**
+	 * The constant RULE_program.
+	 */
 	public static final int
-		RULE_program = 0, RULE_body = 1, RULE_statement = 2, RULE_block = 3, RULE_blockStatement = 4, 
-		RULE_localVariableDeclarationStatement = 5, RULE_localVariableDeclaration = 6, 
-		RULE_main = 7, RULE_functionDeclaration = 8, RULE_functionCall = 9, RULE_parametersDeclaration = 10, 
-		RULE_target = 11, RULE_parameters = 12, RULE_compOp = 13, RULE_boolOp = 14, 
-		RULE_multOp = 15, RULE_plusOp = 16, RULE_negaOp = 17, RULE_expr = 18, 
-		RULE_type = 19, RULE_shared = 20, RULE_primitiveType = 21;
+		RULE_program = 0, /**
+	 * The Rule body.
+	 */
+	RULE_body = 1, /**
+	 * The Rule statement.
+	 */
+	RULE_statement = 2, /**
+	 * The Rule block.
+	 */
+	RULE_block = 3, /**
+	 * The Rule block statement.
+	 */
+	RULE_blockStatement = 4,
+	/**
+	 * The Rule local variable declaration statement.
+	 */
+	RULE_localVariableDeclarationStatement = 5, /**
+	 * The Rule local variable declaration.
+	 */
+	RULE_localVariableDeclaration = 6,
+	/**
+	 * The Rule main.
+	 */
+	RULE_main = 7, /**
+	 * The Rule function declaration.
+	 */
+	RULE_functionDeclaration = 8, /**
+	 * The Rule function call.
+	 */
+	RULE_functionCall = 9, /**
+	 * The Rule parameters declaration.
+	 */
+	RULE_parametersDeclaration = 10,
+	/**
+	 * The Rule target.
+	 */
+	RULE_target = 11, /**
+	 * The Rule parameters.
+	 */
+	RULE_parameters = 12, /**
+	 * The Rule comp op.
+	 */
+	RULE_compOp = 13, /**
+	 * The Rule bool op.
+	 */
+	RULE_boolOp = 14,
+	/**
+	 * The Rule mult op.
+	 */
+	RULE_multOp = 15, /**
+	 * The Rule plus op.
+	 */
+	RULE_plusOp = 16, /**
+	 * The Rule nega op.
+	 */
+	RULE_negaOp = 17, /**
+	 * The Rule expr.
+	 */
+	RULE_expr = 18,
+	/**
+	 * The Rule type.
+	 */
+	RULE_type = 19, /**
+	 * The Rule shared.
+	 */
+	RULE_shared = 20, /**
+	 * The Rule primitive type.
+	 */
+	RULE_primitiveType = 21;
+	/**
+	 * The constant ruleNames.
+	 */
 	public static final String[] ruleNames = {
 		"program", "body", "statement", "block", "blockStatement", "localVariableDeclarationStatement", 
 		"localVariableDeclaration", "main", "functionDeclaration", "functionCall", 
@@ -55,9 +286,14 @@ public class LavaParser extends Parser {
 		"LT", "MINUS", "PLUS", "RBRACE", "RPAR", "SEMI", "SLASH", "STAR", "WS", 
 		"COMMENT"
 	};
+	/**
+	 * The constant VOCABULARY.
+	 */
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
+	 * The constant tokenNames.
+	 *
 	 * @deprecated Use {@link #VOCABULARY} instead.
 	 */
 	@Deprecated
@@ -100,19 +336,70 @@ public class LavaParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
+	/**
+	 * Instantiates a new Lava parser.
+	 *
+	 * @param input the input
+	 */
 	public LavaParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
+	/**
+	 * The type Program context.
+	 */
 	public static class ProgramContext extends ParserRuleContext {
+		/**
+		 * Chamber terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode CHAMBER() { return getToken(LavaParser.CHAMBER, 0); }
+
+		/**
+		 * Id terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode ID() { return getToken(LavaParser.ID, 0); }
+
+		/**
+		 * Lbrace terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LBRACE() { return getToken(LavaParser.LBRACE, 0); }
+
+		/**
+		 * Body body context.
+		 *
+		 * @return the body context
+		 */
 		public BodyContext body() {
 			return getRuleContext(BodyContext.class,0);
 		}
+
+		/**
+		 * Rbrace terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RBRACE() { return getToken(LavaParser.RBRACE, 0); }
+
+		/**
+		 * Eof terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode EOF() { return getToken(LavaParser.EOF, 0); }
+
+		/**
+		 * Instantiates a new Program context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -132,6 +419,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Program program context.
+	 *
+	 * @return the program context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final ProgramContext program() throws RecognitionException {
 		ProgramContext _localctx = new ProgramContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_program);
@@ -163,22 +456,63 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Body context.
+	 */
 	public static class BodyContext extends ParserRuleContext {
+		/**
+		 * Local variable declaration statement list.
+		 *
+		 * @return the list
+		 */
 		public List<LocalVariableDeclarationStatementContext> localVariableDeclarationStatement() {
 			return getRuleContexts(LocalVariableDeclarationStatementContext.class);
 		}
+
+		/**
+		 * Local variable declaration statement local variable declaration statement context.
+		 *
+		 * @param i the
+		 * @return the local variable declaration statement context
+		 */
 		public LocalVariableDeclarationStatementContext localVariableDeclarationStatement(int i) {
 			return getRuleContext(LocalVariableDeclarationStatementContext.class,i);
 		}
+
+		/**
+		 * Function declaration list.
+		 *
+		 * @return the list
+		 */
 		public List<FunctionDeclarationContext> functionDeclaration() {
 			return getRuleContexts(FunctionDeclarationContext.class);
 		}
+
+		/**
+		 * Function declaration function declaration context.
+		 *
+		 * @param i the
+		 * @return the function declaration context
+		 */
 		public FunctionDeclarationContext functionDeclaration(int i) {
 			return getRuleContext(FunctionDeclarationContext.class,i);
 		}
+
+		/**
+		 * Main main context.
+		 *
+		 * @return the main context
+		 */
 		public MainContext main() {
 			return getRuleContext(MainContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Body context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public BodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -198,6 +532,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Body body context.
+	 *
+	 * @return the body context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final BodyContext body() throws RecognitionException {
 		BodyContext _localctx = new BodyContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_body);
@@ -255,50 +595,168 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Statement context.
+	 */
 	public static class StatementContext extends ParserRuleContext {
+		/**
+		 * Instantiates a new Statement context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public StatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_statement; }
-	 
+
+		/**
+		 * Instantiates a new Statement context.
+		 */
 		public StatementContext() { }
+
+		/**
+		 * Copy from.
+		 *
+		 * @param ctx the ctx
+		 */
 		public void copyFrom(StatementContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
+
+	/**
+	 * The type If stat context.
+	 */
 	public static class IfStatContext extends StatementContext {
+		/**
+		 * If list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> IF() { return getTokens(LavaParser.IF); }
+
+		/**
+		 * If terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode IF(int i) {
 			return getToken(LavaParser.IF, i);
 		}
+
+		/**
+		 * Lpar list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> LPAR() { return getTokens(LavaParser.LPAR); }
+
+		/**
+		 * Lpar terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode LPAR(int i) {
 			return getToken(LavaParser.LPAR, i);
 		}
+
+		/**
+		 * Expr list.
+		 *
+		 * @return the list
+		 */
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @param i the
+		 * @return the expr context
+		 */
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+
+		/**
+		 * Rpar list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> RPAR() { return getTokens(LavaParser.RPAR); }
+
+		/**
+		 * Rpar terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode RPAR(int i) {
 			return getToken(LavaParser.RPAR, i);
 		}
+
+		/**
+		 * Then list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> THEN() { return getTokens(LavaParser.THEN); }
+
+		/**
+		 * Then terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode THEN(int i) {
 			return getToken(LavaParser.THEN, i);
 		}
+
+		/**
+		 * Block list.
+		 *
+		 * @return the list
+		 */
 		public List<BlockContext> block() {
 			return getRuleContexts(BlockContext.class);
 		}
+
+		/**
+		 * Block block context.
+		 *
+		 * @param i the
+		 * @return the block context
+		 */
 		public BlockContext block(int i) {
 			return getRuleContext(BlockContext.class,i);
 		}
+
+		/**
+		 * Else list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> ELSE() { return getTokens(LavaParser.ELSE); }
+
+		/**
+		 * Else terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode ELSE(int i) {
 			return getToken(LavaParser.ELSE, i);
 		}
+
+		/**
+		 * Instantiates a new If stat context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public IfStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -314,11 +772,32 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Function stat context.
+	 */
 	public static class FunctionStatContext extends StatementContext {
+		/**
+		 * Function call function call context.
+		 *
+		 * @return the function call context
+		 */
 		public FunctionCallContext functionCall() {
 			return getRuleContext(FunctionCallContext.class,0);
 		}
+
+		/**
+		 * Semi terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
+
+		/**
+		 * Instantiates a new Function stat context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public FunctionStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -334,12 +813,39 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Return stat context.
+	 */
 	public static class ReturnStatContext extends StatementContext {
+		/**
+		 * Return terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RETURN() { return getToken(LavaParser.RETURN, 0); }
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @return the expr context
+		 */
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+
+		/**
+		 * Semi terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
+
+		/**
+		 * Instantiates a new Return stat context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public ReturnStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -355,15 +861,48 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Assign stat context.
+	 */
 	public static class AssignStatContext extends StatementContext {
+		/**
+		 * Target target context.
+		 *
+		 * @return the target context
+		 */
 		public TargetContext target() {
 			return getRuleContext(TargetContext.class,0);
 		}
+
+		/**
+		 * Ass terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode ASS() { return getToken(LavaParser.ASS, 0); }
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @return the expr context
+		 */
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+
+		/**
+		 * Semi terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
+
+		/**
+		 * Instantiates a new Assign stat context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public AssignStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -379,8 +918,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Empty stat context.
+	 */
 	public static class EmptyStatContext extends StatementContext {
+		/**
+		 * Semi terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
+
+		/**
+		 * Instantiates a new Empty stat context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public EmptyStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -396,16 +950,55 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type While stat context.
+	 */
 	public static class WhileStatContext extends StatementContext {
+		/**
+		 * While terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode WHILE() { return getToken(LavaParser.WHILE, 0); }
+
+		/**
+		 * Lpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @return the expr context
+		 */
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+
+		/**
+		 * Rpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
+
+		/**
+		 * Block block context.
+		 *
+		 * @return the block context
+		 */
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new While stat context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public WhileStatContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -422,6 +1015,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Statement statement context.
+	 *
+	 * @return the statement context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final StatementContext statement() throws RecognitionException {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_statement);
@@ -562,15 +1161,49 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Block context.
+	 */
 	public static class BlockContext extends ParserRuleContext {
+		/**
+		 * Lbrace terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LBRACE() { return getToken(LavaParser.LBRACE, 0); }
+
+		/**
+		 * Rbrace terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RBRACE() { return getToken(LavaParser.RBRACE, 0); }
+
+		/**
+		 * Block statement list.
+		 *
+		 * @return the list
+		 */
 		public List<BlockStatementContext> blockStatement() {
 			return getRuleContexts(BlockStatementContext.class);
 		}
+
+		/**
+		 * Block statement block statement context.
+		 *
+		 * @param i the
+		 * @return the block statement context
+		 */
 		public BlockStatementContext blockStatement(int i) {
 			return getRuleContext(BlockStatementContext.class,i);
 		}
+
+		/**
+		 * Instantiates a new Block context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public BlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -590,6 +1223,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Block block context.
+	 *
+	 * @return the block context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final BlockContext block() throws RecognitionException {
 		BlockContext _localctx = new BlockContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_block);
@@ -632,13 +1271,34 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Block statement context.
+	 */
 	public static class BlockStatementContext extends ParserRuleContext {
+		/**
+		 * Local variable declaration statement local variable declaration statement context.
+		 *
+		 * @return the local variable declaration statement context
+		 */
 		public LocalVariableDeclarationStatementContext localVariableDeclarationStatement() {
 			return getRuleContext(LocalVariableDeclarationStatementContext.class,0);
 		}
+
+		/**
+		 * Statement statement context.
+		 *
+		 * @return the statement context
+		 */
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Block statement context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public BlockStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -658,6 +1318,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Block statement block statement context.
+	 *
+	 * @return the block statement context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final BlockStatementContext blockStatement() throws RecognitionException {
 		BlockStatementContext _localctx = new BlockStatementContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_blockStatement);
@@ -702,11 +1368,32 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Local variable declaration statement context.
+	 */
 	public static class LocalVariableDeclarationStatementContext extends ParserRuleContext {
+		/**
+		 * Local variable declaration local variable declaration context.
+		 *
+		 * @return the local variable declaration context
+		 */
 		public LocalVariableDeclarationContext localVariableDeclaration() {
 			return getRuleContext(LocalVariableDeclarationContext.class,0);
 		}
+
+		/**
+		 * Semi terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SEMI() { return getToken(LavaParser.SEMI, 0); }
+
+		/**
+		 * Instantiates a new Local variable declaration statement context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public LocalVariableDeclarationStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -726,6 +1413,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Local variable declaration statement local variable declaration statement context.
+	 *
+	 * @return the local variable declaration statement context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final LocalVariableDeclarationStatementContext localVariableDeclarationStatement() throws RecognitionException {
 		LocalVariableDeclarationStatementContext _localctx = new LocalVariableDeclarationStatementContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_localVariableDeclarationStatement);
@@ -749,29 +1442,86 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Local variable declaration context.
+	 */
 	public static class LocalVariableDeclarationContext extends ParserRuleContext {
+		/**
+		 * Instantiates a new Local variable declaration context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public LocalVariableDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_localVariableDeclaration; }
-	 
+
+		/**
+		 * Instantiates a new Local variable declaration context.
+		 */
 		public LocalVariableDeclarationContext() { }
+
+		/**
+		 * Copy from.
+		 *
+		 * @param ctx the ctx
+		 */
 		public void copyFrom(LocalVariableDeclarationContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
+
+	/**
+	 * The type Primitive declaration context.
+	 */
 	public static class PrimitiveDeclarationContext extends LocalVariableDeclarationContext {
+		/**
+		 * Primitive type primitive type context.
+		 *
+		 * @return the primitive type context
+		 */
 		public PrimitiveTypeContext primitiveType() {
 			return getRuleContext(PrimitiveTypeContext.class,0);
 		}
+
+		/**
+		 * Varid terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode VARID() { return getToken(LavaParser.VARID, 0); }
+
+		/**
+		 * Shared shared context.
+		 *
+		 * @return the shared context
+		 */
 		public SharedContext shared() {
 			return getRuleContext(SharedContext.class,0);
 		}
+
+		/**
+		 * Ass terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode ASS() { return getToken(LavaParser.ASS, 0); }
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @return the expr context
+		 */
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Primitive declaration context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public PrimitiveDeclarationContext(LocalVariableDeclarationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -788,6 +1538,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Local variable declaration local variable declaration context.
+	 *
+	 * @return the local variable declaration context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final LocalVariableDeclarationContext localVariableDeclaration() throws RecognitionException {
 		LocalVariableDeclarationContext _localctx = new LocalVariableDeclarationContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_localVariableDeclaration);
@@ -833,13 +1589,46 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Main context.
+	 */
 	public static class MainContext extends ParserRuleContext {
+		/**
+		 * Erupt terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode ERUPT() { return getToken(LavaParser.ERUPT, 0); }
+
+		/**
+		 * Lpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
+
+		/**
+		 * Rpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
+
+		/**
+		 * Block block context.
+		 *
+		 * @return the block context
+		 */
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Main context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public MainContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -859,6 +1648,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Main main context.
+	 *
+	 * @return the main context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final MainContext main() throws RecognitionException {
 		MainContext _localctx = new MainContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_main);
@@ -886,20 +1681,71 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Function declaration context.
+	 */
 	public static class FunctionDeclarationContext extends ParserRuleContext {
+		/**
+		 * Rupture terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RUPTURE() { return getToken(LavaParser.RUPTURE, 0); }
+
+		/**
+		 * Type type context.
+		 *
+		 * @return the type context
+		 */
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+
+		/**
+		 * Id terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode ID() { return getToken(LavaParser.ID, 0); }
+
+		/**
+		 * Lpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
+
+		/**
+		 * Parameters declaration parameters declaration context.
+		 *
+		 * @return the parameters declaration context
+		 */
 		public ParametersDeclarationContext parametersDeclaration() {
 			return getRuleContext(ParametersDeclarationContext.class,0);
 		}
+
+		/**
+		 * Rpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
+
+		/**
+		 * Block block context.
+		 *
+		 * @return the block context
+		 */
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Function declaration context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public FunctionDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -919,6 +1765,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Function declaration function declaration context.
+	 *
+	 * @return the function declaration context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final FunctionDeclarationContext functionDeclaration() throws RecognitionException {
 		FunctionDeclarationContext _localctx = new FunctionDeclarationContext(_ctx, getState());
 		enterRule(_localctx, 16, RULE_functionDeclaration);
@@ -954,13 +1806,46 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Function call context.
+	 */
 	public static class FunctionCallContext extends ParserRuleContext {
+		/**
+		 * Id terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode ID() { return getToken(LavaParser.ID, 0); }
+
+		/**
+		 * Lpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
+
+		/**
+		 * Parameters parameters context.
+		 *
+		 * @return the parameters context
+		 */
 		public ParametersContext parameters() {
 			return getRuleContext(ParametersContext.class,0);
 		}
+
+		/**
+		 * Rpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
+
+		/**
+		 * Instantiates a new Function call context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public FunctionCallContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -980,6 +1865,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Function call function call context.
+	 *
+	 * @return the function call context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final FunctionCallContext functionCall() throws RecognitionException {
 		FunctionCallContext _localctx = new FunctionCallContext(_ctx, getState());
 		enterRule(_localctx, 18, RULE_functionCall);
@@ -1007,21 +1898,69 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Parameters declaration context.
+	 */
 	public static class ParametersDeclarationContext extends ParserRuleContext {
+		/**
+		 * Type list.
+		 *
+		 * @return the list
+		 */
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
 		}
+
+		/**
+		 * Type type context.
+		 *
+		 * @param i the
+		 * @return the type context
+		 */
 		public TypeContext type(int i) {
 			return getRuleContext(TypeContext.class,i);
 		}
+
+		/**
+		 * Varid list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> VARID() { return getTokens(LavaParser.VARID); }
+
+		/**
+		 * Varid terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode VARID(int i) {
 			return getToken(LavaParser.VARID, i);
 		}
+
+		/**
+		 * Comma list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> COMMA() { return getTokens(LavaParser.COMMA); }
+
+		/**
+		 * Comma terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode COMMA(int i) {
 			return getToken(LavaParser.COMMA, i);
 		}
+
+		/**
+		 * Instantiates a new Parameters declaration context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public ParametersDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1041,6 +1980,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Parameters declaration parameters declaration context.
+	 *
+	 * @return the parameters declaration context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final ParametersDeclarationContext parametersDeclaration() throws RecognitionException {
 		ParametersDeclarationContext _localctx = new ParametersDeclarationContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_parametersDeclaration);
@@ -1090,19 +2035,52 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Target context.
+	 */
 	public static class TargetContext extends ParserRuleContext {
+		/**
+		 * Instantiates a new Target context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public TargetContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_target; }
-	 
+
+		/**
+		 * Instantiates a new Target context.
+		 */
 		public TargetContext() { }
+
+		/**
+		 * Copy from.
+		 *
+		 * @param ctx the ctx
+		 */
 		public void copyFrom(TargetContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
+
+	/**
+	 * The type Variable target context.
+	 */
 	public static class VariableTargetContext extends TargetContext {
+		/**
+		 * Varid terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode VARID() { return getToken(LavaParser.VARID, 0); }
+
+		/**
+		 * Instantiates a new Variable target context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public VariableTargetContext(TargetContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1119,6 +2097,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Target target context.
+	 *
+	 * @return the target context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final TargetContext target() throws RecognitionException {
 		TargetContext _localctx = new TargetContext(_ctx, getState());
 		enterRule(_localctx, 22, RULE_target);
@@ -1141,17 +2125,52 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Parameters context.
+	 */
 	public static class ParametersContext extends ParserRuleContext {
+		/**
+		 * Expr list.
+		 *
+		 * @return the list
+		 */
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @param i the
+		 * @return the expr context
+		 */
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+
+		/**
+		 * Comma list.
+		 *
+		 * @return the list
+		 */
 		public List<TerminalNode> COMMA() { return getTokens(LavaParser.COMMA); }
+
+		/**
+		 * Comma terminal node.
+		 *
+		 * @param i the
+		 * @return the terminal node
+		 */
 		public TerminalNode COMMA(int i) {
 			return getToken(LavaParser.COMMA, i);
 		}
+
+		/**
+		 * Instantiates a new Parameters context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public ParametersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1171,6 +2190,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Parameters parameters context.
+	 *
+	 * @return the parameters context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final ParametersContext parameters() throws RecognitionException {
 		ParametersContext _localctx = new ParametersContext(_ctx, getState());
 		enterRule(_localctx, 24, RULE_parameters);
@@ -1216,12 +2241,51 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Comp op context.
+	 */
 	public static class CompOpContext extends ParserRuleContext {
+		/**
+		 * Eq terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode EQ() { return getToken(LavaParser.EQ, 0); }
+
+		/**
+		 * Ge terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode GE() { return getToken(LavaParser.GE, 0); }
+
+		/**
+		 * Gt terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode GT() { return getToken(LavaParser.GT, 0); }
+
+		/**
+		 * Le terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LE() { return getToken(LavaParser.LE, 0); }
+
+		/**
+		 * Lt terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LT() { return getToken(LavaParser.LT, 0); }
+
+		/**
+		 * Instantiates a new Comp op context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public CompOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1241,6 +2305,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Comp op comp op context.
+	 *
+	 * @return the comp op context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final CompOpContext compOp() throws RecognitionException {
 		CompOpContext _localctx = new CompOpContext(_ctx, getState());
 		enterRule(_localctx, 26, RULE_compOp);
@@ -1268,10 +2338,37 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Bool op context.
+	 */
 	public static class BoolOpContext extends ParserRuleContext {
+		/**
+		 * And terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode AND() { return getToken(LavaParser.AND, 0); }
+
+		/**
+		 * Or terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode OR() { return getToken(LavaParser.OR, 0); }
+
+		/**
+		 * Xor terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode XOR() { return getToken(LavaParser.XOR, 0); }
+
+		/**
+		 * Instantiates a new Bool op context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public BoolOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1291,6 +2388,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Bool op bool op context.
+	 *
+	 * @return the bool op context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final BoolOpContext boolOp() throws RecognitionException {
 		BoolOpContext _localctx = new BoolOpContext(_ctx, getState());
 		enterRule(_localctx, 28, RULE_boolOp);
@@ -1318,9 +2421,30 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Mult op context.
+	 */
 	public static class MultOpContext extends ParserRuleContext {
+		/**
+		 * Star terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode STAR() { return getToken(LavaParser.STAR, 0); }
+
+		/**
+		 * Slash terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SLASH() { return getToken(LavaParser.SLASH, 0); }
+
+		/**
+		 * Instantiates a new Mult op context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public MultOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1340,6 +2464,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Mult op mult op context.
+	 *
+	 * @return the mult op context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final MultOpContext multOp() throws RecognitionException {
 		MultOpContext _localctx = new MultOpContext(_ctx, getState());
 		enterRule(_localctx, 30, RULE_multOp);
@@ -1367,9 +2497,30 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Plus op context.
+	 */
 	public static class PlusOpContext extends ParserRuleContext {
+		/**
+		 * Plus terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode PLUS() { return getToken(LavaParser.PLUS, 0); }
+
+		/**
+		 * Minus terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode MINUS() { return getToken(LavaParser.MINUS, 0); }
+
+		/**
+		 * Instantiates a new Plus op context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public PlusOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1389,6 +2540,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Plus op plus op context.
+	 *
+	 * @return the plus op context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final PlusOpContext plusOp() throws RecognitionException {
 		PlusOpContext _localctx = new PlusOpContext(_ctx, getState());
 		enterRule(_localctx, 32, RULE_plusOp);
@@ -1416,9 +2573,30 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Nega op context.
+	 */
 	public static class NegaOpContext extends ParserRuleContext {
+		/**
+		 * Not terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode NOT() { return getToken(LavaParser.NOT, 0); }
+
+		/**
+		 * Minus terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode MINUS() { return getToken(LavaParser.MINUS, 0); }
+
+		/**
+		 * Instantiates a new Nega op context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public NegaOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1438,6 +2616,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Nega op nega op context.
+	 *
+	 * @return the nega op context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final NegaOpContext negaOp() throws RecognitionException {
 		NegaOpContext _localctx = new NegaOpContext(_ctx, getState());
 		enterRule(_localctx, 34, RULE_negaOp);
@@ -1465,23 +2649,68 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Expr context.
+	 */
 	public static class ExprContext extends ParserRuleContext {
+		/**
+		 * Instantiates a new Expr context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expr; }
-	 
+
+		/**
+		 * Instantiates a new Expr context.
+		 */
 		public ExprContext() { }
+
+		/**
+		 * Copy from.
+		 *
+		 * @param ctx the ctx
+		 */
 		public void copyFrom(ExprContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
+
+	/**
+	 * The type Par expr context.
+	 */
 	public static class ParExprContext extends ExprContext {
+		/**
+		 * Lpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode LPAR() { return getToken(LavaParser.LPAR, 0); }
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @return the expr context
+		 */
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+
+		/**
+		 * Rpar terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode RPAR() { return getToken(LavaParser.RPAR, 0); }
+
+		/**
+		 * Instantiates a new Par expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public ParExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1497,8 +2726,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Char expr context.
+	 */
 	public static class CharExprContext extends ExprContext {
+		/**
+		 * Character terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode CHARACTER() { return getToken(LavaParser.CHARACTER, 0); }
+
+		/**
+		 * Instantiates a new Char expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public CharExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1514,13 +2758,34 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Not expr context.
+	 */
 	public static class NotExprContext extends ExprContext {
+		/**
+		 * Nega op nega op context.
+		 *
+		 * @return the nega op context
+		 */
 		public NegaOpContext negaOp() {
 			return getRuleContext(NegaOpContext.class,0);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @return the expr context
+		 */
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Not expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public NotExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1536,8 +2801,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type True expr context.
+	 */
 	public static class TrueExprContext extends ExprContext {
+		/**
+		 * True terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode TRUE() { return getToken(LavaParser.TRUE, 0); }
+
+		/**
+		 * Instantiates a new True expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public TrueExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1553,16 +2833,44 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Comp expr context.
+	 */
 	public static class CompExprContext extends ExprContext {
+		/**
+		 * Expr list.
+		 *
+		 * @return the list
+		 */
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @param i the
+		 * @return the expr context
+		 */
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+
+		/**
+		 * Comp op comp op context.
+		 *
+		 * @return the comp op context
+		 */
 		public CompOpContext compOp() {
 			return getRuleContext(CompOpContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Comp expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public CompExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1578,8 +2886,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type False expr context.
+	 */
 	public static class FalseExprContext extends ExprContext {
+		/**
+		 * False terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode FALSE() { return getToken(LavaParser.FALSE, 0); }
+
+		/**
+		 * Instantiates a new False expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public FalseExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1595,16 +2918,44 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Bool expr context.
+	 */
 	public static class BoolExprContext extends ExprContext {
+		/**
+		 * Expr list.
+		 *
+		 * @return the list
+		 */
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @param i the
+		 * @return the expr context
+		 */
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+
+		/**
+		 * Bool op bool op context.
+		 *
+		 * @return the bool op context
+		 */
 		public BoolOpContext boolOp() {
 			return getRuleContext(BoolOpContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Bool expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public BoolExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1620,16 +2971,44 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Mult expr context.
+	 */
 	public static class MultExprContext extends ExprContext {
+		/**
+		 * Expr list.
+		 *
+		 * @return the list
+		 */
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @param i the
+		 * @return the expr context
+		 */
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+
+		/**
+		 * Mult op mult op context.
+		 *
+		 * @return the mult op context
+		 */
 		public MultOpContext multOp() {
 			return getRuleContext(MultOpContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Mult expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public MultExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1645,8 +3024,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Num expr context.
+	 */
 	public static class NumExprContext extends ExprContext {
+		/**
+		 * Num terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode NUM() { return getToken(LavaParser.NUM, 0); }
+
+		/**
+		 * Instantiates a new Num expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public NumExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1662,16 +3056,44 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Plus expr context.
+	 */
 	public static class PlusExprContext extends ExprContext {
+		/**
+		 * Expr list.
+		 *
+		 * @return the list
+		 */
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+
+		/**
+		 * Expr expr context.
+		 *
+		 * @param i the
+		 * @return the expr context
+		 */
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+
+		/**
+		 * Plus op plus op context.
+		 *
+		 * @return the plus op context
+		 */
 		public PlusOpContext plusOp() {
 			return getRuleContext(PlusOpContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Plus expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public PlusExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1687,10 +3109,25 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Function expr context.
+	 */
 	public static class FunctionExprContext extends ExprContext {
+		/**
+		 * Function call function call context.
+		 *
+		 * @return the function call context
+		 */
 		public FunctionCallContext functionCall() {
 			return getRuleContext(FunctionCallContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Function expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public FunctionExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1706,8 +3143,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Id expr context.
+	 */
 	public static class IdExprContext extends ExprContext {
+		/**
+		 * Varid terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode VARID() { return getToken(LavaParser.VARID, 0); }
+
+		/**
+		 * Instantiates a new Id expr context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public IdExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1724,6 +3176,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Expr expr context.
+	 *
+	 * @return the expr context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final ExprContext expr() throws RecognitionException {
 		return expr(0);
 	}
@@ -1904,13 +3362,34 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Type context.
+	 */
 	public static class TypeContext extends ParserRuleContext {
+		/**
+		 * Primitive type primitive type context.
+		 *
+		 * @return the primitive type context
+		 */
 		public PrimitiveTypeContext primitiveType() {
 			return getRuleContext(PrimitiveTypeContext.class,0);
 		}
+
+		/**
+		 * Shared shared context.
+		 *
+		 * @return the shared context
+		 */
 		public SharedContext shared() {
 			return getRuleContext(SharedContext.class,0);
 		}
+
+		/**
+		 * Instantiates a new Type context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1930,6 +3409,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Type type context.
+	 *
+	 * @return the type context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final TypeContext type() throws RecognitionException {
 		TypeContext _localctx = new TypeContext(_ctx, getState());
 		enterRule(_localctx, 38, RULE_type);
@@ -1961,8 +3446,23 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Shared context.
+	 */
 	public static class SharedContext extends ParserRuleContext {
+		/**
+		 * Shared terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode SHARED() { return getToken(LavaParser.SHARED, 0); }
+
+		/**
+		 * Instantiates a new Shared context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public SharedContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1982,6 +3482,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Shared shared context.
+	 *
+	 * @return the shared context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final SharedContext shared() throws RecognitionException {
 		SharedContext _localctx = new SharedContext(_ctx, getState());
 		enterRule(_localctx, 40, RULE_shared);
@@ -2003,19 +3509,52 @@ public class LavaParser extends Parser {
 		return _localctx;
 	}
 
+	/**
+	 * The type Primitive type context.
+	 */
 	public static class PrimitiveTypeContext extends ParserRuleContext {
+		/**
+		 * Instantiates a new Primitive type context.
+		 *
+		 * @param parent        the parent
+		 * @param invokingState the invoking state
+		 */
 		public PrimitiveTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_primitiveType; }
-	 
+
+		/**
+		 * Instantiates a new Primitive type context.
+		 */
 		public PrimitiveTypeContext() { }
+
+		/**
+		 * Copy from.
+		 *
+		 * @param ctx the ctx
+		 */
 		public void copyFrom(PrimitiveTypeContext ctx) {
 			super.copyFrom(ctx);
 		}
 	}
+
+	/**
+	 * The type Char type context.
+	 */
 	public static class CharTypeContext extends PrimitiveTypeContext {
+		/**
+		 * Char terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode CHAR() { return getToken(LavaParser.CHAR, 0); }
+
+		/**
+		 * Instantiates a new Char type context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public CharTypeContext(PrimitiveTypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2031,8 +3570,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Int type context.
+	 */
 	public static class IntTypeContext extends PrimitiveTypeContext {
+		/**
+		 * Integer terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode INTEGER() { return getToken(LavaParser.INTEGER, 0); }
+
+		/**
+		 * Instantiates a new Int type context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public IntTypeContext(PrimitiveTypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2048,8 +3602,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Void type context.
+	 */
 	public static class VoidTypeContext extends PrimitiveTypeContext {
+		/**
+		 * Void terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode VOID() { return getToken(LavaParser.VOID, 0); }
+
+		/**
+		 * Instantiates a new Void type context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public VoidTypeContext(PrimitiveTypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2065,8 +3634,23 @@ public class LavaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+
+	/**
+	 * The type Bool type context.
+	 */
 	public static class BoolTypeContext extends PrimitiveTypeContext {
+		/**
+		 * Boolean terminal node.
+		 *
+		 * @return the terminal node
+		 */
 		public TerminalNode BOOLEAN() { return getToken(LavaParser.BOOLEAN, 0); }
+
+		/**
+		 * Instantiates a new Bool type context.
+		 *
+		 * @param ctx the ctx
+		 */
 		public BoolTypeContext(PrimitiveTypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2083,6 +3667,12 @@ public class LavaParser extends Parser {
 		}
 	}
 
+	/**
+	 * Primitive type primitive type context.
+	 *
+	 * @return the primitive type context
+	 * @throws RecognitionException the recognition exception
+	 */
 	public final PrimitiveTypeContext primitiveType() throws RecognitionException {
 		PrimitiveTypeContext _localctx = new PrimitiveTypeContext(_ctx, getState());
 		enterRule(_localctx, 42, RULE_primitiveType);
@@ -2157,6 +3747,9 @@ public class LavaParser extends Parser {
 		return true;
 	}
 
+	/**
+	 * The constant _serializedATN.
+	 */
 	public static final String _serializedATN =
 		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\65\u00f2\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
@@ -2235,6 +3828,9 @@ public class LavaParser extends Parser {
 		"\u00f0\7\t\2\2\u00ef\u00eb\3\2\2\2\u00ef\u00ec\3\2\2\2\u00ef\u00ed\3\2"+
 		"\2\2\u00ef\u00ee\3\2\2\2\u00f0-\3\2\2\2\258>BY^nu|\u0082\u0088\u00a4\u00a7"+
 		"\u00b0\u00b3\u00cd\u00df\u00e1\u00e5\u00ef";
+	/**
+	 * The constant _ATN.
+	 */
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

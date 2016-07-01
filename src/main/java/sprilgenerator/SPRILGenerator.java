@@ -5,7 +5,7 @@ import elaboration.Generator;
 import elaboration.ParseException;
 import grammar.LavaLexer;
 import grammar.LavaParser;
-import model.Addr;
+import model.Address;
 import model.Op;
 import model.OpCode;
 import model.Program;
@@ -25,10 +25,19 @@ import java.util.List;
  * Created by Rogier on 21-06-16 in Enschede.
  */
 public class SPRILGenerator {
+    /**
+     * The constant computationsOpcodes.
+     */
     public static final OpCode[] computationsOpcodes = {OpCode.Add, OpCode.Sub, OpCode.Mul, OpCode.Equal, OpCode.NEQ,
             OpCode.Gt, OpCode.GtE, OpCode.Lt, OpCode.LtE, OpCode.And, OpCode.Or, OpCode.Xor, OpCode.LShift, OpCode.RShift};
 
 
+    /**
+     * Write file.
+     *
+     * @param text the text
+     * @param path the path
+     */
     public void writeFile(String text, String path) {
         try {
             FileWriter writer = new FileWriter(path);
@@ -39,6 +48,12 @@ public class SPRILGenerator {
         }
     }
 
+    /**
+     * Format spril string.
+     *
+     * @param instruction the instruction
+     * @return the string
+     */
     public String formatSpril(List<List<String>> instruction) {
         StringBuilder builder = new StringBuilder();
         builder.append("module Main where\n" +
@@ -73,12 +88,23 @@ public class SPRILGenerator {
     }
 
 
+    /**
+     * Print spril.
+     *
+     * @param list the list
+     */
     public void printSpril(List<String> list) {
         for (int i = 0; i < list.size(); i++) {
             System.out.println(list.get(i));
         }
     }
 
+    /**
+     * Generate spril list.
+     *
+     * @param program the program
+     * @return the list
+     */
     public List<String> generateSpril(Program program) {
 
         List<Op> instructions = program.getOpList();
@@ -97,12 +123,12 @@ public class SPRILGenerator {
                     case LoadD:
                     case LoadIm:
                     case LoadInd:
-                        Addr addr = instr.addr(0);
-                        if (addr.getPrefix() == Addr.AddrType.ImmValueLab) {
-                            int line = program.getLine(addr.getLabel());
+                        Address address = instr.addr(0);
+                        if (address.getPrefix() == Address.AddressType.ImmValueLab) {
+                            int line = program.getLine(address.getLabel());
                             result.add("Load (" + "ImmValue " + line + ") " + instr.reg(1).toString());
                         } else {
-                            result.add("Load (" + addr.toString() + ") " + instr.reg(1).toString());
+                            result.add("Load (" + address.toString() + ") " + instr.reg(1).toString());
                         }
                         break;
                     case StoreD:
@@ -166,6 +192,11 @@ public class SPRILGenerator {
     }
 
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Checker checker = new Checker();
         Generator generator = new Generator();

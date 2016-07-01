@@ -38,6 +38,9 @@ public class LavaCompiler implements ActionListener {
     private File outputFile;
 
 
+    /**
+     * Sets gui.
+     */
     public void setupGUI() {
         frame = new JFrame();
         frame.setSize(500, 500);
@@ -89,6 +92,9 @@ public class LavaCompiler implements ActionListener {
 
     }
 
+    /**
+     * Run.
+     */
     public void run() {
         Checker checker = new Checker();
         Generator generator = new Generator();
@@ -164,6 +170,11 @@ public class LavaCompiler implements ActionListener {
 
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         LavaCompiler compiler = new LavaCompiler();
         compiler.setupGUI();

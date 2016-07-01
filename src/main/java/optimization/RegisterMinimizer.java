@@ -21,7 +21,13 @@ import java.util.*;
  */
 public class RegisterMinimizer {
     private Program program;
+    /**
+     * The constant sprilRegisters.
+     */
     public final static List<String> sprilRegisters = new ArrayList<>();
+    /**
+     * The Errors.
+     */
     List<String> errors = new ArrayList<>();
     static {
         sprilRegisters.add("regA");
@@ -65,56 +71,23 @@ public class RegisterMinimizer {
     }
 
 
+    /**
+     * Minimize registers program.
+     *
+     * @param programx the programx
+     * @return the program
+     * @throws ParseException the parse exception
+     */
     public Program minimizeRegisters(Program programx) throws ParseException {
         this.program = programx;
-//        System.out.println(program);
         int i = 0;
         if (program.getRegisters().size() >= 40) {
-            //            TODO minimize amount of register;
             errors.add("Too much registers used!");
             throw new ParseException(errors);
         }
         renameRegisters();
-//        TODO: Optimize registers here
         return program;
     }
-
-    private boolean unusedLater(String name, int line) {
-        boolean result = true;
-        Set<Integer> reglines = program.getRegLines().get(name);
-        for (Integer lineNmbr : reglines) {
-            if (lineNmbr > line) {
-                result = false;
-            }
-        }
-
-
-        return result;
-    }
-
-    public void printErrors() {
-        for (int i = 0; i < errors.size(); i++) {
-            System.out.println(errors.get(i));
-        }
-    }
-
-    private void renameSingleRegister(String oldReg, String newReg, int line) {
-        Set<Integer> lines = program.getRegLines().get(oldReg);
-        for (Integer i : lines) {
-            if (i > line) {
-                for (Operand operand : program.getOpList().get(i).getArgs()) {
-                    if (operand.getType() == Operand.Type.REG) {
-                        if (((Reg) operand).getName().equals(oldReg)) {
-                            ((Reg) operand).setName(newReg);
-                        }
-
-                    }
-                }
-            }
-
-        }
-    }
-
 
     private void renameSingleRegister(String oldReg, String newReg) {
         Set<Integer> lines = program.getRegLines().get(oldReg);
@@ -150,6 +123,11 @@ public class RegisterMinimizer {
     }
 
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Checker checker = new Checker();
         Generator generator = new Generator();

@@ -25,6 +25,11 @@ public class ErrorListener extends BaseErrorListener {
                 msg));
     }
 
+    /**
+     * Throw exception.
+     *
+     * @throws ParseException the parse exception
+     */
     public void throwException() throws ParseException {
         if (hasErrors()) {
             throw new ParseException(getErrors());
@@ -35,12 +40,14 @@ public class ErrorListener extends BaseErrorListener {
     /**
      * Indicates if the listener has collected any errors.
      */
-    public boolean hasErrors() {
+    private boolean hasErrors() {
         return !this.errors.isEmpty();
     }
 
     /**
      * Returns the (possibly empty) list of errors collected by the listener.
+     *
+     * @return the errors
      */
     public List<String> getErrors() {
         return this.errors;

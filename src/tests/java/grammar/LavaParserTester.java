@@ -18,10 +18,18 @@ import java.io.IOException;
 public class LavaParserTester {
     private static final String BASE_DIR = "src/main/java/testprograms/";
 
+    /**
+     * Instantiates a new Lava parser tester.
+     */
     public LavaParserTester() {
 
     }
 
+    /**
+     * Simple program tests.
+     *
+     * @throws ParseException the parse exception
+     */
     @Test
     public void simpleProgramTests() throws ParseException {
         String test1 = "chamber testChamber {/^\\ this is a comment \n }";
@@ -37,6 +45,9 @@ public class LavaParserTester {
         parse(test3, false, "program");
     }
 
+    /**
+     * Simple program fail test.
+     */
     @Test
     public void simpleProgramFailTest() {
         System.out.println("Simple Program Failure");
@@ -56,6 +67,11 @@ public class LavaParserTester {
 
     }
 
+    /**
+     * Test programs tests.
+     *
+     * @throws ParseException the parse exception
+     */
     @Test
     public void testProgramsTests() throws ParseException {
         parse("gauss", true, "program");
@@ -76,6 +92,11 @@ public class LavaParserTester {
 
     }
 
+    /**
+     * Statement test.
+     *
+     * @throws ParseException the parse exception
+     */
     @Test
     public void statementTest() throws ParseException {
         String test1 = "if (hot) then { $x = 7; }  else { $x = 3; } ";
@@ -92,6 +113,11 @@ public class LavaParserTester {
         parse(test6, false, "statement");
     }
 
+    /**
+     * Statements wrong test.
+     *
+     * @throws ParseException the parse exception
+     */
     @Test
     public void statementsWrongTest() throws ParseException {
         System.out.println("Statements Failure Test");
@@ -109,6 +135,11 @@ public class LavaParserTester {
         testParseFailure(test6, false, "statement");
     }
 
+    /**
+     * Expr test.
+     *
+     * @throws ParseException the parse exception
+     */
     @Test
     public void exprTest() throws ParseException {
         String test1 = "3.3";
@@ -138,6 +169,9 @@ public class LavaParserTester {
 
     }
 
+    /**
+     * Expr fail test.
+     */
     @Test
     public void exprFailTest() {
         System.out.println("Expression Failure Test");
@@ -170,6 +204,13 @@ public class LavaParserTester {
 
     }
 
+    /**
+     * Test parse failure.
+     *
+     * @param testString  the test string
+     * @param isFile      the is file
+     * @param parseOption the parse option
+     */
     public void testParseFailure(String testString, boolean isFile, String parseOption) {
         try {
             parse(testString, isFile, parseOption);

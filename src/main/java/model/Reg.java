@@ -1,25 +1,36 @@
 package model;
 
-/** Register operand
+/**
+ * Register operand
+ *
  * @author Arend Rensink
  */
 public class Reg extends Operand {
     private String name;
 
-	/** Constructs an operand with a given name. */
+	/**
+	 * Constructs an operand with a given name.  @param name the name
+	 */
 	public Reg(String name) {
 		super(Type.REG);
 		assert name != null && name.length() > 1 : "Register names must be non-empty strings";
 		this.name = name;
 	}
 
-	/** Returns the name of this register. */
+	/**
+	 * Returns the name of this register.  @return the name
+	 */
 	public String getName() {
 		return this.name;
 	}
 
-    public void setName(String name) {
-        this.name = name;
+	/**
+	 * Sets name.
+	 *
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		this.name = name;
     }
 
 	@Override

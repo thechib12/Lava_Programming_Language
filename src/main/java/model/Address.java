@@ -4,11 +4,11 @@ package model;
  * Created by Rogier on 20-06-16 in Enschede.
  * Address Operand.
  */
-public class Addr extends Operand {
+public class Address extends Operand {
     /**
      * Haskell prefix for the code generation represented as an Enum
      */
-    private AddrType prefix;
+    private AddressType prefix;
     /** Register which contains the memory address. */
     private Reg register;
     /** Value representing the memory address or an immediate value depending on the prefix. */
@@ -17,13 +17,14 @@ public class Addr extends Operand {
     private Label label;
 
     /**
-     * Creates an Addr with a type and a register to point to.
-     * @param type type should be {@link AddrType} IndAddr.
+     * Creates an Address with a type and a register to point to.
+     *
+     * @param type     type should be {@link AddressType} IndAddr.
      * @param register register containing the memory address.
      */
-    public Addr(AddrType type, Reg register){
+    public Address(AddressType type, Reg register) {
         super(Type.ADDR);
-        assert type == AddrType.IndAddr;
+        assert type == AddressType.IndAddr;
         this.prefix = type;
         this.register = register;
         this.value = -1;
@@ -31,14 +32,15 @@ public class Addr extends Operand {
     }
 
     /**
-     * Creates an Addr object with a type and an integer, which represent a memory location or
+     * Creates an Address object with a type and an integer, which represent a memory location or
      * an immediate value depending on the type
-     * @param type type should be ImmValue or DirAddr.
+     *
+     * @param type  type should be ImmValue or DirAddr.
      * @param value integer value.
      */
-    public Addr(AddrType type,int value){
+    public Address(AddressType type, int value) {
         super(Type.ADDR);
-        assert type == AddrType.ImmValue || type == AddrType.DirAddr;
+        assert type == AddressType.ImmValue || type == AddressType.DirAddr;
         this.prefix = type;
         this.value = value;
         this.register = null;
@@ -46,7 +48,13 @@ public class Addr extends Operand {
     }
 
 
-    public Addr(AddrType type, Label label) {
+    /**
+     * Instantiates a new Address.
+     *
+     * @param type  the type
+     * @param label the label
+     */
+    public Address(AddressType type, Label label) {
         super(Type.ADDR);
         this.prefix = type;
         this.value = -1;
@@ -72,10 +80,20 @@ public class Addr extends Operand {
         return super.toString();
     }
 
-    public AddrType getPrefix() {
+    /**
+     * Gets prefix.
+     *
+     * @return the prefix
+     */
+    public AddressType getPrefix() {
         return prefix;
     }
 
+    /**
+     * Gets label.
+     *
+     * @return the label
+     */
     public Label getLabel() {
         return label;
     }
@@ -83,10 +101,22 @@ public class Addr extends Operand {
     /**
      * Enum containing the various address types.
      */
-    public enum AddrType {
+    public enum AddressType {
+        /**
+         * Imm value lab address type.
+         */
         ImmValueLab,
+        /**
+         * Ind addr address type.
+         */
         IndAddr,
+        /**
+         * Imm value address type.
+         */
         ImmValue,
+        /**
+         * Dir addr address type.
+         */
         DirAddr
     }
 }

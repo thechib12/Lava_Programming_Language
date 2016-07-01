@@ -32,6 +32,8 @@ public class Checker extends LavaBaseListener {
     private String currentFunction;
 
     /**
+     * Gets errors.
+     *
      * @return the list of all errors.
      */
     public List<String> getErrors() {
@@ -43,6 +45,7 @@ public class Checker extends LavaBaseListener {
      *
      * @param tree input {@link ParseTree} of the Lava Program.
      * @return a {@link CheckerResult} object which stores all revelant data of the checking phase.
+     * @throws ParseException the parse exception
      */
     public CheckerResult check(ParseTree tree) throws ParseException {
         scope = new MultiScope();
@@ -61,9 +64,10 @@ public class Checker extends LavaBaseListener {
         return checkerResult;
     }
 
-//  Program ------------------------------------------------------------------------------------------------------------
 
-    //  Functions ----------------------------------------------------------------------------------------------------------
+//  Functions ----------------------------------------------------------------------------------------------------------
+
+
     @Override
     public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         currentFunction = ctx.ID().getText();

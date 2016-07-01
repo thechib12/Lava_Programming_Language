@@ -5,21 +5,24 @@ import java.util.*;
 /**
  * Created by Rogier on 22-06-16 in Enschede.
  */
-public class MultiScope {
+class MultiScope {
     /**
      * Map from declared variables to their types.
      */
-    private Stack<Map<String, Type>> types;
+    private final Stack<Map<String, Type>> types;
 
-    private Stack<Map<String, Integer>> scopes;
+    private final Stack<Map<String, Integer>> scopes;
 
-    private Stack<List<String>> parameters;
+    private final Stack<List<String>> parameters;
 
-    private Stack<List<String>> localVar;
+    private final Stack<List<String>> localVar;
 
     private int scopeCount = 0;
 
 
+    /**
+     * Instantiates a new Multi scope.
+     */
     public MultiScope() {
         types = new Stack<>();
         scopes = new Stack<>();
@@ -33,7 +36,9 @@ public class MultiScope {
     }
 
 
-
+    /**
+     * Open scope.
+     */
     public void openScope() {
         scopeCount++;
         this.types.add(new HashMap<>(this.types.peek()));
@@ -42,6 +47,9 @@ public class MultiScope {
         this.localVar.add(new ArrayList<>(localVar.peek()));
     }
 
+    /**
+     * Close scope.
+     */
     public void closeScope() {
 
         if (this.types.size() == 1) {
@@ -54,10 +62,24 @@ public class MultiScope {
         localVar.pop();
     }
 
+    /**
+     * Contains boolean.
+     *
+     * @param id the id
+     * @return the boolean
+     */
     public boolean contains(String id) {
         return this.types.peek().containsKey(id);
     }
 
+    /**
+     * Put boolean.
+     *
+     * @param id          the id
+     * @param type        the type
+     * @param isParameter the is parameter
+     * @return the boolean
+     */
     public boolean put(String id, Type type, boolean isParameter) {
         boolean typeNotDefined = !types.peek().containsKey(id);
         boolean notDefinedInScope = !this.scopes.peek().containsKey(id);
@@ -103,17 +125,42 @@ public class MultiScope {
         return typeNotDefined && notDefinedInScope;
     }
 
+    /**
+     * Type type.
+     *
+     * @param id the id
+     * @return the type
+     */
     public Type type(String id) {
         return types.peek().get(id);
     }
+
+    /**
+     * Offset integer.
+     *
+     * @param id the id
+     * @return the integer
+     */
     public Integer offset(String id) {
         return scopes.peek().get(id);
     }
 
+    /**
+     * Is parameter boolean.
+     *
+     * @param id the id
+     * @return the boolean
+     */
     public boolean isParameter(String id) {
         return parameters.peek().contains(id);
     }
 
+    /**
+     * Is local boolean.
+     *
+     * @param id the id
+     * @return the boolean
+     */
     public boolean isLocal(String id) {
         return localVar.peek().contains(id);
     }

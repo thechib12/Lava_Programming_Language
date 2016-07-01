@@ -14,10 +14,10 @@ import java.io.IOException;
  */
 public class LavaCompiler {
     private final static LavaCompiler instance = new LavaCompiler();
-    /** Debug flag. */
-    private final static boolean SHOW = true;
 
-    /** Returns the singleton instance of this class. */
+    /**
+     * Returns the singleton instance of this class.  @return the lava compiler
+     */
     public static LavaCompiler instance() {
         return instance;
     }
@@ -33,33 +33,64 @@ public class LavaCompiler {
 //        this.generator = new Generator();
     }
 
+    /**
+     * Gets checker.
+     *
+     * @return the checker
+     */
     public Checker getChecker() {
         return checker;
     }
 
-    /** Typechecks a given Simple Pascal string. */
+    /**
+     * Typechecks a given Simple Pascal string.  @param text the text
+     *
+     * @return the checker result
+     * @throws ParseException the parse exception
+     */
     public CheckerResult check(String text) throws ParseException {
         return check(parse(text));
     }
 
-    /** Typechecks a given Simple Pascal file. */
+    /**
+     * Typechecks a given Simple Pascal file.  @param file the file
+     *
+     * @return the checker result
+     * @throws ParseException the parse exception
+     * @throws IOException    the io exception
+     */
     public CheckerResult check(File file) throws ParseException, IOException {
         return check(parse(file));
     }
 
-    /** Typechecks a given Simple Pascal parse tree. */
+    /**
+     * Typechecks a given Simple Pascal parse tree.  @param tree the tree
+     *
+     * @return the checker result
+     * @throws ParseException the parse exception
+     */
     public CheckerResult check(ParseTree tree) throws ParseException {
         return this.checker.check(tree);
     }
 
 
-
-    /** Compiles a given Simple Pascal string into a parse tree. */
+    /**
+     * Compiles a given Simple Pascal string into a parse tree.  @param text the text
+     *
+     * @return the parse tree
+     * @throws ParseException the parse exception
+     */
     public ParseTree parse(String text) throws ParseException {
         return parse(new ANTLRInputStream(text));
     }
 
-    /** Compiles a given Simple Pascal string into a parse tree. */
+    /**
+     * Compiles a given Simple Pascal string into a parse tree.  @param file the file
+     *
+     * @return the parse tree
+     * @throws ParseException the parse exception
+     * @throws IOException    the io exception
+     */
     public ParseTree parse(File file) throws ParseException, IOException {
         return parse(new ANTLRInputStream(new FileReader(file)));
     }
@@ -74,7 +105,6 @@ public class LavaCompiler {
         parser.removeErrorListeners();
         parser.addErrorListener(listener);
         ParseTree result = parser.program();
-//		System.out.println(result.toStringTree(parser));
 
         listener.throwException();
         return result;

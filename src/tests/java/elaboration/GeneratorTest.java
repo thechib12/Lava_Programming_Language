@@ -17,6 +17,9 @@ import static org.junit.Assert.assertEquals;
 public class GeneratorTest {
 
 
+    /**
+     * Test simple programs.
+     */
     public void testSimplePrograms() {
         GeneratorTest test = new GeneratorTest();
         String program = test.generate("chamber test1 { mineral $a;" +
@@ -71,10 +74,22 @@ public class GeneratorTest {
     }
 
 
+    /**
+     * Remove spaces string.
+     *
+     * @param in the in
+     * @return the string
+     */
     public String removeSpaces(String in) {
         return in.replaceAll(("\n"), "").replaceAll(" ", "");
     }
 
+    /**
+     * Generate string.
+     *
+     * @param program the program
+     * @return the string
+     */
     public String generate(String program) {
         Checker checker = new Checker();
         Generator generator = new Generator();

@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by Rogier on 22-06-16 in Enschede.
  */
-public class Explorer extends LavaBaseListener {
+class Explorer extends LavaBaseListener {
     private Map<String, Type> functionReturnTypes;
     private ParseTreeProperty<Type> types;
     private Map<String, List<Type>> functionParameterTypes;
@@ -32,6 +32,11 @@ public class Explorer extends LavaBaseListener {
     }
 
 
+    /**
+     * Explore.
+     *
+     * @param tree the tree
+     */
     public void explore(ParseTree tree) {
         errors = new ArrayList<>();
         functionReturnTypes = new HashMap<>();
@@ -90,14 +95,29 @@ public class Explorer extends LavaBaseListener {
         types.put(ctx, Type.INT);
     }
 
+    /**
+     * Gets function return types.
+     *
+     * @return the function return types
+     */
     public Map<String, Type> getFunctionReturnTypes() {
         return functionReturnTypes;
     }
 
+    /**
+     * Gets function parameter types.
+     *
+     * @return the function parameter types
+     */
     public Map<String, List<Type>> getFunctionParameterTypes() {
         return functionParameterTypes;
     }
 
+    /**
+     * Gets errors.
+     *
+     * @return the errors
+     */
     public List<String> getErrors() {
         return errors;
     }
