@@ -5,18 +5,23 @@ import java.util.*;
 /**
  * Created by Rogier on 22-06-16 in Enschede.
  */
-class MultiScope {
+public class MultiScope {
+
     /**
-     * Map from declared variables to their types.
+     * Stack of maps from declared variables to their types.
      */
     private final Stack<Map<String, Type>> types;
 
+    /** Stack of maps of variables to their integer offset. */
     private final Stack<Map<String, Integer>> scopes;
 
+    /** Stack of lists containing all parameters in this scope. */
     private final Stack<List<String>> parameters;
 
+    /** Stack of lists containing all local variables in this scope.*/
     private final Stack<List<String>> localVar;
 
+    /** The amount of scopes */
     private int scopeCount = 0;
 
 
@@ -37,7 +42,7 @@ class MultiScope {
 
 
     /**
-     * Open scope.
+     * Open a scope containing all values of its enclosing scope.
      */
     public void openScope() {
         scopeCount++;
@@ -48,12 +53,15 @@ class MultiScope {
     }
 
     /**
-     * Close scope.
+     * Close scope and the first item of each stack.
+     * @throws ParseException when the scope count
      */
-    public void closeScope() {
+    public void closeScope() throws ParseException {
 
         if (this.types.size() == 1) {
-            throw new RuntimeException();
+            List<String> errors = new ArrayList<>();
+            errors.add("Scoping error, no scopes exist anymore");
+            throw new ParseException(errors);
         }
         scopeCount--;
         this.types.pop();
@@ -63,22 +71,16 @@ class MultiScope {
     }
 
     /**
-     * Contains boolean.
+     * Put a variable in the scope of global variables, local variables and function parameters.
+     * Global variables will be on the first scope and have offsets from range 1..n.
+     * Local variables will be on the second scope and all following scopes and the variables will have offsets
+     * in range 1..n. Parameters could be on any scope, but the definition of the Lava grammar tells us that parameters
+     * will always be encoutered from the second scope on.
      *
-     * @param id the id
-     * @return the boolean
-     */
-    public boolean contains(String id) {
-        return this.types.peek().containsKey(id);
-    }
-
-    /**
-     * Put boolean.
-     *
-     * @param id          the id
-     * @param type        the type
-     * @param isParameter the is parameter
-     * @return the boolean
+     * @param id          the id of this variable.
+     * @param type        the type of this variable
+     * @param isParameter marks when this variable is a parameter.
+     * @return if it succeeded putting this variable in this scope.
      */
     public boolean put(String id, Type type, boolean isParameter) {
         boolean typeNotDefined = !types.peek().containsKey(id);

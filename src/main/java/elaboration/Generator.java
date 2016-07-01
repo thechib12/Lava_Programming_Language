@@ -128,7 +128,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         this.labels = new ParseTreeProperty<>();
         programs = new ArrayList<>();
         programs.add(prog);
-        this.functionLabelMapping = new FunctionLabeler().labelFunc(tree);
+        this.functionLabelMapping = new FunctionLabeler().labelFunctions(tree);
         this.regCount = 0;
     }
 

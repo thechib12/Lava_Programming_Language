@@ -3,7 +3,7 @@ package model;
 import java.util.Iterator;
 
 /**
- * SPRILL instruction
+ * Lava IR instruction
  *
  * @author Rogier Monshouwer
  */

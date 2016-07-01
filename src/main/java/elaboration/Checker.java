@@ -34,7 +34,9 @@ public class Checker extends LavaBaseListener {
     /** Mapping of variables on their memory location (shared or local). */
     private Map<String, Boolean> sharedVars;
 
-    /** The list of errors that occured while checking. */
+    /**
+     * The list of errors that occurred while checking.
+     */
     private List<String> errors;
 
     /** Current function for return type checking. */
@@ -54,8 +56,8 @@ public class Checker extends LavaBaseListener {
      * This method walks the parse tree and checks the types of the program.
      *
      * @param tree input {@link ParseTree} of the Lava Program.
-     * @return a {@link CheckerResult} object which stores all revelant data of the checking phase.
-     * @throws ParseException the parse exception
+     * @return a {@link CheckerResult} object which stores all relevant data of the checking phase.
+     * @throws ParseException the parse exception is thrown when there were errors during type checking.
      */
     public CheckerResult check(final ParseTree tree) throws ParseException {
         scope = new MultiScope();
@@ -89,7 +91,11 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
-        scope.closeScope();
+        try {
+            scope.closeScope();
+        } catch (ParseException e) {
+            errors.addAll(e.getMessages());
+        }
     }
 
     @Override
@@ -133,6 +139,16 @@ public class Checker extends LavaBaseListener {
 
     }
 
+    @Override
+    public void exitParameters(LavaParser.ParametersContext ctx) {
+        for (LavaParser.ExprContext expression : ctx.expr()) {
+            if (expression instanceof LavaParser.FunctionExprContext) {
+                addError(expression, "Rupture cannot be a parameter");
+            }
+        }
+
+    }
+
     //  Block --------------------------------------------------------------------------------------------------------------
     @Override
     public void enterBlock(LavaParser.BlockContext ctx) {
@@ -141,7 +157,11 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitBlock(LavaParser.BlockContext ctx) {
-        scope.closeScope();
+        try {
+            scope.closeScope();
+        } catch (ParseException e) {
+            errors.addAll(e.getMessages());
+        }
     }
 
     //  Variable Declarations and assignment -------------------------------------------------------------------------------

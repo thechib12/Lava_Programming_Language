@@ -6,7 +6,7 @@ import java.util.*;
 
 
 /**
- * SPRILL operation
+ * Lava IR operation
  *
  * @author Rogier Monshouwer
  */
@@ -154,13 +154,6 @@ public class Op extends Instr {
 			result.append(String
 					.format("%-" + labelSize + "s", toLabelString()));
 		}
-		int arrowSize = 4;
-//		if (getOpCode() == OpCode.out) {
-//			int size = sourceSize + targetSize + arrowSize;
-//			result.append(String.format("%-8s", getOpCode().name()));
-//			result.append(String.format("%-" + size + "s ", toSourceString()));
-//			result.append(toCommentString());
-//		} else {
         result.append(String.format("%-8s", getOpCode().name()));
         if (sourceSize > 0) {
             result.append(String.format("%-" + sourceSize + "s",
@@ -199,7 +192,7 @@ public class Op extends Instr {
     /**
      * Returns the string representation of the source operands.  @return the string
      */
-	String toSourceString() {
+	private String toSourceString() {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 		for (int i = 0; i < getOpCode().getSourceCount(); i++) {
@@ -217,7 +210,7 @@ public class Op extends Instr {
     /**
      * Returns the string representation of the target operands.  @return the string
      */
-	String toTargetString() {
+	private String toTargetString() {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 		for (int i = getOpCode().getSourceCount(); i < getOpCode()

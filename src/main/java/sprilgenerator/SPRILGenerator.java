@@ -124,7 +124,7 @@ public class SPRILGenerator {
     }
 
     /**
-     * Generate sprill list.
+     * Generate sprill list by iterating through the Lava IR Program.
      *
      * @param program the program
      * @return the list

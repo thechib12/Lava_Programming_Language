@@ -53,7 +53,8 @@ class Explorer extends LavaBaseListener {
     private List<String> errors;
 
     /**
-     * Explore.
+     * Explore the parse tree for functions, return types and parameter types by walking the parse tree.
+     * Fork and join are predefined functions so they have static parameters.
      *
      * @param tree the tree
      */
@@ -73,7 +74,12 @@ class Explorer extends LavaBaseListener {
         functionParameterTypes.put("unlock", new ArrayList<>());
     }
 
-
+    /**
+     * This methods queries the function id and checks if it has not already been declared.
+     * It also adds its return type and its parameter types.
+     *
+     * @param ctx FunctionDeclaration node.
+     */
     @Override
     public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         String id = ctx.ID().getText();
@@ -90,26 +96,47 @@ class Explorer extends LavaBaseListener {
         functionParameterTypes.put(id, types1);
     }
 
+    /**
+     * Sets the type based on its primitive type, since their are no compound types in Lava
+     * and a function cannot return or have parameter of shared type by its definition.
+     * @param ctx Type node.
+     */
     @Override
     public void exitType(LavaParser.TypeContext ctx) {
         types.put(ctx, types.get(ctx.primitiveType()));
     }
 
+    /**
+     * Sets this node as an Type.Void.
+     * @param ctx Void Type node.
+     */
     @Override
     public void exitVoidType(LavaParser.VoidTypeContext ctx) {
         types.put(ctx, Type.VOID);
     }
 
+    /**
+     * Sets this node as an Type.Char.
+     * @param ctx Char Type node.
+     */
     @Override
     public void exitCharType(LavaParser.CharTypeContext ctx) {
         types.put(ctx, Type.CHAR);
     }
 
+    /**
+     * Sets this node as an Type.Bool.
+     * @param ctx Bool Type node.
+     */
     @Override
     public void exitBoolType(LavaParser.BoolTypeContext ctx) {
         types.put(ctx, Type.BOOL);
     }
 
+    /**
+     * Sets this node as an Type.Int.
+     * @param ctx Int Type node.
+     */
     @Override
     public void exitIntType(LavaParser.IntTypeContext ctx) {
         types.put(ctx, Type.INT);

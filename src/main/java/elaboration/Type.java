@@ -36,7 +36,7 @@ abstract public class Type {
      *
      * @param kind the kind
      */
-    Type(TypeKind kind) {
+    private Type(TypeKind kind) {
         this.kind = kind;
     }
 

@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static model.Operand.Type.REG;
 
 /**
- * SPRILL program.
+ * Lava Intermediate Representation program class.
  *
  * @author Rogier Monshouwer
  */

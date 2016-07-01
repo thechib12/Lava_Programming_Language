@@ -26,7 +26,7 @@ public class ErrorListener extends BaseErrorListener {
     }
 
     /**
-     * Throw exception.
+     * Throw exception when the list is not empty.
      *
      * @throws ParseException the parse exception
      */
