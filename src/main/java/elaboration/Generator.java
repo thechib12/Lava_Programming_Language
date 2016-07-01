@@ -699,7 +699,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         labels.put(ctx.functionCall().parameters(), label);
 
         visitChildren(ctx);
-
+        emit(I2I, reg(ctx.functionCall()), reg(ctx));
         return null;
     }
 

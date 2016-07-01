@@ -79,7 +79,6 @@ public class SPRILGenerator {
         }
     }
 
-    //TODO: JumpI, BranchI
     public List<String> generateSpril(Program program) {
 
         List<Op> instructions = program.getOpList();
@@ -182,8 +181,6 @@ public class SPRILGenerator {
         Lexer lexer = new LavaLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         LavaParser parser = new LavaParser(tokens);
-
-
         ParseTree tree = parser.program();
         RegisterMinimizer minimizer = new RegisterMinimizer();
         SPRILGenerator sprilgen = new SPRILGenerator();

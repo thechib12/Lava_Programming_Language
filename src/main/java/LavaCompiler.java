@@ -13,7 +13,6 @@ import sprilgenerator.SPRILGenerator;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +27,7 @@ import java.util.List;
  */
 public class LavaCompiler implements ActionListener {
     private JFrame frame;
-    private final JButton chooseInputButton = new JButton("Choose file");
+    private final JButton chooseInputButton = new JButton("Choose files");
     private final JButton chooseOutputButton = new JButton("Choose output folder");
     private final JButton runButton = new JButton("Run");
     private JTextArea messages;
@@ -37,7 +36,6 @@ public class LavaCompiler implements ActionListener {
     private JFileChooser outputFileChooser;
     private File[] inputFiles;
     private File outputFile;
-    private Document document;
 
 
     public void setupGUI() {

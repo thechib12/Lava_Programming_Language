@@ -18,8 +18,6 @@ chamber simpletest6 {
 
      }
 
-
-
      rupture rock func4(rock $arg1, rock $arg2){
         return $arg1 * $arg2;
      }
