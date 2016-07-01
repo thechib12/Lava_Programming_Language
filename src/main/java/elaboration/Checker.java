@@ -22,13 +22,24 @@ public class Checker extends LavaBaseListener {
      */
     private CheckerResult checkerResult;
 
-    /** The current scope of the the type checker, a single scope at this time.*/
+    /**
+     * The current scope of the the type checker, a single scope at this time.
+     */
     private MultiScope scope;
+
+    /** Mapping of the function return types. */
     private Map<String, Type> functionReturnTypes;
+
+    /** Mapping of the function parameter types. */
     private Map<String, List<Type>> functionParameters;
+
+    /** Mapping of variables on their memory location (shared or local). */
     private Map<String, Boolean> sharedVars;
-    /* The list of errors that occured while checking.*/
+
+    /** The list of errors that occured while checking. */
     private List<String> errors;
+
+    /** Current function for return type checking. */
     private String currentFunction;
 
     /**
@@ -36,7 +47,8 @@ public class Checker extends LavaBaseListener {
      *
      * @return the list of all errors.
      */
-    public List<String> getErrors() {
+
+    List<String> getErrors() {
         return errors;
     }
 
@@ -72,7 +84,7 @@ public class Checker extends LavaBaseListener {
     public void enterFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         currentFunction = ctx.ID().getText();
         if (currentFunction.equals("fork")) {
-            addError(ctx, "fork is a pre defined function, you cannot declare this");
+            addError(ctx, "fork is a pre-defined rupture, you cannot declare this");
         }
         scope.openScope();
     }
@@ -80,7 +92,7 @@ public class Checker extends LavaBaseListener {
     @Override
     public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         if (ctx.type().shared() != null) {
-            addError(ctx, "functions cannot return a shared variable");
+            addError(ctx, "Ruptures cannot return a shared variable");
         }
         scope.closeScope();
     }
@@ -131,7 +143,6 @@ public class Checker extends LavaBaseListener {
         scope.closeScope();
     }
 
-
     //  Variable Declarations and assignment -------------------------------------------------------------------------------
     @Override
     public void exitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
@@ -145,9 +156,6 @@ public class Checker extends LavaBaseListener {
         this.setParameter(ctx, this.scope.isParameter(id));
         this.setLocal(ctx, this.scope.isLocal(id));
         this.setOffset(ctx, this.scope.offset(id));
-        if (getSharedVar(id) == null) {
-            System.out.println(ctx.VARID().getText() + ": " + ctx.VARID().getSymbol().getLine());
-        }
         this.setShared(ctx, getSharedVar(id));
     }
 
@@ -181,7 +189,7 @@ public class Checker extends LavaBaseListener {
         Type type = this.getType(ctx.expr());
         Type type1 = this.getType(ctx.target());
         if (type == null || type1 == null) {
-            addError(ctx, "Variable not defined!");
+            addError(ctx, "Variable is not defined!");
         } else {
             if (type == type1) {
                 setType(ctx, type);
@@ -213,7 +221,7 @@ public class Checker extends LavaBaseListener {
         if (returnType == Type.INT && currentReturnType == Type.CHAR) {
             addError(ctx, "Jesus Christ Marie, they're minerals, not rocks! - Hank Schrader ");
         } else if (returnType != currentReturnType) {
-            addError(ctx, "Incompatible Return type!");
+            addError(ctx, "Incompatible Return types");
         }
     }
 

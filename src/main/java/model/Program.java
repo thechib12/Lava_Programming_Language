@@ -1,13 +1,15 @@
 package model;
 
 
+import elaboration.ParseException;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static model.Operand.Type.REG;
 
 /**
- * ILOC program.
+ * SPRILL program.
  *
  * @author Rogier Monshouwer
  */
@@ -52,9 +54,10 @@ public class Program {
 
 
 	/**
-	 * Registers the label of a given instruction.  @param instr the instr
-	 */
-	void registerLabel(Instr instr) {
+     * Registers the label of a given instruction.
+     * @param instr the instr
+     */
+    void registerLabel(Instr instr) {
 		Label label = instr.getLabel();
         Integer loc = this.labelMap.get(label);
         if (loc != null) {
@@ -96,17 +99,17 @@ public class Program {
 	 * Checks for internal consistency, in particular whether
 	 * all used labels are defined.
 	 *
-	 * @throws FormatException the format exception
-	 */
-	public void check() throws FormatException {
-		List<String> messages = new ArrayList<>();
+     * @throws ParseException the format exception
+     */
+    public void check() throws ParseException {
+        List<String> messages = new ArrayList<>();
         for (Instr instr : getOpList()) {
             for (Op op : instr) {
                 messages.addAll(checkOpnds(op.getLine(), op.getArgs()));
             }
         }
         if (!messages.isEmpty()) {
-            throw new FormatException(messages);
+            throw new ParseException(messages);
         }
     }
 
@@ -200,11 +203,8 @@ public class Program {
 			return false;
 		}
 		Program other = (Program) obj;
-		if (!this.opList.equals(other.opList)) {
-			return false;
-		}
-		return true;
-	}
+        return this.opList.equals(other.opList);
+    }
 
 	/**
 	 * Returns a string consisting of this program in a nice layout.
@@ -215,10 +215,8 @@ public class Program {
 		StringBuilder result = new StringBuilder();
 		// first print the symbolic declaration map
 		int idSize = 0;
-		if (idSize > 0) {
-			result.append('\n');
-		}
-		// then print the instructions
+
+        // then print the instructions
 		int labelSize = 0;
 		int sourceSize = 0;
 		int targetSize = 0;

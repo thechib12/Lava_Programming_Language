@@ -6,14 +6,16 @@ package model;
  */
 public class Address extends Operand {
     /**
-     * Haskell prefix for the code generation represented as an Enum
+     * Haskell prefix for the code generation represented as an Enum.
      */
     private AddressType prefix;
     /** Register which contains the memory address. */
     private Reg register;
     /** Value representing the memory address or an immediate value depending on the prefix. */
     private int value;
-
+    /**
+     * Label which will translate to an instruction line.
+     */
     private Label label;
 
     /**
@@ -49,7 +51,8 @@ public class Address extends Operand {
 
 
     /**
-     * Instantiates a new Address.
+     * Instantiates a new Address with an label. This will translate to a program line.
+     * This is an convenience method to load return addresses into memory.
      *
      * @param type  the type
      * @param label the label

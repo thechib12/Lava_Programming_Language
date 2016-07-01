@@ -102,14 +102,11 @@ public enum OpCode {
 	 * Branch i op code.
 	 */
 	BranchI(1, REG, TARGET),
-	/**
-	 * Jump op code.
-	 */
-	Jump(0, LABEL),
+
 	/**
 	 * Jump i op code.
 	 */
-	JumpI(0, TARGET),
+	Jump(0, TARGET),
 	/**
 	 * Push op code.
 	 */
@@ -166,25 +163,32 @@ public enum OpCode {
 	 */
 	TestAndSetInd(1, ADDR);
 
+	private static final Map<String, OpCode> codeMap = new HashMap<>();
+
+	static {
+		for (OpCode op : values()) {
+			codeMap.put(op.name(), op);
+		}
+	}
+
 	/** The source operand types. */
 	private final List<Operand.Type> sourceSig;
-
     /**
      * The target operand types.
      */
     private final List<Operand.Type> targetSig;
-
     /**
      * The operand types.
      */
     private final List<Operand.Type> sig;
 
-    /**
-     * Sourcecount
+	/** Returns the class of this opcode (normal or control flow). */
+	/**
+	 * Sourcecount
      */
     private final int sourceCount;
 
-	private OpCode(int sourceCount, Operand.Type... sig) {
+	OpCode(int sourceCount, Operand.Type... sig) {
 		this.sourceCount = sourceCount;
 
 		this.sourceSig = new ArrayList<>(sourceCount);
@@ -198,8 +202,14 @@ public enum OpCode {
 		this.sig = new ArrayList<>(Arrays.asList(sig));
 	}
 
-	/** Returns the class of this opcode (normal or control flow). */
-
+	/**
+	 * Returns the {@link OpCode} for a given string, if any.  @param code the code
+	 *
+	 * @return the op code
+	 */
+	public static OpCode parse(String code) {
+		return codeMap.get(code);
+	}
 
 	/**
 	 * Returns the number of operands.  @return the sig size
@@ -241,21 +251,5 @@ public enum OpCode {
 	 */
 	public List<Operand.Type> getTargetSig() {
 		return this.targetSig;
-	}
-
-	/**
-	 * Returns the {@link OpCode} for a given string, if any.  @param code the code
-	 *
-	 * @return the op code
-	 */
-	public static OpCode parse(String code) {
-		return codeMap.get(code);
-	}
-
-	private static final Map<String, OpCode> codeMap = new HashMap<>();
-	static {
-		for (OpCode op : values()) {
-				codeMap.put(op.name(), op);
-		}
 	}
 }

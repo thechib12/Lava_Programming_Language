@@ -3,7 +3,7 @@ package model;
 /**
  * Register operand
  *
- * @author Arend Rensink
+ * @author Christiaan van den Bogaard.
  */
 public class Reg extends Operand {
     private String name;
@@ -52,9 +52,6 @@ public class Reg extends Operand {
 			return false;
 		}
 		Reg other = (Reg) obj;
-		if (!getName().equals(other.getName())) {
-			return false;
-		}
-		return true;
+		return getName().equals(other.getName());
 	}
 }

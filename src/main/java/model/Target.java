@@ -4,6 +4,7 @@ import static model.Target.TargetType.*;
 
 /**
  * Created by Rogier on 20-06-16 in Enschede.
+ * Branch or Jump target
  */
 public class Target extends Operand {
     private final TargetType prefix;
@@ -110,7 +111,7 @@ public class Target extends Operand {
     /**
      * The enum Target type.
      */
-    static enum TargetType {
+    enum TargetType {
         /**
          * Ind target type.
          */

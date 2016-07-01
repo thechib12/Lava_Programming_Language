@@ -6,7 +6,7 @@ import java.util.*;
 
 
 /**
- * Lava operation
+ * SPRILL operation
  *
  * @author Rogier Monshouwer
  */
@@ -59,7 +59,7 @@ public class Op extends Instr {
      * @param args   the args
      * @throws IllegalArgumentException if one of the arguments is not of the expected type
      */
-	public Op(Label label, OpCode opCode, List<Operand> args)
+	private Op(Label label, OpCode opCode, List<Operand> args)
 			throws IllegalArgumentException {
 		if (label != null) {
 			super.setLabel(label);

@@ -3,9 +3,11 @@ package model;
 /**
  * Label operand.
  *
- * @author Arend Rensink
+ * @author Rogier Monshouwer
  */
 public class Label extends Operand {
+	private final String value;
+
 	/**
 	 * Constructs a label object with a given label text.  @param value the value
 	 */
@@ -22,8 +24,6 @@ public class Label extends Operand {
 	public String getValue() {
 		return this.value;
 	}
-
-	private final String value;
 
 	@Override
 	public String toString() {
@@ -44,10 +44,7 @@ public class Label extends Operand {
 			return false;
 		}
 		Label other = (Label) obj;
-		if (!getValue().equals(other.getValue())) {
-			return false;
-		}
-		return true;
+		return getValue().equals(other.getValue());
 	}
 
 	/** Tests if a string value is a well-formed label. */
