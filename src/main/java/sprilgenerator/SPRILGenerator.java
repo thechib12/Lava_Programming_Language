@@ -131,7 +131,7 @@ public class SPRILGenerator {
                         result.add("DecrSP");
                         break;
                     case I2I:
-                        result.add("I2I" + instr.reg(0).toString() + instr.reg(1).toString());
+                        result.add("I2I " + instr.reg(0).toString() + " " + instr.reg(1).toString());
                         break;
                     case Nop:
                         result.add("Nop");
