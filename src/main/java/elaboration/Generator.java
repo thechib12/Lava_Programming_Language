@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static model.Addr.AddrType.*;
 import static model.OpCode.*;
 
 
@@ -41,7 +42,7 @@ public class Generator extends LavaBaseVisitor<Op> {
     private final static int SHARED_OFFSET = MAX_THREADS * 2;
 
     /** The standard lock address in memory */
-    private final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
+    private final static Addr LOCK = new Addr(DirAddr, SHARED_OFFSET);
 
     /** The amount of local variables currently in this scope */
     private int localVarCount;
@@ -129,7 +130,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         }
 //        At last visit all other functions.
         ctx.functionDeclaration().forEach(this::visit);
-        return null;
+        return emit(EndProg);
     }
 
     @Override
@@ -189,7 +190,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         //        Allocate place for return value
         emit(Push, REG_ZERO);
 //        Calculate the return address
-        emit(LoadIm, new Addr(Addr.AddrType.ImmValueLab, label1), reg(ctx));
+        emit(LoadIm, new Addr(ImmValueLab, label1), reg(ctx));
 //        Push the return address on the stack
         emit(Push, reg(ctx));
 //        Jump to the function
@@ -258,22 +259,22 @@ public class Generator extends LavaBaseVisitor<Op> {
             localVarCount++;
             if (isShared(ctx)) {
                 return emit(WriteD, reg(ctx.expr()),
-                        new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+                        new Addr(DirAddr, offset(ctx) + SHARED_OFFSET));
             } else if (isLocal(ctx)) {
                 return emit(Push, reg(ctx.expr()));
             } else {
-                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+                return emit(StoreD, reg(ctx.expr()), new Addr(DirAddr, offset(ctx)));
             }
 
         } else {
             localVarCount++;
             if (isShared(ctx)) {
                 return emit(WriteD, REG_ZERO,
-                        new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+                        new Addr(DirAddr, offset(ctx) + SHARED_OFFSET));
             } else if (isLocal(ctx)) {
                 return emit(Push, REG_ZERO);
             } else {
-                return emit(StoreD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+                return emit(StoreD, REG_ZERO, new Addr(DirAddr, offset(ctx)));
             }
         }
     }
@@ -350,7 +351,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         visit(ctx.expr());
         if (isShared(ctx)) {
 //            Calculate the address of the shared variable
-            Addr addr = new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET);
+            Addr addr = new Addr(DirAddr, offset(ctx) + SHARED_OFFSET);
 //            Write to the shared memory
             return emit(WriteD, reg(ctx.expr()), addr);
         } else {
@@ -385,7 +386,7 @@ public class Generator extends LavaBaseVisitor<Op> {
 
                 return null;
             } else {
-                return emit(StoreD, reg(ctx.expr()), new Addr(Addr.AddrType.DirAddr, offset(ctx)));
+                return emit(StoreD, reg(ctx.expr()), new Addr(DirAddr, offset(ctx)));
             }
 
 
@@ -407,9 +408,9 @@ public class Generator extends LavaBaseVisitor<Op> {
             } catch (ParseException e) {
                 errors.addAll(e.getMessages());
             }
-            emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
-            emit(WriteD, REG_ZERO, new Addr(Addr.AddrType.DirAddr, (forkCount * 2) - 1));
-            emit(WriteD, reg(ctx), new Addr(Addr.AddrType.DirAddr, forkCount * 2));
+            emit(label, LoadIm, new Addr(ImmValue, 1), reg(ctx));
+            emit(WriteD, REG_ZERO, new Addr(DirAddr, (forkCount * 2) - 1));
+            emit(WriteD, reg(ctx), new Addr(DirAddr, forkCount * 2));
         } else if (ctx.functionCall().ID().getText().equals("fork") && forkCount >= MAX_THREADS - 1) {
             addError(ctx, "Too many forks for this Sprockell");
         } else if (ctx.functionCall().ID().getText().equals("join")) {
@@ -419,9 +420,9 @@ public class Generator extends LavaBaseVisitor<Op> {
             Label joinLabel = createLabel(ctx, "join");
             labels.put(ctx.functionCall().parameters().expr(0), joinLabel);
             visit(ctx.functionCall().parameters().expr(0));
-            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 2), reg(ctx.functionCall()));
+            emit(LoadIm, new Addr(ImmValue, 2), reg(ctx.functionCall()));
             emit(Mul, reg(ctx.functionCall()), reg(ctx.functionCall().parameters().expr(0)), reg(ctx.functionCall()));
-            emit(TestAndSetD, new Addr(Addr.AddrType.IndAddr, reg(ctx.functionCall())));
+            emit(TestAndSetD, new Addr(IndAddr, reg(ctx.functionCall())));
             emit(Receive, reg(ctx));
             emit(Branch, reg(ctx), joinLabel);
         } else if (ctx.functionCall().ID().getText().equals("lock")) {
@@ -590,10 +591,10 @@ public class Generator extends LavaBaseVisitor<Op> {
         visit(ctx.expr());
         Op operation;
         if (ctx.negaOp().MINUS() != null) {
-            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 0), reg(ctx));
+            emit(LoadIm, new Addr(ImmValue, 0), reg(ctx));
             operation = emit(Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
         } else {
-            emit(LoadIm, new Addr(Addr.AddrType.ImmValue, 1), reg(ctx));
+            emit(LoadIm, new Addr(ImmValue, 1), reg(ctx));
             operation = emit(Sub, reg(ctx), reg(ctx.expr()), reg(ctx));
         }
         return operation;
@@ -606,7 +607,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
-        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, (int) (ctx.CHARACTER().getText().charAt(1))), reg(ctx));
+        return emit(label, LoadIm, new Addr(ImmValue, (int) (ctx.CHARACTER().getText().charAt(1))), reg(ctx));
     }
 
     @Override
@@ -624,7 +625,13 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
-        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, Integer.parseInt(ctx.NUM().getText())), reg(ctx));
+        try {
+            return emit(label, LoadIm, new Addr(ImmValue, Integer.parseInt(ctx.NUM().getText())), reg(ctx));
+        } catch (NumberFormatException e) {
+            addError(ctx, "Integer overflow");
+            return null;
+        }
+
     }
 
     @Override
@@ -643,7 +650,7 @@ public class Generator extends LavaBaseVisitor<Op> {
             label = labels.get(ctx);
         }
         if (isShared(ctx)) {
-            emit(label, ReadD, new Addr(Addr.AddrType.DirAddr, offset(ctx) + SHARED_OFFSET));
+            emit(label, ReadD, new Addr(DirAddr, offset(ctx) + SHARED_OFFSET));
             return emit(Receive, reg(ctx));
         } else {
             if (isParameter(ctx)) {
@@ -687,7 +694,7 @@ public class Generator extends LavaBaseVisitor<Op> {
                 return null;
             } else {
 //                Load the global variable from memory
-                return emit(label, LoadD, new Addr(Addr.AddrType.DirAddr, offset(ctx)), reg(ctx));
+                return emit(label, LoadD, new Addr(DirAddr, offset(ctx)), reg(ctx));
             }
 
         }

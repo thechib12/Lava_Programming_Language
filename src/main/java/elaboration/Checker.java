@@ -108,14 +108,12 @@ public class Checker extends LavaBaseListener {
         for (int i = 0; i < varCount; i++) {
             varTypes.add(getType(ctx.parameters().expr(i)));
         }
+        if (!functionParameters.containsKey(id)) {
+            addError(ctx, "Rupture does not exists");
+        }
         if (!varTypes.equals(functionParameters.get(id))) {
             addError(ctx, "Invalid parameters used");
         }
-    }
-
-    @Override
-    public void exitParameters(LavaParser.ParametersContext ctx) {
-
     }
 
     //  Block --------------------------------------------------------------------------------------------------------------
