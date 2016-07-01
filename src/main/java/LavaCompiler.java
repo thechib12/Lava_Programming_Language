@@ -13,6 +13,7 @@ import sprilgenerator.SPRILGenerator;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,8 +35,9 @@ public class LavaCompiler implements ActionListener {
     private final JPanel panel = new JPanel(new GridBagLayout());
     private final JFileChooser inputFileChooser = new JFileChooser();
     private JFileChooser outputFileChooser;
-    private File inputFile;
+    private File[] inputFiles;
     private File outputFile;
+    private Document document;
 
 
     public void setupGUI() {
@@ -52,8 +54,9 @@ public class LavaCompiler implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 0;
         inputFileChooser.setCurrentDirectory(new java.io.File("."));
-        FileFilter fileFilter = new FileNameExtensionFilter("Lava file", ".magma");
+        FileFilter fileFilter = new FileNameExtensionFilter("Lava file", "magma");
         inputFileChooser.addChoosableFileFilter(fileFilter);
+        inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.setAcceptAllFileFilterUsed(false);
         chooseInputButton.addActionListener(this);
         panel.add(chooseInputButton, gbc);
@@ -92,41 +95,44 @@ public class LavaCompiler implements ActionListener {
         Checker checker = new Checker();
         Generator generator = new Generator();
         CharStream input;
-
-        if (inputFile == null) {
-            messages.append("No file selected\n");
-        }
-        input = null;
-        try {
-            input = new ANTLRInputStream(new FileReader(inputFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Lexer lexer = new LavaLexer(input);
-            TokenStream tokens = new CommonTokenStream(lexer);
-            LavaParser parser = new LavaParser(tokens);
-            parser.removeErrorListeners();
-            ErrorListener errorListener = new ErrorListener();
-            parser.addErrorListener(errorListener);
-
-            ParseTree tree = parser.program();
-            errorListener.throwException();
-            RegisterMinimizer minimizer = new RegisterMinimizer();
-            SPRILGenerator sprilgen = new SPRILGenerator();
-            List<List<String>> sprils = new ArrayList<>();
-            List<Program> programs = generator.generate(tree, checker.check(tree));
-            for (Program program : programs) {
-                program = minimizer.minimizeRegisters(program);
-                sprils.add(sprilgen.generateSpril(program));
+        for (File inputFile : inputFiles) {
+            if (inputFile == null) {
+                messages.append("No file selected\n");
+            }
+            input = null;
+            try {
+                input = new ANTLRInputStream(new FileReader(inputFile));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            sprilgen.writeFile(sprilgen.formatSpril(sprils), outputFile.getPath() + "/Program.hs");
-            messages.append("Compiled with 0 errors\n");
-        } catch (ParseException e) {
-            messages.append(e.getMessages().toString() + "\n");
+            try {
+                Lexer lexer = new LavaLexer(input);
+                TokenStream tokens = new CommonTokenStream(lexer);
+                LavaParser parser = new LavaParser(tokens);
+                parser.removeErrorListeners();
+                ErrorListener errorListener = new ErrorListener();
+                parser.addErrorListener(errorListener);
+
+                ParseTree tree = parser.program();
+                errorListener.throwException();
+                RegisterMinimizer minimizer = new RegisterMinimizer();
+                SPRILGenerator sprilgen = new SPRILGenerator();
+                List<List<String>> sprils = new ArrayList<>();
+                List<Program> programs = generator.generate(tree, checker.check(tree));
+                for (Program program : programs) {
+                    program = minimizer.minimizeRegisters(program);
+                    sprils.add(sprilgen.generateSpril(program));
+                }
+
+                sprilgen.writeFile(sprilgen.formatSpril(sprils),
+                        outputFile.getPath() + "/" + inputFile.getName().replaceAll(".magma", "") + ".hs");
+                messages.append(inputFile.getName() + " compiled with 0 errors\n");
+            } catch (ParseException e) {
+                messages.append(inputFile.getName() + " - " + e.getMessages().toString() + "\n");
+            }
         }
+
     }
 
     @Override
@@ -135,7 +141,7 @@ public class LavaCompiler implements ActionListener {
             int returnVal = inputFileChooser.showOpenDialog(frame);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                inputFile = inputFileChooser.getSelectedFile();
+                inputFiles = inputFileChooser.getSelectedFiles();
             }
 
         } else if (((JButton) e.getSource()).getText().equals("Choose output folder")) {
@@ -147,7 +153,7 @@ public class LavaCompiler implements ActionListener {
 
         } else {
             messages.setText("");
-            if (inputFile == null) {
+            if (inputFiles == null) {
                 messages.append("Please choose an input file\n");
             } else if (outputFile == null) {
                 messages.append("Please choose an output directory\n");

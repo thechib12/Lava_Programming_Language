@@ -29,7 +29,6 @@ chamber peterson2 {
    }
 
 
-
    erupt(){
        $flag0 = cold;
        $flag1 = cold;

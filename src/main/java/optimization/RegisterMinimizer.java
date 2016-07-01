@@ -65,14 +65,14 @@ public class RegisterMinimizer {
     }
 
 
-    public Program minimizeRegisters(Program programx) {
+    public Program minimizeRegisters(Program programx) throws ParseException {
         this.program = programx;
 //        System.out.println(program);
         int i = 0;
-        if (program.getRegisters().size() > 40) {
+        if (program.getRegisters().size() >= 40) {
             //            TODO minimize amount of register;
-            errors.add("To much registers used!");
-
+            errors.add("Too much registers used!");
+            throw new ParseException(errors);
         }
         renameRegisters();
 //        TODO: Optimize registers here

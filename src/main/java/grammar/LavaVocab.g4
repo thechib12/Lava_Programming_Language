@@ -55,7 +55,6 @@ PLUS:   '+';
 RBRACE: '}';
 RPAR:   ')';
 SEMI:   ';';
-SLASH:  '/';
 STAR:   '*';
 
 

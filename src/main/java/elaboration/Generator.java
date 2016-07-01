@@ -38,9 +38,9 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     private final static Addr LOCK = new Addr(Addr.AddrType.DirAddr, SHARED_OFFSET);
 
-    private int localVarCount = 0;
+    private int localVarCount;
 
-    private int forkCount = 0;
+    private int forkCount;
 
     /**
      * All labels belonging mapped to their correct nodes.
@@ -78,6 +78,8 @@ public class Generator extends LavaBaseVisitor<Op> {
 
 
     protected void init(ParseTree tree, CheckerResult checkResult) {
+        localVarCount = 0;
+        forkCount = 0;
         this.tree = tree;
         this.errors = new ArrayList<>();
         this.prog = new Program();

@@ -76,7 +76,7 @@ boolOp:
     | XOR
     ;
 
-multOp: STAR | SLASH;
+multOp: STAR ;
 
 plusOp : PLUS | MINUS;
 
