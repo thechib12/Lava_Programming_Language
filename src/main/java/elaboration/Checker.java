@@ -22,9 +22,7 @@ public class Checker extends LavaBaseListener {
      */
     private CheckerResult checkerResult;
 
-    /**
-     * The current scope of the the type checker, a single scope at this time.
-     */
+    /** The current scope of the the type checker, a single scope at this time. */
     private MultiScope scope;
 
     /** Mapping of the function return types. */
@@ -48,7 +46,7 @@ public class Checker extends LavaBaseListener {
      * @return the list of all errors.
      */
 
-    List<String> getErrors() {
+    final List<String> getErrors() {
         return errors;
     }
 
@@ -59,7 +57,7 @@ public class Checker extends LavaBaseListener {
      * @return a {@link CheckerResult} object which stores all revelant data of the checking phase.
      * @throws ParseException the parse exception
      */
-    public CheckerResult check(ParseTree tree) throws ParseException {
+    public CheckerResult check(final ParseTree tree) throws ParseException {
         scope = new MultiScope();
         errors = new ArrayList<>();
         sharedVars = new HashMap<>();
@@ -91,9 +89,6 @@ public class Checker extends LavaBaseListener {
 
     @Override
     public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
-        if (ctx.type().shared() != null) {
-            addError(ctx, "Ruptures cannot return a shared variable");
-        }
         scope.closeScope();
     }
 
@@ -102,16 +97,16 @@ public class Checker extends LavaBaseListener {
         for (int i = 0; i < ctx.type().size(); i++) {
             Type type = getType(ctx.type(i));
             if (type.getKind() == TypeKind.VOID) {
-                addError(ctx, "Void is not a type for a variable");
-            } else {
-                if (!this.scope.put(ctx.VARID(i).getText(), type, true)) {
-                    addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
-                }
-                setOffset(ctx.VARID(i), this.scope.offset(ctx.VARID(i).getText()));
-                setLocal(ctx.VARID(i), false);
-                sharedVars.put(ctx.VARID(i).getText(), false);
-                setType(ctx.VARID(i), type);
+                addError(ctx, "Void is not a type for a parameter");
             }
+            if (!this.scope.put(ctx.VARID(i).getText(), type, true)) {
+                addError(ctx, "Variable already declared: " + ctx.VARID(i).getText());
+            }
+            setOffset(ctx.VARID(i), this.scope.offset(ctx.VARID(i).getText()));
+            setLocal(ctx.VARID(i), false);
+            sharedVars.put(ctx.VARID(i).getText(), false);
+            setType(ctx.VARID(i), type);
+
 
         }
     }
@@ -130,6 +125,12 @@ public class Checker extends LavaBaseListener {
         if (!varTypes.equals(functionParameters.get(id))) {
             addError(ctx, "Invalid parameters used");
         }
+        if (ctx.parameters().expr().size() > 0 && ctx.ID().getText().equals("fork")) {
+            if (((LavaParser.FunctionExprContext) ctx.parameters().expr(0)).functionCall().parameters().expr().size() > 0) {
+                addError(ctx, "You cannot pass parameters to a function, use shared variables instead.");
+            }
+        }
+
     }
 
     //  Block --------------------------------------------------------------------------------------------------------------
@@ -403,9 +404,9 @@ public class Checker extends LavaBaseListener {
         this.errors.add(message);
     }
 
-    private void addError(ParseTree node, String message) {
-        this.errors.add(node.getText() + message);
-    }
+//    private void addError(ParseTree node, String message) {
+//        this.errors.add(node.getText()  + message);
+//    }
 
     private Boolean getSharedVar(String id) {
         return sharedVars.get(id);
@@ -420,8 +421,6 @@ public class Checker extends LavaBaseListener {
     private void setOffset(ParseTree node, Integer offset) {
         if (offset != null) {
             this.checkerResult.setOffset(node, offset);
-        } else {
-            addError(node, "Scoping error, variable already defined in other scope!");
         }
     }
 

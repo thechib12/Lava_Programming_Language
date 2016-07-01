@@ -1,14 +1,12 @@
 package sprilgenerator;
 
 import elaboration.Checker;
+import elaboration.ErrorListener;
 import elaboration.Generator;
 import elaboration.ParseException;
 import grammar.LavaLexer;
 import grammar.LavaParser;
-import model.Address;
-import model.Op;
-import model.OpCode;
-import model.Program;
+import model.*;
 import optimization.RegisterMinimizer;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -26,19 +24,63 @@ import java.util.List;
  */
 public class SPRILGenerator {
     /**
-     * The constant computationsOpcodes.
+     * The constant COMPUTATIONS_OPCODES.
      */
-    public static final OpCode[] computationsOpcodes = {OpCode.Add, OpCode.Sub, OpCode.Mul, OpCode.Equal, OpCode.NEQ,
-            OpCode.Gt, OpCode.GtE, OpCode.Lt, OpCode.LtE, OpCode.And, OpCode.Or, OpCode.Xor, OpCode.LShift, OpCode.RShift};
-
+    private static final OpCode[] COMPUTATIONS_OPCODES = {OpCode.Add, OpCode.Sub,
+            OpCode.Mul, OpCode.Equal, OpCode.NEQ, OpCode.Gt, OpCode.GtE, OpCode.Lt,
+            OpCode.LtE, OpCode.And, OpCode.Or, OpCode.Xor, OpCode.LShift, OpCode.RShift};
 
     /**
-     * Write file.
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(final String[] args) {
+        Checker checker = new Checker();
+        Generator generator = new Generator();
+        CharStream input;
+
+        File file = new File("src/main/java/testprograms/voidtest.magma");
+        input = null;
+        try {
+            input = new ANTLRInputStream(new FileReader(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Lexer lexer = new LavaLexer(input);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        LavaParser parser = new LavaParser(tokens);
+
+        RegisterMinimizer minimizer = new RegisterMinimizer();
+        SPRILGenerator sprilgen = new SPRILGenerator();
+        List<List<String>> sprils = new ArrayList<>();
+        try {
+            parser.removeErrorListeners();
+            ErrorListener errorListener = new ErrorListener();
+            parser.addErrorListener(errorListener);
+            ParseTree tree = parser.program();
+            errorListener.throwException();
+            List<Program> programs = generator.generate(tree, checker.check(tree));
+            for (Program prog : programs) {
+                prog = minimizer.minimizeRegisters(prog);
+                sprils.add(sprilgen.generateSprill(prog));
+            }
+
+            sprilgen.writeFile(sprilgen.formatSprill(sprils), "./src/main/java/sprockell/Program.hs");
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
+
+
+    }
+
+    /**
+     * Write the sprill file to the specified path.
      *
      * @param text the text
      * @param path the path
      */
-    public void writeFile(String text, String path) {
+    public final void writeFile(final String text, final String path) {
         try {
             FileWriter writer = new FileWriter(path);
             writer.write(text);
@@ -49,73 +91,54 @@ public class SPRILGenerator {
     }
 
     /**
-     * Format spril string.
+     * Format sprill file which contains the instructions of all sprockells and a helpful function to start program.
      *
      * @param instruction the instruction
      * @return the string
      */
-    public String formatSpril(List<List<String>> instruction) {
+    public final String formatSprill(final List<List<String>> instruction) {
         StringBuilder builder = new StringBuilder();
-        builder.append("module Main where\n" +
-                "\n" +
-                "import BasicFunctions\n" +
-                "import HardwareTypes\n" +
-                "import Sprockell\n" +
-                "import System\n" +
-                "import Simulation\n" +
-                "\n");
-
-        List<String> progNames = new ArrayList<>();
+        builder.append("module Main where\n").append("\n").append("import BasicFunctions\n");
+        builder.append("import HardwareTypes\n").append("import Sprockell\n");
+        builder.append("import System\n").append("import Simulation\n").append("\n");
+        List<String> programNames = new ArrayList<>();
         for (int i = 0; i < instruction.size(); i++) {
 
             String progName = "prog" + i;
-            progNames.add(progName);
-            builder.append(progName + " :: [Instruction]\n");
-            builder.append(progName + " = [\n");
-            List<String> instrs = instruction.get(i);
-            for (int j = 0; j < instrs.size() - 1; j++) {
-                builder.append("          " + instrs.get(j) + ", \n");
+            programNames.add(progName);
+            builder.append(progName).append(" :: [Instruction]\n");
+            builder.append(progName).append(" = [\n");
+            List<String> instructions = instruction.get(i);
+            for (int j = 0; j < instructions.size() - 1; j++) {
+                builder.append("          ").append(instructions.get(j)).append(", \n");
 
             }
-            builder.append("          " + instrs.get(instrs.size() - 1) + " \n");
+            builder.append("          ").append(instructions.get(instructions.size() - 1)).append(" \n");
 
             builder.append("       ] \n");
         }
 
-        builder.append("main = sysTest " + progNames.toString());
+        builder.append("main = sysTest ").append(programNames.toString());
         return builder.toString();
 
     }
 
-
     /**
-     * Print spril.
-     *
-     * @param list the list
-     */
-    public void printSpril(List<String> list) {
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
-        }
-    }
-
-    /**
-     * Generate spril list.
+     * Generate sprill list.
      *
      * @param program the program
      * @return the list
      */
-    public List<String> generateSpril(Program program) {
+    public final List<String> generateSprill(final Program program) {
 
         List<Op> instructions = program.getOpList();
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < instructions.size(); i++) {
+        for (Op instr : instructions) {
 
 //            computations
-            Op instr = instructions.get(i);
             OpCode opcode = instr.getOpCode();
-            if (Arrays.asList(computationsOpcodes).contains(opcode)) {
+            if (Arrays.asList(COMPUTATIONS_OPCODES).contains(opcode)) {
                 result.add("Compute " + opcode.toString() + " " + instr.reg(0).toString()
                         + " " + instr.reg(1).toString() + " " + instr.reg(2).toString());
             } else {
@@ -136,14 +159,19 @@ public class SPRILGenerator {
                         result.add("Store " + instr.reg(0).toString() + " (" + instr.addr(1).toString() + ")");
                         break;
                     case Branch:
-                        result.add("Branch " + instr.reg(0).toString() + " (Abs " + program.getLine(instr.label(1)) + ")");
+                        result.add("Branch " + instr.reg(0).toString()
+                                + " (Abs " + program.getLine(instr.label(1)) + ")");
                         break;
                     case Jump:
-                        result.add("Jump " + "(Abs " + program.getLine(instr.label(0)) + ")");
-                        break;
-                    case JumpI:
-                        result.add("Jump " + "(" + instr.target(0).toString() + ")");
-                        break;
+                        if (instr.target(0).getPrefix() == Target.TargetType.Abs) {
+                            result.add("Jump " + "(" + instr.target(0).getPrefix() + " "
+                                    + program.getLine(instr.target(0).getLabel()) + ")");
+                            break;
+                        } else {
+                            result.add("Jump " + "(" + instr.target(0).getPrefix() + " "
+                                    + instr.target(0).getRegister() + ")");
+                            break;
+                        }
                     case Push:
                         result.add("Push " + instr.reg(0).toString());
                         break;
@@ -180,54 +208,9 @@ public class SPRILGenerator {
                     case TestAndSetInd:
                         result.add("TestAndSet (" + instr.addr(0).toString() + ")");
                         break;
-
-
-
                 }
             }
-
         }
-
         return result;
-    }
-
-
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        Checker checker = new Checker();
-        Generator generator = new Generator();
-        CharStream input;
-
-        File file = new File("src/main/java/testprograms/doublefunctions.magma");
-        input = null;
-        try {
-            input = new ANTLRInputStream(new FileReader(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Lexer lexer = new LavaLexer(input);
-        TokenStream tokens = new CommonTokenStream(lexer);
-        LavaParser parser = new LavaParser(tokens);
-        ParseTree tree = parser.program();
-        RegisterMinimizer minimizer = new RegisterMinimizer();
-        SPRILGenerator sprilgen = new SPRILGenerator();
-        List<List<String>> sprils = new ArrayList<>();
-        try {
-            List<Program> programs = generator.generate(tree, checker.check(tree));
-            for (Program prog : programs) {
-                prog = minimizer.minimizeRegisters(prog);
-                sprils.add(sprilgen.generateSpril(prog));
-            }
-
-            sprilgen.writeFile(sprilgen.formatSpril(sprils), "./src/main/java/sprockell/Program.hs");
-        } catch (ParseException e) {
-            System.err.println(e.getMessages());
-        }
-
-
     }
 }

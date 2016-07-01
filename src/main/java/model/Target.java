@@ -94,6 +94,9 @@ public class Target extends Operand {
         return value;
     }
 
+    public TargetType getPrefix() {
+        return prefix;
+    }
 
     @Override
     public String toString() {
@@ -111,7 +114,7 @@ public class Target extends Operand {
     /**
      * The enum Target type.
      */
-    enum TargetType {
+    public enum TargetType {
         /**
          * Ind target type.
          */

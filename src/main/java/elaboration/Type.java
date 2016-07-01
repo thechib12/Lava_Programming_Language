@@ -141,7 +141,7 @@ abstract public class Type {
         public static final int VOID_SIZE = 0;
 
         private Void() {
-            super(TypeKind.CHAR);
+            super(TypeKind.VOID);
         }
 
         @Override
@@ -151,7 +151,7 @@ abstract public class Type {
 
         @Override
         public String toString() {
-            return "Char";
+            return "Void";
         }
     }
 

@@ -18,110 +18,63 @@ import java.util.*;
 
 /**
  * Created by Rogier on 21-06-16 in Enschede.
+ * Register minimizer which translates Lava IR register to actual SPROCKELL registers.
  */
 public class RegisterMinimizer {
-    private Program program;
     /**
-     * The constant sprilRegisters.
+     * The constant SPRING_REGISTERS.
      */
-    public final static List<String> sprilRegisters = new ArrayList<>();
+    private final static List<String> SPRING_REGISTERS = new ArrayList<>();
+
+    /**
+     * List of all usable registers in SPROCKELL.
+     */
+    static {
+        SPRING_REGISTERS.add("regA");
+        SPRING_REGISTERS.add("regB");
+        SPRING_REGISTERS.add("regC");
+        SPRING_REGISTERS.add("regD");
+        SPRING_REGISTERS.add("regE");
+        SPRING_REGISTERS.add("regF");
+        SPRING_REGISTERS.add("regG");
+        SPRING_REGISTERS.add("regH");
+        SPRING_REGISTERS.add("regI");
+        SPRING_REGISTERS.add("regJ");
+        SPRING_REGISTERS.add("regK");
+        SPRING_REGISTERS.add("regL");
+        SPRING_REGISTERS.add("regM");
+        SPRING_REGISTERS.add("regN");
+        SPRING_REGISTERS.add("regO");
+        SPRING_REGISTERS.add("regP");
+        SPRING_REGISTERS.add("regQ");
+        SPRING_REGISTERS.add("regR");
+        SPRING_REGISTERS.add("regS");
+        SPRING_REGISTERS.add("regA1");
+        SPRING_REGISTERS.add("regB1");
+        SPRING_REGISTERS.add("regC1");
+        SPRING_REGISTERS.add("regD1");
+        SPRING_REGISTERS.add("regE1");
+        SPRING_REGISTERS.add("regF1");
+        SPRING_REGISTERS.add("regG1");
+        SPRING_REGISTERS.add("regH1");
+        SPRING_REGISTERS.add("regI1");
+        SPRING_REGISTERS.add("regJ1");
+        SPRING_REGISTERS.add("regK1");
+        SPRING_REGISTERS.add("regL1");
+        SPRING_REGISTERS.add("regM1");
+        SPRING_REGISTERS.add("regN1");
+        SPRING_REGISTERS.add("regO1");
+        SPRING_REGISTERS.add("regP1");
+        SPRING_REGISTERS.add("regQ1");
+        SPRING_REGISTERS.add("regR1");
+        SPRING_REGISTERS.add("regS1");
+    }
+
+    private Program program;
     /**
      * The Errors.
      */
-    List<String> errors = new ArrayList<>();
-    static {
-        sprilRegisters.add("regA");
-        sprilRegisters.add("regB");
-        sprilRegisters.add("regC");
-        sprilRegisters.add("regD");
-        sprilRegisters.add("regE");
-        sprilRegisters.add("regF");
-        sprilRegisters.add("regG");
-        sprilRegisters.add("regH");
-        sprilRegisters.add("regI");
-        sprilRegisters.add("regJ");
-        sprilRegisters.add("regK");
-        sprilRegisters.add("regL");
-        sprilRegisters.add("regM");
-        sprilRegisters.add("regN");
-        sprilRegisters.add("regO");
-        sprilRegisters.add("regP");
-        sprilRegisters.add("regQ");
-        sprilRegisters.add("regR");
-        sprilRegisters.add("regS");
-        sprilRegisters.add("regA1");
-        sprilRegisters.add("regB1");
-        sprilRegisters.add("regC1");
-        sprilRegisters.add("regD1");
-        sprilRegisters.add("regE1");
-        sprilRegisters.add("regF1");
-        sprilRegisters.add("regG1");
-        sprilRegisters.add("regH1");
-        sprilRegisters.add("regI1");
-        sprilRegisters.add("regJ1");
-        sprilRegisters.add("regK1");
-        sprilRegisters.add("regL1");
-        sprilRegisters.add("regM1");
-        sprilRegisters.add("regN1");
-        sprilRegisters.add("regO1");
-        sprilRegisters.add("regP1");
-        sprilRegisters.add("regQ1");
-        sprilRegisters.add("regR1");
-        sprilRegisters.add("regS1");
-    }
-
-
-    /**
-     * Minimize registers program.
-     *
-     * @param programx the programx
-     * @return the program
-     * @throws ParseException the parse exception
-     */
-    public Program minimizeRegisters(Program programx) throws ParseException {
-        this.program = programx;
-        int i = 0;
-        if (program.getRegisters().size() >= 40) {
-            errors.add("Too much registers used!");
-            throw new ParseException(errors);
-        }
-        renameRegisters();
-        return program;
-    }
-
-    private void renameSingleRegister(String oldReg, String newReg) {
-        Set<Integer> lines = program.getRegLines().get(oldReg);
-        for (Integer i : lines) {
-            for (Operand operand : program.getOpList().get(i).getArgs()) {
-                if (operand.getType() == Operand.Type.REG) {
-                    if (((Reg) operand).getName().equals(oldReg)) {
-                        ((Reg) operand).setName(newReg);
-                    }
-
-                }
-            }
-        }
-    }
-
-    private void renameRegisters() {
-        List<String> programRegisters = program.getRegisters();
-        List<String> tempRegisters = new ArrayList<>(sprilRegisters);
-        Map<String, String> registerMapping = new HashMap<>();
-
-        for (String reg : programRegisters) {
-
-            if (!reg.equals("reg0")) {
-                registerMapping.put(reg, tempRegisters.remove(0));
-            }
-
-        }
-        for (String reg : registerMapping.keySet()) {
-            renameSingleRegister(reg, registerMapping.get(reg));
-
-        }
-
-    }
-
+    private List<String> errors = new ArrayList<>();
 
     /**
      * The entry point of application.
@@ -156,6 +109,66 @@ public class RegisterMinimizer {
             System.err.println(e.getMessages());
         }
 
+
+    }
+
+    /**
+     * Minimize registers program.
+     *
+     * @param program the program
+     * @return the program
+     * @throws ParseException the parse exception
+     */
+    public Program minimizeRegisters(Program program) throws ParseException {
+        this.program = program;
+        int i = 0;
+        if (this.program.getRegisters().size() >= 40) {
+            errors.add("Too much registers used!");
+            throw new ParseException(errors);
+        }
+        renameRegisters();
+        return this.program;
+    }
+
+    /**
+     * Rename a single register throughout the program.
+     *
+     * @param oldReg the old register name.
+     * @param newReg the new register name.
+     */
+    private void renameSingleRegister(String oldReg, String newReg) {
+        Set<Integer> lines = program.getRegLines().get(oldReg);
+        for (Integer i : lines) {
+            for (Operand operand : program.getOpList().get(i).getArgs()) {
+                if (operand.getType() == Operand.Type.REG) {
+                    if (((Reg) operand).getName().equals(oldReg)) {
+                        ((Reg) operand).setName(newReg);
+                    }
+
+                }
+            }
+        }
+    }
+
+    /**
+     * Rename the registers of a {@link Program} to fit the names specified in SPROCKELL.
+     */
+    private void renameRegisters() {
+        List<String> programRegisters = program.getRegisters();
+        List<String> tempRegisters = new ArrayList<>(SPRING_REGISTERS);
+        Map<String, String> registerMapping = new HashMap<>();
+
+        for (String reg : programRegisters) {
+
+            if (!reg.equals("reg0")) {
+                registerMapping.put(reg, tempRegisters.remove(0));
+            }
+
+        }
+        for (String reg : registerMapping.keySet()) {
+            renameSingleRegister(reg, registerMapping.get(reg));
+
+        }
 
     }
 }

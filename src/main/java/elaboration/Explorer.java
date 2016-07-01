@@ -15,22 +15,42 @@ import java.util.Map;
  * Created by Rogier on 22-06-16 in Enschede.
  */
 class Explorer extends LavaBaseListener {
-    private Map<String, Type> functionReturnTypes;
-    private ParseTreeProperty<Type> types;
-    private Map<String, List<Type>> functionParameterTypes;
-    private static final List<Type> fork = new ArrayList<>();
-    private List<String> errors;
 
+    /**
+     * List of the parameter type of the function fork.
+     */
+    private static final List<Type> fork = new ArrayList<>();
+    /**
+     * List of the parameter type of the function join.
+     */
+    private static final List<Type> join = new ArrayList<>();
+
+    /** Static initialization of the List fork. */
     static {
         fork.add(Type.VOID);
     }
 
-    private static final List<Type> join = new ArrayList<>();
-
+    /** Static initialization of the List join */
     static {
         join.add(Type.INT);
     }
 
+    /**
+     * Mapping of function and its return type.
+     */
+    private Map<String, Type> functionReturnTypes;
+    /**
+     * Types synthesised from the parse tree
+     */
+    private ParseTreeProperty<Type> types;
+    /**
+     * Mapping of function and its parameter types.
+     */
+    private Map<String, List<Type>> functionParameterTypes;
+    /**
+     * List of all errors encountered during the exploring.
+     */
+    private List<String> errors;
 
     /**
      * Explore.

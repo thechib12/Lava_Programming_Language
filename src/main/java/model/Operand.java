@@ -25,7 +25,7 @@ abstract public class Operand {
 	/**
 	 * Enumeration of all available operand types.
 	 */
-	public static enum Type {
+	public enum Type {
 		/**
 		 * Register-type operand; class {@link Reg}.
 		 */

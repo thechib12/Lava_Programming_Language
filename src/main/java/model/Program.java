@@ -206,30 +206,5 @@ public class Program {
         return this.opList.equals(other.opList);
     }
 
-	/**
-	 * Returns a string consisting of this program in a nice layout.
-	 *
-	 * @return the string
-	 */
-	public String prettyPrint() {
-		StringBuilder result = new StringBuilder();
-		// first print the symbolic declaration map
-		int idSize = 0;
 
-        // then print the instructions
-		int labelSize = 0;
-		int sourceSize = 0;
-		int targetSize = 0;
-		for (Instr i : getOpList()) {
-			if (i instanceof Op) {
-				Op op = (Op) i;
-				sourceSize = Math.max(sourceSize, op.toSourceString().length());
-				targetSize = Math.max(targetSize, op.toTargetString().length());
-			}
-		}
-		for (Instr i : getOpList()) {
-			result.append(i.prettyPrint(labelSize, sourceSize, targetSize));
-		}
-		return result.toString();
-	}
 }

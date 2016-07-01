@@ -26,17 +26,26 @@ import java.util.List;
  * Created by Rogier on 30-06-16 in Enschede.
  */
 public class LavaCompiler implements ActionListener {
-    private JFrame frame;
     private final JButton chooseInputButton = new JButton("Choose files");
     private final JButton chooseOutputButton = new JButton("Choose output folder");
     private final JButton runButton = new JButton("Run");
-    private JTextArea messages;
     private final JPanel panel = new JPanel(new GridBagLayout());
     private final JFileChooser inputFileChooser = new JFileChooser();
+    private JFrame frame;
+    private JTextArea messages;
     private JFileChooser outputFileChooser;
     private File[] inputFiles;
     private File outputFile;
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
+        LavaCompiler compiler = new LavaCompiler();
+        compiler.setupGUI();
+    }
 
     /**
      * Sets gui.
@@ -126,10 +135,10 @@ public class LavaCompiler implements ActionListener {
                 List<Program> programs = generator.generate(tree, checker.check(tree));
                 for (Program program : programs) {
                     program = minimizer.minimizeRegisters(program);
-                    sprils.add(sprilgen.generateSpril(program));
+                    sprils.add(sprilgen.generateSprill(program));
                 }
 
-                sprilgen.writeFile(sprilgen.formatSpril(sprils),
+                sprilgen.writeFile(sprilgen.formatSprill(sprils),
                         outputFile.getPath() + "/" + inputFile.getName().replaceAll(".magma", "") + ".hs");
                 messages.append(inputFile.getName() + " compiled with 0 errors\n");
             } catch (ParseException e) {
@@ -168,15 +177,5 @@ public class LavaCompiler implements ActionListener {
         }
 
 
-    }
-
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        LavaCompiler compiler = new LavaCompiler();
-        compiler.setupGUI();
     }
 }
