@@ -606,7 +606,7 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
-        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, Character.getNumericValue(ctx.CHARACTER().getText().charAt(1))), reg(ctx));
+        return emit(label, LoadIm, new Addr(Addr.AddrType.ImmValue, (int) (ctx.CHARACTER().getText().charAt(1))), reg(ctx));
     }
 
     @Override
