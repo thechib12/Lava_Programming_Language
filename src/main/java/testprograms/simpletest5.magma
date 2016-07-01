@@ -3,7 +3,6 @@
 /^\expected output: 48
 chamber simpletest5{
     shared rock $output = 0;
-
     rupture void func(){
         rock $c =0;
         while ($c < 12){
@@ -28,7 +27,4 @@ chamber simpletest5{
         join(5);
 
     }
-
-
-
 }

@@ -61,17 +61,17 @@ public class CheckerTest {
     public void testPrograms() throws IOException, ParseException {
         check(parse("bank"));
         check(parse("basic"));
-//        check(parse("fib"));
+        check(parse("fib"));
         check(parse("function"));
         check(parse("gauss"));
-//        check(parse("gcd"));
+        check(parse("gcd"));
 //        check(parse("hello"));
         check(parse("ifelse"));
         check(parse("infiniteLoop"));
-//        check(parse("max"));
-//        check(parse("peterson2"));
+        check(parse("peterson2"));
         check(parse("scopetester"));
         check(parse("tester"));
+        check(parse("voidtest"));
         check(parse("simpletest1"));
         check(parse("simpletest2"));
         check(parse("simpletest3"));

@@ -1,20 +1,18 @@
 /^\Simple input-output programs for system tests
-/^\ tests functions with arguments, concurrency, if statements, whileloops.
-/^\expected output: 44
+/^\ tests functions with arguments, if statements
+/^\expected output: 115
 chamber simpletest6 {
      rock $output = 0;
-     shared rock $c = 0;
+     rock $test;
 
 
-
-     rupture void incrementRock(){
-        rock $counter = 0;
-        lock();
-        while( $counter < 10){
-        $c = $c + 1;
-        $counter = $counter + 1;
+     rupture rock func3(rock $arg1, temperature $arg2){
+     /^\
+        if($arg2) then {
+            return -$arg1;
+        } else {
+            return $arg1 + 100;
         }
-        unlock();
 
      }
 
@@ -23,18 +21,9 @@ chamber simpletest6 {
      }
 
      erupt() {
-        rock $res = func4(7, 2);
-        $output = $res;
-        fork(incrementRock());
-        fork(incrementRock());
-        fork(incrementRock());
-        join(1);
-        join(2);
-        join(3);
-
-        $output = $output + $c;
-
-
+        /^\ -5 + 20 + 100 = 115
+        $output =  func3(5, hot) + func4(2,10);
+        $output = func3($output, cold);
      }
 
  }
