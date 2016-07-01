@@ -17,7 +17,6 @@ import java.util.Map;
 public class Explorer extends LavaBaseListener {
     private Map<String, Type> functionReturnTypes;
     private ParseTreeProperty<Type> types;
-
     private Map<String, List<Type>> functionParameterTypes;
     private static final List<Type> fork = new ArrayList<>();
     private List<String> errors;

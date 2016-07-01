@@ -127,10 +127,12 @@ public class Generator extends LavaBaseVisitor<Op> {
 //        Then visit the main function as it is the first to execute.
         if (ctx.main() != null) {
             visit(ctx.main());
+        } else {
+            emit(EndProg);
         }
 //        At last visit all other functions.
         ctx.functionDeclaration().forEach(this::visit);
-        return emit(EndProg);
+        return null;
     }
 
     @Override
