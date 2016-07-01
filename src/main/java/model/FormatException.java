@@ -11,6 +11,7 @@ public class FormatException extends Exception {
 	/** Constructs an exception without a message. */
 	public FormatException() {
 		// empty
+
 	}
 
 	/** Constructs an exception with a formatted message. 
