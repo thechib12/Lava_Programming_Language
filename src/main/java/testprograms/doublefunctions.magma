@@ -1,0 +1,14 @@
+chamber doublefunctions {
+    /^\ Created by Rogier on 01-07-16 in Enschede.
+    rupture void do(){
+        ;
+    }
+
+    rupture void do(){
+        ;
+    }
+
+    rupture rock do(){
+        ;
+    }
+}

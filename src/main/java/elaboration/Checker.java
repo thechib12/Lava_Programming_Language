@@ -16,10 +16,13 @@ import java.util.Map;
  * Type checker, control flow creator and variable offset generator.
  */
 public class Checker extends LavaBaseListener {
-    /* Result object to store all the data from this checker.*/
+
+    /**
+     * Result object to store all the data from this checker.
+     */
     private CheckerResult checkerResult;
 
-    /* The current scope of the the type checker, a single scope at this time.*/
+    /** The current scope of the the type checker, a single scope at this time.*/
     private MultiScope scope;
     private Map<String, Type> functionReturnTypes;
     private Map<String, List<Type>> functionParameters;
@@ -49,6 +52,7 @@ public class Checker extends LavaBaseListener {
         explorer.explore(tree);
         functionReturnTypes = explorer.getFunctionReturnTypes();
         functionParameters = explorer.getFunctionParameterTypes();
+        errors.addAll(explorer.getErrors());
         checkerResult = new CheckerResult();
         new ParseTreeWalker().walk(this, tree);
         if (errors.size() > 0) {

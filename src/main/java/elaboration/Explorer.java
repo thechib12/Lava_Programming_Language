@@ -20,6 +20,7 @@ public class Explorer extends LavaBaseListener {
 
     private Map<String, List<Type>> functionParameterTypes;
     private static final List<Type> fork = new ArrayList<>();
+    private List<String> errors;
 
     static {
         fork.add(Type.VOID);
@@ -33,6 +34,7 @@ public class Explorer extends LavaBaseListener {
 
 
     public void explore(ParseTree tree) {
+        errors = new ArrayList<>();
         functionReturnTypes = new HashMap<>();
         functionParameterTypes = new HashMap<>();
         types = new ParseTreeProperty<>();
@@ -51,6 +53,9 @@ public class Explorer extends LavaBaseListener {
     @Override
     public void exitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         String id = ctx.ID().getText();
+        if (functionReturnTypes.containsKey(id)) {
+            errors.add("rupture " + id + "() is already declared");
+        }
         functionReturnTypes.put(id, types.get(ctx.type()));
         int typeCount = ctx.parametersDeclaration().type().size();
         List<Type> types1 = new ArrayList<>();
@@ -94,4 +99,7 @@ public class Explorer extends LavaBaseListener {
         return functionParameterTypes;
     }
 
+    public List<String> getErrors() {
+        return errors;
+    }
 }
