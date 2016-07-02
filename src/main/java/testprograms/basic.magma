@@ -1,10 +1,8 @@
 chamber basic {
        /^\ Created by Rogier on 16-06-16 in Enschede.
-       rock $a;
+       shared rock $a;
        mineral $b;
        temperature $c;
-       /^\ rock[] $e = with size 8;
-       /^\ mineral[] $f = with size 4;
 
        erupt() {
           $a = 0;

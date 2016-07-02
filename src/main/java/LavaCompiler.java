@@ -150,7 +150,7 @@ public class LavaCompiler implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (((JButton) e.getSource()).getText().equals("Choose file")) {
+        if (((JButton) e.getSource()).getText().equals("Choose files")) {
             int returnVal = inputFileChooser.showOpenDialog(frame);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {

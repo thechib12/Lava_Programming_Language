@@ -26,10 +26,14 @@
 Visit our wiki for more detailed information.
 [Wiki](https://github.com/thechib12/Lava_Programming_Language/wiki)
 
-TODO:
-verslag - shared var keuze
-grammar formatten!!! (plugin?)
-tests aanvullen met nieuwe functies
+Usage:
+Import this project into your IDE or just compile all Java classes. Then run the LavaCompiler found in src/main/java. Choose your input(s) and output folder. Click run and see the result.
+ Note that your output folder must contain all Sprockell library files so a suggestion would be to output into the src/main/java/sprockell folder. 
+ Then open your terminal and type `ghc -o result ***name compiled program.hs***` hit enter and input `./result` or `result.exe` depending on your operating system.
+ 
+ Test Runs:
+ Can be found in src/main/java/testprograms, src/main/java/sprockell and src/tests/java. In the Lava files, expected output can be found.
+
 
 INTRODUCTION
 LAVA Programming Language
