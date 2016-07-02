@@ -72,47 +72,7 @@ public class Generator extends LavaBaseVisitor<Op> {
     private List<String> errors;
 
     /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        Checker checker = new Checker();
-        Generator generator = new Generator();
-        CharStream input;
-
-        File file = new File("src/main/java/testprograms/simpletest6.magma");
-        input = null;
-        try {
-            input = new ANTLRInputStream(new FileReader(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Lexer lexer = new LavaLexer(input);
-            TokenStream tokens = new CommonTokenStream(lexer);
-            LavaParser parser = new LavaParser(tokens);
-            parser.removeErrorListeners();
-            ErrorListener errorListener = new ErrorListener();
-            parser.addErrorListener(errorListener);
-            ParseTree tree = parser.program();
-            errorListener.throwException();
-            List<Program> program;
-            CheckerResult result = checker.check(tree);
-            program = generator.generate(tree, result);
-            System.out.println(program.toString());
-        } catch (ParseException e) {
-            System.err.println(e.getMessages());
-        }
-    }
-
-//    Program ---------------------------------------------------------------------------------------------------------
-//    =================================================================================================================
-//    -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Init.
+     * Initialize the generator.
      *
      * @param tree        the tree
      * @param checkResult the check result
@@ -151,10 +111,19 @@ public class Generator extends LavaBaseVisitor<Op> {
         return this.programs;
     }
 
-//    Function --------------------------------------------------------------------------------------------------------
+//    Program ---------------------------------------------------------------------------------------------------------
 //    =================================================================================================================
 //    -----------------------------------------------------------------------------------------------------------------
 
+
+    /**
+     * Sets the order of a program to run. In Lava, the global variables will be initialized first,
+     * then the main function and at last all other functions.
+     * When there is no main, after the global variables the program ends.
+     *
+     * @param ctx BodyContext ctx
+     * @return nothing
+     */
     @Override
     public Op visitBody(LavaParser.BodyContext ctx) {
 //        First initialize all global variables
@@ -170,53 +139,80 @@ public class Generator extends LavaBaseVisitor<Op> {
         return null;
     }
 
+
+//    Functions -------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Sets the local variable count to zero, visits the block statement and mark the end the of program.
+     *
+     * @param ctx MainContext node.
+     * @return EndProg to mark the end of the program.
+     */
     @Override
     public Op visitMain(LavaParser.MainContext ctx) {
         localVarCount = 0;
-        visitChildren(ctx);
+        visit(ctx.block());
         return emit(EndProg);
     }
 
+    /**
+     * Sets the current function's name in this generator,sets the local variable count to zero and
+     * pops the return address from the stack.
+     * Then it visits the block statement and at last jumps back to the return address.
+     * @param ctx FunctionDeclarationContext
+     * @return Jump back to return address.
+     */
     @Override
     public Op visitFunctionDeclaration(LavaParser.FunctionDeclarationContext ctx) {
         localVarCount = 0;
         String currentFunction = ctx.ID().getText();
         Label label = functionLabelMapping.get(currentFunction);
-//        Rearrange the stack layout
         emit(label, Pop, reg(ctx));
-//        Reset stackpointer
+//        Reset stack pointer
         emit(DecrSP);
 //        visitParametersDeclaration(ctx.parametersDeclaration());
         visitBlock(ctx.block());
         return emit(Jump, new Target(reg(ctx)));
     }
 
-    //    Block -----------------------------------------------------------------------------------------------------------
-//    =================================================================================================================
-//    -----------------------------------------------------------------------------------------------------------------
-
+    /**
+     * Pushes the parameters on the stack in reverse order; the last parameter first.
+     * This will put the first variable on the top of the stack.
+     * @param ctx ParametersContext node.
+     * @return nothing.
+     */
     @Override
     public Op visitParameters(LavaParser.ParametersContext ctx) {
         Label label = null;
         if (hasLabel(ctx)) {
             label = labels.get(ctx);
         }
-        Op operation = null;
         if (ctx.expr().size() > 0) {
             labels.put(ctx.expr(0), label);
             for (int i = ctx.expr().size() - 1; i >= 0; i--) {
                 visit(ctx.expr(i));
                 // push parameters on the stack
-                operation = emit(Push, reg(ctx.expr(i)));
+                emit(Push, reg(ctx.expr(i)));
             }
-
         } else {
             emit(label, Nop);
         }
-
-        return operation;
+        return null;
     }
 
+
+//    Blocks -----------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Allocates the activation record for a function, sets the return address, jump to the function,
+     * pop the return value and remove the activation from the stack.
+     * @param ctx FunctionCallContext node.
+     * @return nothing.
+     */
     @Override
     public Op visitFunctionCall(LavaParser.FunctionCallContext ctx) {
         Label label1 = createLabel(ctx, "return_" + ctx.ID().getText());
@@ -243,20 +239,26 @@ public class Generator extends LavaBaseVisitor<Op> {
         return null;
     }
 
-
-//    Variable declaration and assignment -----------------------------------------------------------------------------
-//    =================================================================================================================
-//    -----------------------------------------------------------------------------------------------------------------
-
+    /**
+     * @param ctx BlockContext node.
+     * @return the child's operation.
+     */
     @Override
     public Op visitBlock(LavaParser.BlockContext ctx) {
-
         if (hasLabel(ctx)) {
             labels.put(ctx.blockStatement(0), labels.get(ctx));
         }
         return super.visitBlock(ctx);
     }
 
+//    Variable declaration and assignment -----------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @param ctx BlockStatementContext node.
+     * @return the child's operation.
+     */
     @Override
     public Op visitBlockStatement(LavaParser.BlockStatementContext ctx) {
         if (hasLabel(ctx)) {
@@ -266,22 +268,29 @@ public class Generator extends LavaBaseVisitor<Op> {
         return super.visitBlockStatement(ctx);
     }
 
+    /**
+     * @param ctx LocalVariableDeclarationStatementContext node.
+     * @return the child's operation
+     */
+    @Override
+    public Op visitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
+        if (hasLabel(ctx)) {
+            setLabel(ctx.localVariableDeclaration(), labels.get(ctx));
+        }
+        return super.visitLocalVariableDeclarationStatement(ctx);
+    }
+
 
 //    Statement -------------------------------------------------------------------------------------------------------
 //    =================================================================================================================
 //    -----------------------------------------------------------------------------------------------------------------
 
-    @Override
-    public Op visitLocalVariableDeclarationStatement(LavaParser.LocalVariableDeclarationStatementContext ctx) {
-        Label label = null;
-        if (hasLabel(ctx)) {
-            label = labels.get(ctx);
-        }
-        labels.put(ctx.localVariableDeclaration(), label);
-
-        return super.visitLocalVariableDeclarationStatement(ctx);
-    }
-
+    /**
+     * Assigns a piece of memory for this variable, possibly with an expression or a zero.
+     * There are three options for declaring variables, a global variable, a local variable or shared variable.
+     * @param ctx PrimitiveDeclarationContext node.
+     * @return the operation.
+     */
     @Override
     public Op visitPrimitiveDeclaration(LavaParser.PrimitiveDeclarationContext ctx) {
         Label label = null;
@@ -314,6 +323,12 @@ public class Generator extends LavaBaseVisitor<Op> {
         }
     }
 
+    /**
+     * If-statements have 4 different options in Lava. If, If-Else,If-ElseIf*, If-ElseIf*-Else.
+     * For each option different instructions and label have to be made.
+     * @param ctx IfStatContext node.
+     * @return an useful nop to mark the end of the if-statement.
+     */
     @Override
     public Op visitIfStat(LavaParser.IfStatContext ctx) {
         if (hasLabel(ctx)) {
@@ -373,6 +388,12 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(label3, Nop);
     }
 
+    /**
+     * Assigns an expression to this variable and store in into memory. Lava has 4 different options on variables.
+     * Each option has its own instructions. These work like in visitIdExpr().
+     * @param ctx AssignStatContext node.
+     * @return an operation or nothing.
+     */
     @Override
     public Op visitAssignStat(LavaParser.AssignStatContext ctx) {
         if (hasLabel(ctx)) {
@@ -384,45 +405,54 @@ public class Generator extends LavaBaseVisitor<Op> {
             Address address = new Address(DirAddr, offset(ctx) + SHARED_OFFSET);
 //            Write to the shared memory
             return emit(WriteD, reg(ctx.expr()), address);
-        } else {
-            if (isParameter(ctx)) {
+        } else if (isParameter(ctx)) {
 //                Set the stack pointer to the right variable
+            emit(Pop, REG_ZERO);
+            for (int i = 1; i < localVarCount + offset(ctx) + 1; i++) {
                 emit(Pop, REG_ZERO);
-                for (int i = 1; i < localVarCount + offset(ctx) + 1; i++) {
-                    emit(Pop, REG_ZERO);
-                }
-//                Pop the variable and put in this register
-                emit(Pop, REG_ZERO);
-//                Push the new variable
-                emit(Push, reg(ctx.expr()));
-//                Reset the stack pointer
-                for (int i = 0; i < localVarCount + offset(ctx) + 1; i++) {
-                    emit(DecrSP);
-                }
-                return null;
-            } else if (isLocal(ctx)) {
-//                Number of pop needed to access this variable
-                int numPops = localVarCount - offset(ctx);
-//                Set the stack pointer to the right variable
-                for (int i = 0; i < numPops + 1; i++) {
-                    emit(Pop, REG_ZERO);
-                }
-//                Push the new value on the stack
-                emit(Push, reg(ctx.expr()));
-//                Reset the stack pointer
-                for (int i = 0; i < numPops; i++) {
-                    emit(DecrSP);
-                }
-
-                return null;
-            } else {
-                return emit(StoreD, reg(ctx.expr()), new Address(DirAddr, offset(ctx)));
             }
-
-
+//                Pop the variable and put in this register
+            emit(Pop, REG_ZERO);
+//                Push the new variable
+            emit(Push, reg(ctx.expr()));
+//                Reset the stack pointer
+            for (int i = 0; i < localVarCount + offset(ctx) + 1; i++) {
+                emit(DecrSP);
+            }
+            return null;
+        } else if (isLocal(ctx)) {
+//                Number of pop needed to access this variable
+            int numPops = localVarCount - offset(ctx);
+//                Set the stack pointer to the right variable
+            for (int i = 0; i < numPops + 1; i++) {
+                emit(Pop, REG_ZERO);
+            }
+//                Push the new value on the stack
+            emit(Push, reg(ctx.expr()));
+//                Reset the stack pointer
+            for (int i = 0; i < numPops; i++) {
+                emit(DecrSP);
+            }
+            return null;
+        } else {
+            return emit(StoreD, reg(ctx.expr()), new Address(DirAddr, offset(ctx)));
         }
+
     }
 
+    /**
+     * Visits the function or in case of predefined functions, execute those.
+     * Predefined functions are fork, join, lock and unlock.
+     * Fork checks if there is a sprockell free, generates the code the parallel execution of the function and
+     * makes a write instruction into a special memory cell, unique to each paralell sprockell,
+     * to tell the parallel sprockell to start from this part on.
+     * Join waits for the indicated sprockell to finish its job by checking the sprockell's shared memory cell.
+     * Lock tests whether the shared memory is being used with TestAndSet and receive the answer.
+     * Depending on that answer it can move on, or check again.
+     * Unlock writes a zero to the lock memory cell in shared memory.
+     * @param ctx FunctionStatContext node.
+     * @return nothing.
+     */
     @Override
     public Op visitFunctionStat(LavaParser.FunctionStatContext ctx) {
         Label label = null;
@@ -439,7 +469,9 @@ public class Generator extends LavaBaseVisitor<Op> {
                 errors.addAll(e.getMessages());
             }
             emit(label, LoadIm, new Address(ImmValue, 1), reg(ctx));
+//            Calculate the memory address for this sprockell run indicator memory cell and write a zero to this cell.
             emit(WriteD, REG_ZERO, new Address(DirAddr, (forkCount * 2) - 1));
+//            Calculate the memory address for this sprockell finish indicator memory cell and write an one to this cell.
             emit(WriteD, reg(ctx), new Address(DirAddr, forkCount * 2));
         } else if (ctx.functionCall().ID().getText().equals("fork") && forkCount >= MAX_THREADS - 1) {
             addError(ctx, "Too many forks for this Sprockell");
@@ -473,10 +505,12 @@ public class Generator extends LavaBaseVisitor<Op> {
         return null;
     }
 
-//    Expression ------------------------------------------------------------------------------------------------------
-//    =================================================================================================================
-//    -----------------------------------------------------------------------------------------------------------------
-
+    /**
+     * Creates three labels, visits the expression, branch based on the outcome of the expression.
+     * Then visits the block statements and jump back to the expression.
+     * @param ctx WhileStatContext node.
+     * @return a useful nop the indicate the end the while loop.
+     */
     @Override
     public Op visitWhileStat(LavaParser.WhileStatContext ctx) {
         if (hasLabel(ctx)) {
@@ -494,6 +528,16 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(label3, Nop);
     }
 
+//    Expression ------------------------------------------------------------------------------------------------------
+//    =================================================================================================================
+//    -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Gets the expressions' value, finds the return address, puts the return value on the stack and
+     * jump to the return address.
+     * @param ctx ReturnStatContext node.
+     * @return Jump to the return address.
+     */
     @Override
     public Op visitReturnStat(LavaParser.ReturnStatContext ctx) {
         if (hasLabel(ctx)) {
@@ -517,6 +561,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(Jump, new Target(reg(ctx)));
     }
 
+    /**
+     * Gets the expressions' value and put it into a new register.
+     * @param ctx ParExprContext node.
+     * @return the operation.
+     */
     @Override
     public Op visitParExpr(LavaParser.ParExprContext ctx) {
         if (hasLabel(ctx)) {
@@ -527,6 +576,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(I2I, reg(ctx.expr()), reg(ctx));
     }
 
+    /**
+     * Multiplies the two expression together and put it into a new register.
+     * @param ctx MultExprContext node.
+     * @return the operation.
+     */
     @Override
     public Op visitMultExpr(LavaParser.MultExprContext ctx) {
         if (hasLabel(ctx)) {
@@ -543,6 +597,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
     }
 
+    /**
+     * Adds the two expressions together and put it into a new register.
+     * @param ctx PlusExprContext node.
+     * @return the operation
+     */
     @Override
     public Op visitPlusExpr(LavaParser.PlusExprContext ctx) {
         if (hasLabel(ctx)) {
@@ -560,6 +619,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
     }
 
+    /**
+     * Sets a new register based on the boolean token and the result of the two expressions' value.
+     * @param ctx BoolExprContext node.
+     * @return the operation
+     */
     @Override
     public Op visitBoolExpr(LavaParser.BoolExprContext ctx) {
         if (hasLabel(ctx)) {
@@ -580,6 +644,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
     }
 
+    /**
+     * Compares the two expressions' value based on the comparison token and puts it into a new register.
+     * @param ctx CompExprContext node.
+     * @return the operation
+     */
     @Override
     public Op visitCompExpr(LavaParser.CompExprContext ctx) {
         if (hasLabel(ctx)) {
@@ -611,12 +680,16 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(opCode, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
     }
 
+    /**
+     * Negates the expressions' value and puts it into a new register.
+     * @param ctx NotExprContext node.
+     * @return the operation.
+     */
     @Override
     public Op visitNotExpr(LavaParser.NotExprContext ctx) {
         if (hasLabel(ctx)) {
             setLabel(ctx.expr(), labels.get(ctx));
         }
-
         visit(ctx.expr());
         Op operation;
         if (ctx.negaOp().MINUS() != null) {
@@ -629,6 +702,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return operation;
     }
 
+    /**
+     * Loads the UTF-16 representation of this character into memory.
+     * @param ctx CharExprContext node.
+     * @return the operation
+     */
     @Override
     public Op visitCharExpr(LavaParser.CharExprContext ctx) {
         Label label = null;
@@ -638,6 +716,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(label, LoadIm, new Address(ImmValue, (int) (ctx.CHARACTER().getText().charAt(1))), reg(ctx));
     }
 
+    /**
+     * This method loads the integer representation for the boolean true into a new register.
+     * @param ctx TrueExprContext node.
+     * @return the operation
+     */
     @Override
     public Op visitTrueExpr(LavaParser.TrueExprContext ctx) {
         Label label = null;
@@ -647,6 +730,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(label, LoadIm, TRUE_VALUE, reg(ctx));
     }
 
+    /**
+     * Loads this number into a new register.
+     * @param ctx NumExprContext node.
+     * @return the operation
+     */
     @Override
     public Op visitNumExpr(LavaParser.NumExprContext ctx) {
         Label label = null;
@@ -662,6 +750,11 @@ public class Generator extends LavaBaseVisitor<Op> {
 
     }
 
+    /**
+     * This method loads the integer representation for the boolean false into a new register.
+     * @param ctx FalseExprContext node.
+     * @return the load operation
+     */
     @Override
     public Op visitFalseExpr(LavaParser.FalseExprContext ctx) {
         Label label = null;
@@ -671,10 +764,17 @@ public class Generator extends LavaBaseVisitor<Op> {
         return emit(label, LoadIm, FALSE_VALUE, reg(ctx));
     }
 
-//    Types -----------------------------------------------------------------------------------------------------------
-//    =================================================================================================================
-//    -----------------------------------------------------------------------------------------------------------------
-
+    /**
+     * This method gets the value out of the memory of this variable and sets a register for the value.
+     * Since Lava has 4 options on variables, each variable has its own way of extracting it from memory.
+     * Shared variables will be read from shared memory and waits for an answer.
+     * Parameters will be popped out of the stack.
+     * Local variables will be popped out the stack with a different procedure,
+     * since local variable have a different position on the stack.
+     * Global variables will be read from local memory.
+     * @param ctx IdExprContext node.
+     * @return an operation {@link Op} or null
+     */
     @Override
     public Op visitIdExpr(LavaParser.IdExprContext ctx) {
         Label label = null;
@@ -684,66 +784,68 @@ public class Generator extends LavaBaseVisitor<Op> {
         if (isShared(ctx)) {
             emit(label, ReadD, new Address(DirAddr, offset(ctx) + SHARED_OFFSET));
             return emit(Receive, reg(ctx));
-        } else {
-            if (isParameter(ctx)) {
+        } else if (isParameter(ctx)) {
 //                Set the stack pointer to the right variable
-                emit(label, Pop, REG_ZERO);
-                for (int i = 1; i < localVarCount + offset(ctx) + 1; i++) {
-                    emit(Pop, REG_ZERO);
-                }
-//                Pop the variable and put in this register
-                emit(Pop, reg(ctx));
-//                Reset the stack pointer
-                for (int i = 0; i < localVarCount + offset(ctx) + 2; i++) {
-                    emit(DecrSP);
-                }
-                return null;
-            } else if (isLocal(ctx)) {
-                if (localVarCount == 1) {
-//                    Set label to the first pop which is the variable itself
-                    emit(label, Pop, reg(ctx));
-//                    Reset stack pointer
-                    emit(DecrSP);
-                } else {
-//                    The amount of pops needed to reach this variable
-                    int numPops = localVarCount - offset(ctx);
-//                    Set label to the first pop to reg0.
-                    if (numPops > 0) {
-                        emit(label, Pop, REG_ZERO);
-                        for (int i = 1; i < numPops - 1; i++) {
-                            emit(Pop, REG_ZERO);
-                        }
-                        //                    Pop the desired variable
-                        emit(Pop, reg(ctx));
-                    } else {
-                        emit(label, Pop, reg(ctx));
-                    }
-//                    Reset stack pointer
-                    for (int i = 0; i < numPops + 1; i++) {
-                        emit(DecrSP);
-                    }
-                }
-                return null;
-            } else {
-//                Load the global variable from memory
-                return emit(label, LoadD, new Address(DirAddr, offset(ctx)), reg(ctx));
+            emit(label, Pop, REG_ZERO);
+            for (int i = 1; i < localVarCount + offset(ctx) + 1; i++) {
+                emit(Pop, REG_ZERO);
             }
-
+//                Pop the variable and put in this register
+            emit(Pop, reg(ctx));
+//                Reset the stack pointer
+            for (int i = 0; i < localVarCount + offset(ctx) + 2; i++) {
+                emit(DecrSP);
+            }
+            return null;
+        } else if (isLocal(ctx)) {
+            if (localVarCount == 1) {
+//                    Set label to the first pop which is the variable itself
+                emit(label, Pop, reg(ctx));
+//                    Reset stack pointer
+                emit(DecrSP);
+            } else {
+//                    The amount of pops needed to reach this variable
+                int numPops = localVarCount - offset(ctx);
+//                    Set label to the first pop to reg0.
+                if (numPops > 0) {
+                    emit(label, Pop, REG_ZERO);
+                    for (int i = 1; i < numPops - 1; i++) {
+                        emit(Pop, REG_ZERO);
+                    }
+//                    Pop the desired variable
+                    emit(Pop, reg(ctx));
+                } else {
+                    emit(label, Pop, reg(ctx));
+                }
+//                    Reset stack pointer
+                for (int i = 0; i < numPops + 1; i++) {
+                    emit(DecrSP);
+                }
+            }
+            return null;
+        } else {
+//                Load the global variable from memory
+            return emit(label, LoadD, new Address(DirAddr, offset(ctx)), reg(ctx));
         }
+
 
     }
 
+    /**
+     * A function expression returns the value calculated in the function.
+     * The {@link grammar.LavaParser.FunctionCallContext} will handle the function and
+     * set the return value on its register. This method will shift the value over to a new register.
+     * @param ctx Function Expression node in the parse tree
+     * @return I2I to move the return value over to this register.
+     */
     @Override
     public Op visitFunctionExpr(LavaParser.FunctionExprContext ctx) {
-        Label label = null;
         if (hasLabel(ctx)) {
-            label = labels.get(ctx);
+            setLabel(ctx.functionCall().parameters(), labels.get(ctx));
         }
-        labels.put(ctx.functionCall().parameters(), label);
 
-        visitChildren(ctx);
-        emit(I2I, reg(ctx.functionCall()), reg(ctx));
-        return null;
+        visit(ctx.functionCall());
+        return emit(I2I, reg(ctx.functionCall()), reg(ctx));
     }
 
     /**
@@ -754,6 +856,11 @@ public class Generator extends LavaBaseVisitor<Op> {
         return labels.get(node) != null;
     }
 
+    /**
+     * Maps the node to a label.
+     * @param node the node
+     * @param label the label
+     */
     private void setLabel(ParseTree node, Label label) {
         labels.put(node, label);
     }
@@ -813,19 +920,38 @@ public class Generator extends LavaBaseVisitor<Op> {
         return result;
     }
 
+    /**
+     *
+     * @param node node in the parse tree.
+     * @return the offset of this node.
+     */
     private int offset(ParseTree node) {
-
         return this.checkResult.getOffset(node);
     }
 
+    /**
+     *
+     * @param node node in the parse tree.
+     * @return whether this node is a parameter.
+     */
     private boolean isParameter(ParseTree node) {
         return this.checkResult.getParameterVar(node);
     }
 
+    /**
+     *
+     * @param node node in the parse tree.
+     * @return whether this node is a local variable.
+     */
     private boolean isLocal(ParseTree node) {
         return this.checkResult.getLocalVar(node);
     }
 
+    /**
+     *
+     * @param node node in the parse tree.
+     * @return whether this node is a shared variable.
+     */
     private boolean isShared(ParseTree node) {
         return this.checkResult.getSharedVar(node);}
 
@@ -847,11 +973,52 @@ public class Generator extends LavaBaseVisitor<Op> {
         return prog;
     }
 
+    /**
+     * Adds an error with the message and line numbers.
+     * @param node the node.
+     * @param message the message.
+     */
     private void addError(ParserRuleContext node, String message) {
         int line = node.getStart().getLine();
         int column = node.getStart().getCharPositionInLine();
         message = String.format("Line %d:%d - %s", line, column, message);
         this.errors.add(message);
+    }
+
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
+        Checker checker = new Checker();
+        Generator generator = new Generator();
+        CharStream input;
+
+        File file = new File("src/main/java/testprograms/simpletest6.magma");
+        input = null;
+        try {
+            input = new ANTLRInputStream(new FileReader(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Lexer lexer = new LavaLexer(input);
+            TokenStream tokens = new CommonTokenStream(lexer);
+            LavaParser parser = new LavaParser(tokens);
+            parser.removeErrorListeners();
+            ErrorListener errorListener = new ErrorListener();
+            parser.addErrorListener(errorListener);
+            ParseTree tree = parser.program();
+            errorListener.throwException();
+            List<Program> program;
+            CheckerResult result = checker.check(tree);
+            program = generator.generate(tree, result);
+            System.out.println(program.toString());
+        } catch (ParseException e) {
+            System.err.println(e.getMessages());
+        }
     }
 
 }
